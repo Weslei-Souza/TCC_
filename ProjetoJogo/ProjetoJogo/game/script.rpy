@@ -1,47 +1,55 @@
-﻿define navegador = Character('Navegador', color="#c8ffc8")
-define m = Character('Me', color="#c8c8ff")
-
+﻿define m = Character('Me', color="#c8c8ff")
+define navegador = Character('Navegador', color="#c8ffc8")
 
 label start:
 
     scene bg mar
-
     "O navio está no mar."
-
     m "Vejamos."
 
     show ch navegador
+    navegador "Capitão, pra onde vamos?"
 
-    navegador "Capitão, pra onde vamos!?"
+    jump ilha_1
+
+
+label ilha_1:
+
+    scene bg ilha_1
+    "Você chegou à Ilha 1."
 
     menu:
+        "Para onde ir?"
 
-        "Seguir para a Ilha da Floresta":
-            jump ilha_floresta
+        "Ir para a Ilha 2":
+            jump ilha_2
 
-        "Seguir para a Ilha Rochosa":
-            jump ilha_rochosa
-
-
-label ilha_floresta:
-
-    
-    scene bg ilha_floresta
-
-    "O navio chega à Ilha da Floresta."
-
-    navegador "Chegamos à Ilha da Floresta."
-
-    return
+        "Ir para a Ilha 3":
+            jump ilha_3
 
 
-label ilha_rochosa:
+label ilha_2:
 
-    
-    scene bg ilha_rochosa
+    scene bg ilha_2
+    "Você chegou à Ilha 2."
 
-    "O navio chega à Ilha Rochosa."
+    menu:
+        "Para onde ir?"
 
-    navegador "Chegamos à Ilha Rochosa."
+        "Voltar para a Ilha 1":
+            jump ilha_1
 
-    return
+        "Ir para a Ilha 3":
+            jump ilha_3
+
+
+label ilha_3:
+
+    scene bg ilha_3
+    "Você chegou à Ilha 3."
+
+    menu:
+        "Para onde ir?"
+
+        "Voltar para a Ilha 1":
+            jump ilha_1
