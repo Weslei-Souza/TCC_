@@ -1,4 +1,5 @@
-﻿define m = Character('Me', color="#1f1f89")
+
+define m = Character('Me', color="#1f1f89")
 define navegador = Character('Navegador', color="#08eb08")
 
 label start:
