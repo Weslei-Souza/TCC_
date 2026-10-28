@@ -1997,7 +1997,7 @@ screen mapa_arquipelago():
 screen escolha_transicao(nome_ilha, destino_a, destino_b):
 
     modal True
-====
+
     # TÍTULO DA ILH====
 
     frame:
@@ -2011,7 +2011,7 @@ screen escolha_transicao(nome_ilha, destino_a, destino_b):
         text nome_ilha:
 
             size 38
-====
+
     # ÁREA INFERIO====
 
     hbox:
@@ -2215,7 +2215,9 @@ screen selecionar_fase():
 # ESTILO DOS PAINÉIS DO JOGO
 
 style painel_jogo:
-    background Solid("#162331E8")
+
+    #background "fundo_mapa"
+    background Solid("#bea909cc")
     xpadding 35
     ypadding 30
 
@@ -2223,7 +2225,7 @@ style painel_jogo:
 # BOTÕES PRINCIPAIS
 
 style rota_button:
-    background "fundo_mapa.jpg"
+    background Solid("#365a78ff")
     hover_background Solid("#365A78FF")
 
     xsize 420
