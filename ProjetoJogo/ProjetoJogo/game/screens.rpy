@@ -1688,7 +1688,7 @@ screen menu_modo_jogo():
                 xalign 0.5
                 size 40
 
-            text "Escolha como deseja navegar:"
+            text "Escolha como deseja navegar:":
                 xalign 0.5
 
             textbutton "Navegação passo a passo":

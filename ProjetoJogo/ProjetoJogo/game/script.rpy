@@ -5,7 +5,7 @@ define m = Character('Me', color="#c8c8ff")
 define navegador = Character('Navegador', color="#c8ffc8")
 
 default estado_atual = "q0"
-default modo_jogo = Noneault estado_atual = "q0"
+default modo_jogo = None
 
 
 label start:
