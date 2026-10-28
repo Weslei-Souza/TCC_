@@ -1979,3 +1979,57 @@ screen entrada_rota(nome_ilha):
             textbutton "Ver mapa":
                 action Show("mapa_arquipelago")
 
+#TELA DE SELECIONAR FASE
+screen selecionar_fase():
+
+    modal True
+
+    frame:
+        xalign 0.5
+        yalign 0.5
+
+        xsize 850
+        ysize 700
+
+
+        vbox:
+
+            xalign 0.5
+            yalign 0.5
+
+            spacing 20
+
+
+            text "Selecione uma fase":
+                size 42
+                xalign 0.5
+
+
+            for numero in range(1, 8):
+
+                $ dados = fases.FASES[numero]
+
+
+                # Fase ainda bloqueada
+                if numero > persistent.fase_max_desbloqueada:
+
+                    textbutton "Fase [numero] - Bloqueada":
+                        xalign 0.5
+                        sensitive False
+
+
+                # Fase desbloqueada, mas ainda não programada
+                elif not dados["implementada"]:
+
+                    textbutton "Fase [numero] - [dados['nome']] - Em desenvolvimento":
+                        xalign 0.5
+                        sensitive False
+
+
+                # Fase liberada e implementada
+                else:
+
+                    textbutton "Fase [numero] - [dados['nome']]":
+                        xalign 0.5
+
+                        action Return(numero)

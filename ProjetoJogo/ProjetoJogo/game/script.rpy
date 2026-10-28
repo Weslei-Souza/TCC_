@@ -3,9 +3,11 @@ init python:
     from logica import automato
     from logica import fases
 
+    # Se nunca houve progresso salvo,
+    # somente a primeira fase fica liberada.
+
     if persistent.fase_max_desbloqueada is None:
         persistent.fase_max_desbloqueada = 1
-
 #personagens
 define m = Character('Me', color="#c8c8ff")
 define navegador = Character('Navegador', color="#c8ffc8")
@@ -38,14 +40,31 @@ default historico_npc = []
 #começo do jogo
 label start:
 
+    # SELEÇÃO DA FASE
+
+    call screen selecionar_fase
+
+    $ fase_atual = _return
+
+
+    # Por enquanto todas as partidas começam no
+    # autômato da Fase 1.
+
     $ estado_atual = automato.ESTADO_INICIAL
+
+
+    # SELEÇÃO DO MODO
 
     call screen menu_modo_jogo
 
     $ modo_jogo = _return
 
+
     if modo_jogo == "navegacao":
+
         jump modo_navegacao
 
+
     elif modo_jogo == "rota":
+
         jump modo_rota
