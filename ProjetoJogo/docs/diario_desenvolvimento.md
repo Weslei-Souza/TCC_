@@ -76,3 +76,78 @@ Adicionar à estrutura de navegação:
 1. um estado final;
 2. posteriormente, um estado armadilha;
 3. organizar as ilhas como estados formais do primeiro autômato do jogo.
+
+----------------------------------------------------------------
+
+## 28/10/2026
+
+### Planejamento da próxima etapa
+
+Após a validação da navegação básica entre ilhas, foi definida como próxima etapa a criação de uma interface personalizada para seleção de rotas.
+
+A interface deverá utilizar uma `screen` do Ren'Py, organizada inicialmente em duas colunas:
+
+- personagem/NPC e informações da interação no lado esquerdo;
+- opções de rotas/botões no lado direito.
+
+Também foi definido que a navegação começará a representar explicitamente os estados de um autômato.
+
+Mapeamento inicial provisório:
+
+- Ilha 1 → `q0` — estado inicial;
+- Ilha 2 → `q1`;
+- Ilha 3 → `q2`.
+
+Posteriormente serão adicionados um estado final e um estado armadilha.
+
+Foi discutida também uma funcionalidade futura em que o jogador poderá informar uma sequência de símbolos, como `AAB` ou `010`, para representar uma palavra de entrada. O sistema deverá processar essa sequência a partir do estado inicial e percorrer automaticamente as ilhas correspondentes às transições realizadas.
+
+Essa funcionalidade será implementada somente após a formalização dos estados e da tabela de transições.
+
+### Ordem definida
+
+1. Criar interface personalizada para escolha de rotas.
+2. Associar as ilhas a estados formais.
+3. Implementar estado final e estado armadilha.
+4. Definir transições do primeiro autômato.
+5. Implementar entrada e processamento de sequências.
+
+## Organização inicial da arquitetura
+
+O código do protótipo passou a ser organizado em arquivos com responsabilidades distintas.
+
+### script.rpy
+
+Responsável pelo ponto de entrada do jogo, definição dos personagens e inicialização de variáveis globais.
+
+### screens.rpy
+
+Responsável pela interface gráfica.
+
+Foi definida uma tela reutilizável de escolha de rotas, organizada em duas colunas:
+
+- lado esquerdo: personagem/NPC e informações da interação;
+- lado direito: botões correspondentes às rotas disponíveis.
+
+A tela retorna apenas o símbolo da transição escolhida (`A` ou `B`), sem determinar diretamente o próximo estado.
+
+### ilhas.rpy
+
+Responsável pelos estados e fluxo atual do jogo.
+
+Cada ilha possui um `label` associado provisoriamente a um estado do autômato:
+
+- Ilha 1 → q0;
+- Ilha 2 → q1;
+- Ilha 3 → q2;
+- Ilha Final → qf.
+
+Os labels recebem a escolha retornada pela interface e atualmente determinam o próximo estado.
+
+Essa implementação ainda será posteriormente substituída por uma lógica formal de transições.
+
+### Decisão de arquitetura
+
+A interface deverá permanecer separada da lógica formal do autômato.
+
+Posteriormente, o processamento das transições será transferido para código Python independente, permitindo que o Ren'Py seja responsável principalmente pela apresentação e interação com o jogador.
