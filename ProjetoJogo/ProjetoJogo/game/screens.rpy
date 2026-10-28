@@ -1716,30 +1716,96 @@ screen como_jogar():
         xalign 0.5
         yalign 0.5
 
-        xsize 900
-        ysize 650
+        xsize 950
+        ysize 700
 
         vbox:
             spacing 20
 
             text "Como jogar":
-                size 36
+                size 42
+                xalign 0.5
 
-            text """
-Seu objetivo é navegar pelo arquipélago até encontrar a Ilha Final.
+
+            # Área que pode ser rolada
+            viewport:
+
+                xsize 880
+                ysize 550
+
+                scrollbars "vertical"
+                mousewheel True
+                draggable True
+
+                vbox:
+                    xsize 830
+                    spacing 30
+
+
+                    text """
+OBJETIVO
+
+Seu objetivo é navegar pelo arquipélago e encontrar a Ilha Final.
 
 Cada ilha representa um estado.
-
-A Ilha 1 representa o estado inicial.
-
-As rotas A e B representam transições entre os estados.
-
-No modo Navegação, você escolhe uma transição de cada vez.
-
-No modo Planejar Rota, você pode informar uma sequência inteira, como AAB, e o navio seguirá as transições na ordem informada.
 """
 
+
+                    text """
+ESTADO INICIAL
+
+O estado inicial representa o ponto onde o percurso começa.
+
+Na primeira fase, a Ilha 1 representa o estado inicial q0.
+"""
+
+
+                    text """
+TRANSIÇÕES
+
+As rotas disponíveis entre as ilhas representam transições.
+
+As transições são identificadas por símbolos como A e B.
+"""
+
+
+                    text """
+ESTADO FINAL
+
+O objetivo é realizar uma sequência de transições que leve o navio até um estado final.
+
+A Ilha Final representa o estado qf.
+"""
+
+
+                    text """
+MODO NAVEGAÇÃO
+
+Neste modo, você escolhe cada transição individualmente.
+
+Por exemplo:
+
+q0 → A → q1
+
+Depois escolhe novamente a partir de q1.
+"""
+
+
+                    text """
+MODO PLANEJAMENTO
+
+Neste modo, você informa uma sequência completa.
+
+Exemplo:
+
+ABB
+
+O sistema processa todos os símbolos na ordem informada e mostra o caminho percorrido.
+"""
+
+
             textbutton "Voltar":
+                xalign 0.5
                 action Hide("como_jogar")
 
 #SCREEN MAPA
@@ -1747,89 +1813,133 @@ screen mapa_arquipelago():
 
     modal True
 
-    frame:
-        xalign 0.5
-        yalign 0.5
-
-        xsize 900
-        ysize 650
-
-        vbox:
-            spacing 20
-
-            text "Mapa do Arquipélago":
-                size 36
-
-            text """
-Ilha 1 — q0 — Estado inicial
-
-A → Ilha 2
-B → Ilha 3
+    # Fundo do mapa
+    add "mapa fundo"
 
 
-Ilha 2 — q1
+    # ILHA 1 - q0
 
-A → Ilha 1
-B → Ilha 3
+    add "bg ilha_1":
+        xpos 100
+        ypos 350
+        xysize (160, 100)
+
+    text "Ilha 1 - q0":
+        xpos 120
+        ypos 455
 
 
-Ilha 3 — q2
+    # ILHA 2 - q1
 
-A → Ilha 1
-B → Ilha Final
+    add "bg ilha_2":
+        xpos 400
+        ypos 100
+        xysize (160, 100)
+
+    text "Ilha 2 - q1":
+        xpos 420
+        ypos 205
 
 
-Ilha Final — qf — Estado final
-"""
+    # ILHA 3 - q2
 
-            textbutton "Fechar mapa":
-                action Hide("mapa_arquipelago")
+    add "bg ilha_3":
+        xpos 400
+        ypos 450
+        xysize (160, 100)
+
+    text "Ilha 3 - q2":
+        xpos 420
+        ypos 555
+
+
+    # ILHA FINAL - qf
+
+    add "bg ilha_final":
+        xpos 750
+        ypos 275
+        xysize (160, 100)
+
+    text "Ilha Final - qf":
+        xpos 760
+        ypos 380
+
+
+    # INDICAÇÃO DAS TRANSIÇÕES
+
+    text "A →":
+        xpos 290
+        ypos 210
+
+    text "B →":
+        xpos 290
+        ypos 430
+
+    text "B →":
+        xpos 610
+        ypos 240
+
+
+    # BOTÃO FECHAR
+    textbutton "Fechar mapa":
+        xalign 0.92
+        yalign 0.92
+
+        action Hide("mapa_arquipelago")
+
 
 #TELA DO MODO PASSO A PASSO
 screen escolha_transicao(nome_ilha, destino_a, destino_b):
 
     modal True
 
-    frame:
+    # Nome da ilha no topo
+    text nome_ilha:
         xalign 0.5
-        yalign 0.5
-
-        hbox:
-            spacing 80
-
-            frame:
-                xsize 500
-                ysize 500
-
-                vbox:
-                    spacing 20
-
-                    text nome_ilha:
-                        size 36
-
-                    text "Navegador"
-
-                    text "Capitão, qual rota devemos seguir?"
+        yalign 0.08
+        size 42
 
 
-            frame:
-                xsize 400
-                ysize 500
+    # Personagem / navegador no lado esquerdo
+    add "ch navegador":
+        xalign 0.18
+        yalign 1.0
+        zoom 0.75
 
-                vbox:
-                    spacing 25
 
-                    text "Escolha uma rota:"
+    # Fala do navegador
+    vbox:
+        xalign 0.35
+        yalign 0.55
+        xsize 350
+        spacing 10
 
-                    textbutton "A - [destino_a]":
-                        action Return("A")
+        text "Navegador":
+            size 28
 
-                    textbutton "B - [destino_b]":
-                        action Return("B")
+        text "Capitão, qual rota devemos seguir?":
+            size 22
 
-                    textbutton "Ver mapa":
-                        action Show("mapa_arquipelago")
-    
+
+    # Botões no lado direito
+    vbox:
+        xalign 0.78
+        yalign 0.55
+        spacing 25
+
+        text "Escolha uma rota:":
+            size 28
+
+        textbutton "Rota A - [destino_a]":
+            action Return("A")
+
+        textbutton "Rota B - [destino_b]":
+            action Return("B")
+
+        textbutton "Ver mapa":
+            action Show("mapa_arquipelago")
+
+
 #TELA da navegação
 
 screen entrada_rota(nome_ilha):

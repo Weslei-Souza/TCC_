@@ -106,6 +106,24 @@ label modo_rota:
 
     navegador "Capitão, encontramos nosso destino!"
 
-    "Você concluiu o percurso."
+    "Você concluiu a Fase [fase_atual]."
+
+
+    # DESBLOQUEAR A PRÓXIMA FASE
+
+    if fase_atual < 7:
+
+        $ proxima_fase = fase_atual + 1
+
+
+        if persistent.fase_max_desbloqueada < proxima_fase:
+
+            $ persistent.fase_max_desbloqueada = proxima_fase
+
+            $ renpy.save_persistent()
+
+
+            "Uma nova fase foi desbloqueada!"
+
 
     return
