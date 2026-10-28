@@ -1646,7 +1646,7 @@ screen escolha_rota(nome_ilha, fala_npc, texto_a, texto_b):
                     text fala_npc
 
                     # Futuramente:
-                    # add "ch navegador"
+                    add "ch navegador"
 
 
             # COLUNA DIREITA
