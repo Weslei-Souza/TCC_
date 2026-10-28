@@ -1622,7 +1622,7 @@ style slider_slider:
 
 
 #----------------------------------------------------------------
-
+#MENU ESCOLHA DE ROTA
 screen escolha_rota(nome_ilha, fala_npc, texto_a, texto_b):
 
     modal True
@@ -1664,3 +1664,208 @@ screen escolha_rota(nome_ilha, fala_npc, texto_a, texto_b):
 
                     textbutton texto_b:
                         action Return("B")
+
+#MENU JOGO
+
+screen menu_modo_jogo():
+
+    modal True
+
+    frame:
+        xalign 0.5
+        yalign 0.5
+
+        xsize 800
+        ysize 600
+
+        vbox:
+            xalign 0.5
+            yalign 0.5
+
+            spacing 30
+
+            text "Arquipélago dos Autômatos":
+                xalign 0.5
+                size 40
+
+            text "Escolha como deseja navegar:"
+                xalign 0.5
+
+            textbutton "Navegação passo a passo":
+                xalign 0.5
+                action Return("navegacao")
+
+            textbutton "Planejar uma rota":
+                xalign 0.5
+                action Return("rota")
+
+            textbutton "Como jogar":
+                xalign 0.5
+                action Show("como_jogar")
+
+            textbutton "Ver mapa":
+                xalign 0.5
+                action Show("mapa_arquipelago")
+
+#MENU COMO JOGAR
+screen como_jogar():
+
+    modal True
+
+    frame:
+        xalign 0.5
+        yalign 0.5
+
+        xsize 900
+        ysize 650
+
+        vbox:
+            spacing 20
+
+            text "Como jogar":
+                size 36
+
+            text """
+Seu objetivo é navegar pelo arquipélago até encontrar a Ilha Final.
+
+Cada ilha representa um estado.
+
+A Ilha 1 representa o estado inicial.
+
+As rotas A e B representam transições entre os estados.
+
+No modo Navegação, você escolhe uma transição de cada vez.
+
+No modo Planejar Rota, você pode informar uma sequência inteira, como AAB, e o navio seguirá as transições na ordem informada.
+"""
+
+            textbutton "Voltar":
+                action Hide("como_jogar")
+
+#SCREEN MAPA
+screen mapa_arquipelago():
+
+    modal True
+
+    frame:
+        xalign 0.5
+        yalign 0.5
+
+        xsize 900
+        ysize 650
+
+        vbox:
+            spacing 20
+
+            text "Mapa do Arquipélago":
+                size 36
+
+            text """
+Ilha 1 — q0 — Estado inicial
+
+A → Ilha 2
+B → Ilha 3
+
+
+Ilha 2 — q1
+
+A → Ilha 1
+B → Ilha 3
+
+
+Ilha 3 — q2
+
+A → Ilha 1
+B → Ilha Final
+
+
+Ilha Final — qf — Estado final
+"""
+
+            textbutton "Fechar mapa":
+                action Hide("mapa_arquipelago")
+
+#TELA DO MODO PASSO A PASSO
+screen escolha_transicao(nome_ilha, destino_a, destino_b):
+
+    modal True
+
+    frame:
+        xalign 0.5
+        yalign 0.5
+
+        hbox:
+            spacing 80
+
+            frame:
+                xsize 500
+                ysize 500
+
+                vbox:
+                    spacing 20
+
+                    text nome_ilha:
+                        size 36
+
+                    text "Navegador"
+
+                    text "Capitão, qual rota devemos seguir?"
+
+
+            frame:
+                xsize 400
+                ysize 500
+
+                vbox:
+                    spacing 25
+
+                    text "Escolha uma rota:"
+
+                    textbutton "A - [destino_a]":
+                        action Return("A")
+
+                    textbutton "B - [destino_b]":
+                        action Return("B")
+
+                    textbutton "Ver mapa":
+                        action Show("mapa_arquipelago")
+    
+#TELA da navegação
+
+screen entrada_rota(nome_ilha):
+
+    modal True
+
+    default sequencia = ""
+
+    frame:
+        xalign 0.5
+        yalign 0.5
+
+        xsize 800
+        ysize 500
+
+        vbox:
+            spacing 25
+
+            text nome_ilha:
+                size 36
+
+            text "Digite a rota que deseja percorrer."
+
+            text "Exemplo: AAB"
+
+            input:
+                value ScreenVariableInputValue(
+                    "sequencia",
+                    returnable=True
+                )
+
+                length 20
+
+            textbutton "Executar rota":
+                action Return(sequencia)
+
+            textbutton "Ver mapa":
+                action Show("mapa_arquipelago")
+

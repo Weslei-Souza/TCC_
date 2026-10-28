@@ -79,7 +79,7 @@ Adicionar à estrutura de navegação:
 
 ----------------------------------------------------------------
 
-## 28/10/2026
+## 27/10/2026
 
 ### Planejamento da próxima etapa
 
@@ -151,3 +151,40 @@ Essa implementação ainda será posteriormente substituída por uma lógica for
 A interface deverá permanecer separada da lógica formal do autômato.
 
 Posteriormente, o processamento das transições será transferido para código Python independente, permitindo que o Ren'Py seja responsável principalmente pela apresentação e interação com o jogador.
+
+## 28/10/2026 — Integração inicial Ren'Py/Python
+
+Foi iniciada a separação entre a interface do jogo e a lógica formal do autômato.
+
+Foi criado o pacote `logica`, destinado a concentrar os componentes computacionais independentes da interface Ren'Py.
+
+O primeiro módulo implementado foi `automato.py`, responsável por:
+
+- definição do estado inicial;
+- identificação dos estados finais;
+- associação entre estados e ilhas;
+- definição da função de transição;
+- processamento de sequências completas de símbolos.
+
+Foram definidos dois modos de interação:
+
+### Navegação passo a passo
+
+O jogador seleciona uma transição por vez.
+
+A escolha é enviada ao módulo Python, que determina o próximo estado.
+
+### Planejamento de rota
+
+O jogador informa uma sequência de símbolos, como `AAB`.
+
+O módulo Python percorre a sequência e retorna o estado resultante e o caminho realizado.
+
+Também foram definidos:
+
+- um menu inicial de seleção de modo;
+- uma tela de explicação do funcionamento;
+- uma tela de mapa do arquipélago;
+- botão para consultar o mapa durante a navegação.
+
+A interface permanece responsável pela apresentação visual e pelas escolhas do jogador, enquanto o módulo Python é responsável pelo processamento formal das transições.

@@ -1,19 +1,23 @@
+init python:
+    from logica import automato
+
 define m = Character('Me', color="#c8c8ff")
 define navegador = Character('Navegador', color="#c8ffc8")
 
 default estado_atual = "q0"
+default modo_jogo = Noneault estado_atual = "q0"
 
 
 label start:
 
-    scene bg mar
+    $ estado_atual = automato.ESTADO_INICIAL
 
-    "O navio está no mar."
+    call screen menu_modo_jogo
 
-    m "Vejamos."
+    $ modo_jogo = _return
 
-    show ch navegador
+    if modo_jogo == "navegacao":
+        jump modo_navegacao
 
-    navegador "Capitão, pra onde vamos?"
-
-    jump ilha_1
+    elif modo_jogo == "rota":
+        jump modo_rota
