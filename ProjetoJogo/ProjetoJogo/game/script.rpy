@@ -37,28 +37,25 @@ default historico_interacoes = []
 default estado_afetivo_npc = 0.0
 default historico_npc = []
 
-#começo do jogo
 label start:
 
-    # SELEÇÃO DA FASE
+    # 1. ESCOLHA DO MODO DE JOGO
+    call screen menu_modo_jogo
 
+    $ modo_jogo = _return
+
+
+    # 2. ESCOLHA DA FASE
     call screen selecionar_fase
 
     $ fase_atual = _return
 
 
-    # Por enquanto todas as partidas começam no
-    # autômato da Fase 1.
-
+    # 3. PREPARAÇÃO DA PARTIDA
     $ estado_atual = automato.ESTADO_INICIAL
 
 
-    # SELEÇÃO DO MODO
-
-    call screen menu_modo_jogo
-
-    $ modo_jogo = _return
-
+    # 4. INÍCIO DO MODO ESCOLHIDO
 
     if modo_jogo == "navegacao":
 

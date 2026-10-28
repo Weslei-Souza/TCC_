@@ -1621,6 +1621,11 @@ style slider_slider:
     xsize 600
 
 
+
+
+
+
+
 #----------------------------------------------------------------
 #MENU ESCOLHA DE ROTA
 screen escolha_rota(nome_ilha, fala_npc, texto_a, texto_b):
@@ -1646,7 +1651,7 @@ screen escolha_rota(nome_ilha, fala_npc, texto_a, texto_b):
                     text fala_npc
 
                     # Futuramente:
-                    add "ch navegador"
+                    # add "ch navegador"
 
 
             # COLUNA DIREITA
@@ -1666,86 +1671,123 @@ screen escolha_rota(nome_ilha, fala_npc, texto_a, texto_b):
                         action Return("B")
 
 #MENU JOGO
-
 screen menu_modo_jogo():
 
     modal True
 
+    # Mesmo fundo utilizado no início do jogo.
+    add "bg_mar"
+
+
     frame:
+
+        style "painel_jogo"
+
         xalign 0.5
         yalign 0.5
 
         xsize 800
-        ysize 600
+
 
         vbox:
+
             xalign 0.5
-            yalign 0.5
 
             spacing 30
 
-            text "Arquipélago dos Autômatos":
-                xalign 0.5
-                size 40
 
-            text "Escolha como deseja navegar:":
+            text "Arquipélago dos Autômatos":
+
                 xalign 0.5
+                size 46
+
+
+            text "Escolha como deseja navegar":
+
+                xalign 0.5
+                size 26
+
+
+            null height 20
+
 
             textbutton "Navegação passo a passo":
+
+                style "rota_button"
                 xalign 0.5
+
                 action Return("navegacao")
 
-            textbutton "Planejar uma rota":
+
+            textbutton "Planejamento de rota":
+
+                style "rota_button"
                 xalign 0.5
+
                 action Return("rota")
 
-            textbutton "Como jogar":
-                xalign 0.5
-                action Show("como_jogar")
 
-            textbutton "Ver mapa":
+            null height 20
+
+
+            textbutton "Como jogar":
+
+                style "rota_button"
                 xalign 0.5
-                action Show("mapa_arquipelago")
+
+                action Show("como_jogar")
 
 #MENU COMO JOGAR
 screen como_jogar():
 
     modal True
 
+    add "bg_mar"
+
+
     frame:
+
+        style "painel_jogo"
+
         xalign 0.5
         yalign 0.5
 
-        xsize 950
-        ysize 700
+        xsize 1000
+        ysize 750
+
 
         vbox:
+
             spacing 20
 
+
             text "Como jogar":
+
                 size 42
                 xalign 0.5
 
 
-            # Área que pode ser rolada
             viewport:
 
-                xsize 880
-                ysize 550
+                xsize 920
+                ysize 570
 
                 scrollbars "vertical"
                 mousewheel True
                 draggable True
 
+
                 vbox:
-                    xsize 830
+
+                    xsize 850
+
                     spacing 30
 
 
                     text """
 OBJETIVO
 
-Seu objetivo é navegar pelo arquipélago e encontrar a Ilha Final.
+Seu objetivo é navegar pelo arquipélago até encontrar a Ilha Final.
 
 Cada ilha representa um estado.
 """
@@ -1763,182 +1805,304 @@ Na primeira fase, a Ilha 1 representa o estado inicial q0.
                     text """
 TRANSIÇÕES
 
-As rotas disponíveis entre as ilhas representam transições.
+As rotas representam transições entre estados.
 
-As transições são identificadas por símbolos como A e B.
+Cada rota possui um símbolo, como A ou B.
 """
 
 
                     text """
 ESTADO FINAL
 
-O objetivo é realizar uma sequência de transições que leve o navio até um estado final.
-
-A Ilha Final representa o estado qf.
+Uma sequência correta de transições poderá levar o navio até o estado final.
 """
 
 
                     text """
-MODO NAVEGAÇÃO
+NAVEGAÇÃO PASSO A PASSO
 
-Neste modo, você escolhe cada transição individualmente.
-
-Por exemplo:
-
-q0 → A → q1
-
-Depois escolhe novamente a partir de q1.
+Neste modo você escolhe cada transição individualmente.
 """
 
 
                     text """
-MODO PLANEJAMENTO
+PLANEJAMENTO DE ROTA
 
-Neste modo, você informa uma sequência completa.
+Neste modo você informa uma sequência completa, como ABB.
 
-Exemplo:
-
-ABB
-
-O sistema processa todos os símbolos na ordem informada e mostra o caminho percorrido.
+O sistema processa os símbolos em sequência e informa onde o navio termina.
 """
 
 
             textbutton "Voltar":
+
+                style "rota_button"
+
                 xalign 0.5
+
                 action Hide("como_jogar")
+
+
+
 
 #SCREEN MAPA
 screen mapa_arquipelago():
 
     modal True
 
-    # Fundo do mapa
-    add "mapa fundo"
+
+    # ========================================================
+    # FUNDO
+    # ========================================================
+
+    add "mapa_fundo"
 
 
-    # ILHA 1 - q0
+    # Painel para dar contraste
+    frame:
 
-    add "bg ilha_1":
-        xpos 100
-        ypos 350
-        xysize (160, 100)
+        background Solid("#111820CC")
 
-    text "Ilha 1 - q0":
-        xpos 120
-        ypos 455
+        xalign 0.5
+        yalign 0.5
 
-
-    # ILHA 2 - q1
-
-    add "bg ilha_2":
-        xpos 400
-        ypos 100
-        xysize (160, 100)
-
-    text "Ilha 2 - q1":
-        xpos 420
-        ypos 205
+        xsize 1500
+        ysize 850
 
 
-    # ILHA 3 - q2
-
-    add "bg ilha_3":
-        xpos 400
-        ypos 450
-        xysize (160, 100)
-
-    text "Ilha 3 - q2":
-        xpos 420
-        ypos 555
+        fixed:
 
 
-    # ILHA FINAL - qf
+            # =================================================
+            # q0
+            # =================================================
 
-    add "bg ilha_final":
-        xpos 750
-        ypos 275
-        xysize (160, 100)
+            add Transform(
+                "ilha_1",
+                xysize=(220, 140),
+                fit="contain"
+            ):
 
-    text "Ilha Final - qf":
-        xpos 760
-        ypos 380
-
-
-    # INDICAÇÃO DAS TRANSIÇÕES
-
-    text "A →":
-        xpos 290
-        ypos 210
-
-    text "B →":
-        xpos 290
-        ypos 430
-
-    text "B →":
-        xpos 610
-        ypos 240
+                xpos 100
+                ypos 340
 
 
-    # BOTÃO FECHAR
-    textbutton "Fechar mapa":
-        xalign 0.92
-        yalign 0.92
+            text "Ilha 1\nq0 - Inicial":
 
-        action Hide("mapa_arquipelago")
+                xpos 120
+                ypos 490
+
+
+            # =================================================
+            # q1
+            # =================================================
+
+            add Transform(
+                "ilha_2",
+                xysize=(220, 140),
+                fit="contain"
+            ):
+
+                xpos 480
+                ypos 100
+
+
+            text "Ilha 2\nq1":
+
+                xpos 530
+                ypos 250
+
+
+            # =================================================
+            # q2
+            # =================================================
+
+            add Transform(
+                "ilha_3",
+                xysize=(220, 140),
+                fit="contain"
+            ):
+
+                xpos 480
+                ypos 500
+
+
+            text "Ilha 3\nq2":
+
+                xpos 530
+                ypos 650
+
+
+            # =================================================
+            # qf
+            # =================================================
+
+            add Transform(
+                "ilha_final",
+                xysize=(220, 140),
+                fit="contain"
+            ):
+
+                xpos 950
+                ypos 300
+
+
+            text "Ilha Final\nqf - Final":
+
+                xpos 970
+                ypos 450
+
+
+            # =================================================
+            # TRANSIÇÕES
+            # =================================================
+
+            text "A":
+
+                xpos 370
+                ypos 250
+                size 36
+
+
+            text "B":
+
+                xpos 370
+                ypos 500
+                size 36
+
+
+            text "B":
+
+                xpos 800
+                ypos 300
+                size 36
+
+
+            # =================================================
+            # FECHAR
+            # =================================================
+
+            textbutton "Fechar mapa":
+
+                style "rota_button"
+
+                xpos 1000
+                ypos 680
+
+                action Hide("mapa_arquipelago")
+
 
 
 #TELA DO MODO PASSO A PASSO
 screen escolha_transicao(nome_ilha, destino_a, destino_b):
 
     modal True
+====
+    # TÍTULO DA ILH====
 
-    # Nome da ilha no topo
-    text nome_ilha:
+    frame:
+
+        style "painel_jogo"
+
         xalign 0.5
-        yalign 0.08
-        size 42
+        yalign 0.07
 
 
-    # Personagem / navegador no lado esquerdo
-    add "ch navegador":
-        xalign 0.18
-        yalign 1.0
-        zoom 0.75
+        text nome_ilha:
+
+            size 38
+====
+    # ÁREA INFERIO====
+
+    hbox:
+
+        xalign 0.5
+        yalign 0.82
+
+        spacing 80
 
 
-    # Fala do navegador
-    vbox:
-        xalign 0.35
-        yalign 0.55
-        xsize 350
-        spacing 10
+        # NAVEGADOR
 
-        text "Navegador":
-            size 28
+        frame:
 
-        text "Capitão, qual rota devemos seguir?":
-            size 22
+            style "painel_jogo"
+
+            xsize 600
+            ysize 500
 
 
-    # Botões no lado direito
-    vbox:
-        xalign 0.78
-        yalign 0.55
-        spacing 25
+            hbox:
 
-        text "Escolha uma rota:":
-            size 28
+                spacing 25
 
-        textbutton "Rota A - [destino_a]":
-            action Return("A")
 
-        textbutton "Rota B - [destino_b]":
-            action Return("B")
+                # Imagem carregada automaticamente
+                add "navegador":
 
-        textbutton "Ver mapa":
-            action Show("mapa_arquipelago")
+                    xalign 0.0
+                    yalign 1.0
 
+
+                vbox:
+
+                    xsize 280
+                    spacing 15
+
+
+                    text "Navegador":
+
+                        size 30
+
+
+                    text "Capitão, qual rota devemos seguir?":
+
+                        size 23
+
+
+        # ROTAS
+
+        frame:
+
+            style "painel_jogo"
+
+            xsize 500
+            ysize 500
+
+
+            vbox:
+
+                xalign 0.5
+                yalign 0.5
+
+                spacing 25
+
+
+                text "Escolha uma rota:":
+
+                    size 30
+                    xalign 0.5
+
+
+                textbutton "Rota A - [destino_a]":
+
+                    style "rota_button"
+
+                    action Return("A")
+
+
+                textbutton "Rota B - [destino_b]":
+
+                    style "rota_button"
+
+                    action Return("B")
+
+
+                textbutton "Ver mapa":
+
+                    style "rota_button"
+
+                    action Show("mapa_arquipelago")
 
 #TELA da navegação
 
@@ -1984,23 +2148,28 @@ screen selecionar_fase():
 
     modal True
 
+    add "bg_mar"
+
+
     frame:
+
+        style "painel_jogo"
+
         xalign 0.5
         yalign 0.5
 
-        xsize 850
-        ysize 700
+        xsize 900
 
 
         vbox:
 
             xalign 0.5
-            yalign 0.5
 
             spacing 20
 
 
             text "Selecione uma fase":
+
                 size 42
                 xalign 0.5
 
@@ -2010,26 +2179,65 @@ screen selecionar_fase():
                 $ dados = fases.FASES[numero]
 
 
-                # Fase ainda bloqueada
                 if numero > persistent.fase_max_desbloqueada:
 
                     textbutton "Fase [numero] - Bloqueada":
+
+                        style "rota_button"
+
                         xalign 0.5
+
                         sensitive False
 
 
-                # Fase desbloqueada, mas ainda não programada
                 elif not dados["implementada"]:
 
                     textbutton "Fase [numero] - [dados['nome']] - Em desenvolvimento":
+
+                        style "rota_button"
+
                         xalign 0.5
+
                         sensitive False
 
 
-                # Fase liberada e implementada
                 else:
 
                     textbutton "Fase [numero] - [dados['nome']]":
+
+                        style "rota_button"
+
                         xalign 0.5
 
                         action Return(numero)
+
+
+# ESTILO DOS PAINÉIS DO JOGO
+
+style painel_jogo:
+    background Solid("#162331E8")
+    xpadding 35
+    ypadding 30
+
+
+# BOTÕES PRINCIPAIS
+
+style rota_button:
+    background "fundo_mapa.jpg"
+    hover_background Solid("#365A78FF")
+
+    xsize 420
+    ysize 70
+
+    xpadding 20
+    ypadding 12
+
+
+style rota_button_text:
+    color "#FFFFFF"
+    hover_color "#F5D77A"
+
+    size 26
+
+    xalign 0.5
+    yalign 0.5

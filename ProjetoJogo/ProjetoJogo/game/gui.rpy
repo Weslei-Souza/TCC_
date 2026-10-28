@@ -10,6 +10,12 @@ init offset = -2
 ## width and height of the game.
 init python:
     gui.init(1280, 720)
+    bg_mar.png       (1280, 720)
+    ilha_1.png       (1280, 720)
+    ilha_2.png       (1280, 720)
+    ilha_3.png       (1280, 720)
+    ilha_final.png   (1280, 720)
+    mapa_fundo.png   (1280, 720)
 
 ## Enable checks for invalid or unstable properties in screens or transforms
 define config.check_conflicting_properties = True
