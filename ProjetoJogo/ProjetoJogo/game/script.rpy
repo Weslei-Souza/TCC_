@@ -13,10 +13,10 @@ define m = Character('Me', color="#c8c8ff")
 define navegador = Character('Navegador', color="#c8ffc8")
 
 # ESTADO DA PARTIDA
-default estado_atual = "q0"
+default estado_atual = None
 default fase_atual = 1
 default modo_jogo = None
-
+default configuracao_automato = None
 
 # MÉTRICAS DO JOGADOR
 default numero_tentativas = 0
@@ -35,10 +35,6 @@ default historico_npc = []
 
 label start:
 
-    
-    $ estado_atual = automato.ESTADO_INICIAL
-    # Reinicia as métricas da fase atual.
-    $ historico_estados = [estado_atual]
 
     $ estados_repetidos = 0
     $ quantidade_retornos = 0
@@ -57,10 +53,17 @@ label start:
 
     $ fase_atual = _return
 
+    # Obtém a configuração correspondente à fase escolhida.
+    $ configuracao_automato = fases.obter_automato(
+        fase_atual
+    )
 
-    # 3. PREPARAÇÃO DA PARTIDA
-    $ estado_atual = automato.ESTADO_INICIAL
 
+    $ estado_atual = automato.estado_inicial(
+        configuracao_automato
+    )
+    # Reinicia as métricas da fase atual.
+    $ historico_estados = [estado_atual]
 
     # 4. INÍCIO DO MODO ESCOLHIDO
 

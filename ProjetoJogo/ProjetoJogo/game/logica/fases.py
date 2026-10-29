@@ -1,57 +1,69 @@
 """
 Configuração geral das fases do jogo.
-
-Este módulo contém apenas informações sobre
-as fases disponíveis.
-
-A lógica dos autômatos será implementada
-separadamente.
 """
-
+from logica.automatos import fase_1
+from logica.automatos import fase_2
+from logica.automatos import fase_3
+from logica.automatos import fase_4
+from logica.automatos import fase_5
+from logica.automatos import fase_6
+from logica.automatos import fase_7
 
 FASES = {
-#estados basicos
+
     1: {
         "nome": "Primeiros Estados",
-        "implementada": True
+        "implementada": True,
+        "automato": fase_1.CONFIGURACAO,
     },
-#mais do mesmo, um pouco mais dificil
+
     2: {
         "nome": "Novas Rotas",
-        "implementada": False
+        "implementada": False,
+        "automato": None,
     },
-#diferentes rotas pra vitoria
+
     3: {
         "nome": "Caminhos Alternativos",
-        "implementada": False
+        "implementada": False,
+        "automato": None,
     },
-#loops
+
     4: {
         "nome": "O Redemoinho",
-        "implementada": False
+        "implementada": False,
+        "automato": None,
     },
-#fase com tudo meio junto
+
     5: {
         "nome": "Rotas Complexas",
-        "implementada": False
+        "implementada": False,
+        "automato": None,
     },
-#estado de morte/armadilha
+
     6: {
         "nome": "A Prisão",
-        "implementada": False
+        "implementada": False,
+        "automato": None,
     },
-#fase dificil
+
     7: {
         "nome": "Desafio Final",
-        "implementada": False
+        "implementada": False,
+        "automato": None,
     }
 
 }
 
 
 def obter_fase(numero):
-    """
-    Retorna os dados de uma fase.
-    """
-
     return FASES.get(numero)
+
+
+def obter_automato(numero):
+    fase = obter_fase(numero)
+
+    if fase is None:
+        return None
+
+    return fase.get("automato")
