@@ -1,5 +1,5 @@
-====
-# MODO DE NAVEGAÇÃO PASSO A PASS====
+
+# MODO DE NAVEGAÇÃO PASSO A PASS
 
 label modo_navegacao:
 
@@ -77,11 +77,14 @@ label modo_navegacao:
 
     $ estado_atual = proximo_estado
 
+    "DEBUG - Histórico: [historico_estados]"
+    "DEBUG - Estados repetidos: [estados_repetidos]"
+    "DEBUG - Retornos: [quantidade_retornos]"
 
     jump modo_navegacao
 
-====
-# MODO DE PLANEJAMENTO DE ROT====
+
+# MODO DE PLANEJAMENTO DE ROT
 
 label modo_rota:
 
@@ -145,6 +148,9 @@ label modo_rota:
 
     "Percurso realizado: [percurso]"
 
+    "DEBUG - Histórico: [historico_estados]"
+    "DEBUG - Estados repetidos: [estados_repetidos]"
+    "DEBUG - Retornos: [quantidade_retornos]"
 
     if erro:
 
@@ -163,8 +169,8 @@ label modo_rota:
 
     jump modo_rota
 
-====
-# VITÓRI====
+
+# VITÓRIA
 
 label vitoria:
 

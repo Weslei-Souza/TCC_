@@ -95,4 +95,8 @@ def processar_sequencia(estado_inicial, sequencia):
         estado = proximo_estado
         caminho.append(estado)
 
+    "DEBUG - Histórico: [historico_estados]"
+    "DEBUG - Estados repetidos: [estados_repetidos]"
+    "DEBUG - Retornos: [quantidade_retornos]"
+
     return estado, caminho, None
