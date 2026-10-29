@@ -35,6 +35,8 @@ default historico_npc = []
 
 label start:
 
+    
+    $ estado_atual = automato.ESTADO_INICIAL
     # Reinicia as métricas da fase atual.
     $ historico_estados = [estado_atual]
 

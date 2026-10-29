@@ -1,3 +1,6 @@
+====
+# MODO DE NAVEGAÇÃO PASSO A PASS====
+
 label modo_navegacao:
 
     call exibir_ilha_atual
@@ -5,6 +8,9 @@ label modo_navegacao:
     if automato.eh_final(estado_atual):
         jump vitoria
 
+
+    # Consulta ao módulo Python quais estados são alcançados
+    # pelas transições A e B.
 
     $ destino_a_estado = automato.transicao(estado_atual, "A")
     $ destino_b_estado = automato.transicao(estado_atual, "B")
@@ -22,6 +28,8 @@ label modo_navegacao:
         $ destino_b = "Sem rota"
 
 
+    # Mostra as opções disponíveis para o jogador.
+
     call screen escolha_transicao(
         automato.nome_estado(estado_atual),
         destino_a,
@@ -30,6 +38,13 @@ label modo_navegacao:
 
 
     $ simbolo = _return
+
+
+    # Envia ao módulo do autômato:
+    #
+    # estado atual + símbolo escolhido
+    #
+    # e recebe o próximo estado.
 
     $ proximo_estado = automato.transicao(
         estado_atual,
@@ -44,12 +59,12 @@ label modo_navegacao:
         jump modo_navegacao
 
 
-    # Analisa a nova visita antes de atualizar a interface.
+    # REGISTRO DA NAVEGAÇÃO DO JOGADOR
 
     $ novo_historico, novas_repeticoes, novos_retornos = jogador.registrar_percurso(
         historico_estados,
         [proximo_estado]
-        )
+    )
 
 
     $ historico_estados = novo_historico
@@ -58,22 +73,27 @@ label modo_navegacao:
     $ quantidade_retornos += novos_retornos
 
 
+    # Atualiza o estado da partida.
+
     $ estado_atual = proximo_estado
 
+
     jump modo_navegacao
-    
 
-
+====
+# MODO DE PLANEJAMENTO DE ROT====
 
 label modo_rota:
 
     call exibir_ilha_atual
+
 
     if automato.eh_final(estado_atual):
         jump vitoria
 
 
     navegador "Capitão, podemos planejar várias rotas antes de partir."
+
 
     call screen entrada_rota(
         automato.nome_estado(estado_atual)
@@ -83,17 +103,26 @@ label modo_rota:
     $ sequencia = _return.strip().upper()
 
 
+    # O módulo Python processa toda a sequência.
+
     $ novo_estado, caminho, erro = automato.processar_sequencia(
-    estado_atual,
-    sequencia
+        estado_atual,
+        sequencia
     )
 
+
+    # Cria uma versão textual apenas para mostrar na tela.
 
     $ percurso = " -> ".join(caminho)
 
 
+    # O primeiro elemento é o estado em que o jogador já estava.
+    # Portanto, registramos apenas os estados seguintes.
+
     $ estados_visitados = caminho[1:]
 
+
+    # REGISTRO DA NAVEGAÇÃO DO JOGADOR
 
     $ novo_historico, novas_repeticoes, novos_retornos = jogador.registrar_percurso(
         historico_estados,
@@ -107,13 +136,7 @@ label modo_rota:
     $ quantidade_retornos += novos_retornos
 
 
-    $ estado_atual = novo_estado
-
-
-    "Sequência informada: [sequencia]"
-
-    "Percurso realizado: [percurso]"
-
+    # Atualiza onde o jogador terminou.
 
     $ estado_atual = novo_estado
 
@@ -140,9 +163,13 @@ label modo_rota:
 
     jump modo_rota
 
+====
+# VITÓRI====
+
 label vitoria:
 
     call exibir_ilha_atual
+
 
     navegador "Capitão, encontramos nosso destino!"
 
