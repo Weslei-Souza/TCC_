@@ -78,113 +78,446 @@ Adicionar à estrutura de navegação:
 3. organizar as ilhas como estados formais do primeiro autômato do jogo.
 
 ----------------------------------------------------------------
+# Diário de Desenvolvimento — 27/10 e 28/10/2026
 
-## 27/10/2026
+## Situação do projeto
 
-### Planejamento da próxima etapa
+O desenvolvimento do protótipo em Ren'Py avançou da navegação básica entre telas para uma estrutura mais próxima do jogo proposto no TCC.
 
-Após a validação da navegação básica entre ilhas, foi definida como próxima etapa a criação de uma interface personalizada para seleção de rotas.
+A navegação entre ilhas já estava funcional, com a Ilha 1 funcionando como estado inicial provisório e com possibilidade de alcançar um estado final, encerrando corretamente a partida.
 
-A interface deverá utilizar uma `screen` do Ren'Py, organizada inicialmente em duas colunas:
+## Implementações e decisões consolidadas
 
-- personagem/NPC e informações da interação no lado esquerdo;
-- opções de rotas/botões no lado direito.
+### 1. Estrutura do autômato
 
-Também foi definido que a navegação começará a representar explicitamente os estados de um autômato.
-
-Mapeamento inicial provisório:
+Foi mantida a correspondência entre as ilhas e os estados do autômato:
 
 - Ilha 1 → `q0` — estado inicial;
 - Ilha 2 → `q1`;
-- Ilha 3 → `q2`.
+- Ilha 3 → `q2`;
+- Ilha Final → `qf` — estado final.
 
-Posteriormente serão adicionados um estado final e um estado armadilha.
+As rotas `A` e `B` representam as transições entre esses estados.
 
-Foi discutida também uma funcionalidade futura em que o jogador poderá informar uma sequência de símbolos, como `AAB` ou `010`, para representar uma palavra de entrada. O sistema deverá processar essa sequência a partir do estado inicial e percorrer automaticamente as ilhas correspondentes às transições realizadas.
+O autômato utilizado atualmente ainda é provisório e serve principalmente para desenvolver e testar a infraestrutura do jogo.
 
-Essa funcionalidade será implementada somente após a formalização dos estados e da tabela de transições.
+### 2. Organização modular do projeto
 
-### Ordem definida
+Foi definida uma separação de responsabilidades entre os arquivos do projeto.
 
-1. Criar interface personalizada para escolha de rotas.
-2. Associar as ilhas a estados formais.
-3. Implementar estado final e estado armadilha.
-4. Definir transições do primeiro autômato.
-5. Implementar entrada e processamento de sequências.
+`script.rpy`
+- ponto de entrada do jogo;
+- personagens;
+- variáveis globais;
+- estado atual da partida;
+- modo selecionado;
+- fase atual.
 
-## Organização inicial da arquitetura
+`screens.rpy`
+- interfaces;
+- botões;
+- seleção de modo;
+- seleção de fases;
+- tutorial;
+- mapa;
+- tela de escolha de transições.
 
-O código do protótipo passou a ser organizado em arquivos com responsabilidades distintas.
+`ilhas.rpy`
+- representação visual das ilhas/estados.
 
-### script.rpy
+`navegacao.rpy`
+- fluxo dos modos de jogo;
+- navegação passo a passo;
+- processamento de rota completa;
+- vitória.
 
-Responsável pelo ponto de entrada do jogo, definição dos personagens e inicialização de variáveis globais.
+`logica/automato.py`
+- representação formal dos estados;
+- tabela de transições;
+- função de transição;
+- processamento de sequências.
 
-### screens.rpy
+`logica/fases.py`
+- configuração das fases e progressão.
 
-Responsável pela interface gráfica.
+Também foi organizada a estrutura de imagens em pastas separadas para fundos, personagens e interface.
 
-Foi definida uma tela reutilizável de escolha de rotas, organizada em duas colunas:
+### 3. Integração Ren'Py e Python
 
-- lado esquerdo: personagem/NPC e informações da interação;
-- lado direito: botões correspondentes às rotas disponíveis.
+Foi planejada/adotada a separação entre a interface Ren'Py e a lógica computacional em Python.
 
-A tela retorna apenas o símbolo da transição escolhida (`A` ou `B`), sem determinar diretamente o próximo estado.
+A ideia central é:
 
-### ilhas.rpy
+Ren'Py  
+→ recebe a ação do jogador  
+→ envia estado e símbolo ao Python  
+→ Python calcula a transição  
+→ devolve o novo estado  
+→ Ren'Py apresenta a nova ilha.
 
-Responsável pelos estados e fluxo atual do jogo.
+O módulo Python deve permanecer independente da interface e não deverá armazenar diretamente o estado corrente da partida.
 
-Cada ilha possui um `label` associado provisoriamente a um estado do autômato:
+### 4. Dois modos de jogo
 
-- Ilha 1 → q0;
-- Ilha 2 → q1;
-- Ilha 3 → q2;
-- Ilha Final → qf.
+Foram definidos dois modos que utilizam o mesmo autômato.
 
-Os labels recebem a escolha retornada pela interface e atualmente determinam o próximo estado.
+#### Navegação passo a passo
 
-Essa implementação ainda será posteriormente substituída por uma lógica formal de transições.
+O jogador escolhe cada transição individualmente.
 
-### Decisão de arquitetura
+Exemplo:
 
-A interface deverá permanecer separada da lógica formal do autômato.
+`q0 → A → q1 → B → q2`
 
-Posteriormente, o processamento das transições será transferido para código Python independente, permitindo que o Ren'Py seja responsável principalmente pela apresentação e interação com o jogador.
+#### Planejamento de rota
 
-## 28/10/2026 — Integração inicial Ren'Py/Python
+O jogador informa uma sequência completa, como:
 
-Foi iniciada a separação entre a interface do jogo e a lógica formal do autômato.
+`ABB`
 
-Foi criado o pacote `logica`, destinado a concentrar os componentes computacionais independentes da interface Ren'Py.
+O sistema processa todos os símbolos sequencialmente e determina o estado final alcançado.
 
-O primeiro módulo implementado foi `automato.py`, responsável por:
+Exemplo:
 
-- definição do estado inicial;
-- identificação dos estados finais;
-- associação entre estados e ilhas;
-- definição da função de transição;
-- processamento de sequências completas de símbolos.
+`q0 → q1 → q2 → qf`
 
-Foram definidos dois modos de interação:
+Depois de terminar em um estado não final, o jogador poderá informar uma nova sequência a partir daquele ponto.
 
-### Navegação passo a passo
+### 5. Menu e fluxo geral
 
-O jogador seleciona uma transição por vez.
+Foi definido que o fluxo deverá ser:
 
-A escolha é enviada ao módulo Python, que determina o próximo estado.
+Menu principal  
+→ seleção do modo de jogo  
+→ seleção da fase  
+→ início da partida.
 
-### Planejamento de rota
+O menu deverá também oferecer acesso a uma explicação de como o jogo funciona.
 
-O jogador informa uma sequência de símbolos, como `AAB`.
+### 6. Mapa
 
-O módulo Python percorre a sequência e retorna o estado resultante e o caminho realizado.
+Foi planejada a transformação do mapa textual em um mapa visual do arquipélago.
 
-Também foram definidos:
+O mapa deverá mostrar:
 
-- um menu inicial de seleção de modo;
-- uma tela de explicação do funcionamento;
-- uma tela de mapa do arquipélago;
-- botão para consultar o mapa durante a navegação.
+- miniaturas das ilhas;
+- identificação dos estados (`q0`, `q1`, `q2`, `qf`);
+- indicação do estado inicial;
+- indicação do estado final;
+- rotas;
+- símbolos das transições.
 
-A interface permanece responsável pela apresentação visual e pelas escolhas do jogador, enquanto o módulo Python é responsável pelo processamento formal das transições.
+As próprias imagens das ilhas poderão ser reaproveitadas como miniaturas.
+
+### 7. Tutorial
+
+Foi decidido que a tela "Como jogar" deverá utilizar uma área rolável.
+
+O tutorial poderá apresentar gradualmente:
+
+- objetivo do jogo;
+- estado inicial;
+- estados intermediários;
+- estado final;
+- transições;
+- símbolos `A` e `B`;
+- funcionamento do modo Navegação;
+- funcionamento do modo Planejamento.
+
+O jogo continua sendo tratado como material didático/de apoio e não como ferramenta cuja eficácia de aprendizagem já foi comprovada.
+
+### 8. Progressão de fases
+
+Foi definida provisoriamente uma estrutura com sete fases.
+
+Apenas a primeira precisa estar implementada neste momento.
+
+Estrutura conceitual futura:
+
+1. conceitos básicos: estado inicial, estados intermediários e estado final;
+2. novas rotas;
+3. caminhos alternativos;
+4. introdução de loop, possivelmente representado por um redemoinho;
+5. rotas mais complexas;
+6. estado morto/armadilha, possivelmente representado por uma prisão;
+7. desafio final combinando conceitos anteriores.
+
+As fases deverão ser desbloqueadas progressivamente.
+
+Uma fase ainda não implementada poderá aparecer como "Em desenvolvimento".
+
+### 9. Variáveis preparadas para o jogador
+
+Foram definidas como variáveis candidatas:
+
+- número de tentativas;
+- quantidade de retornos;
+- estados repetidos;
+- entradas em estados armadilha;
+- solicitações anteriores de ajuda;
+- histórico de estados;
+- histórico de interações.
+
+Essas variáveis ainda não devem ser interpretadas como emoções.
+
+Posteriormente poderão contribuir para uma medida operacional de **necessidade de assistência**.
+
+### 10. Estado do NPC
+
+Foi mantida a decisão de preparar:
+
+- uma variável de estado afetivo interno do NPC;
+- um histórico de interações.
+
+Nenhuma escala, peso ou significado matemático definitivo foi definido ainda.
+
+As escolhas futuras do jogador deverão atualizar o estado interno do NPC, que posteriormente será fuzzificado.
+
+### 11. Interface visual
+
+Foram planejadas melhorias para deixar o protótipo com aparência mais próxima de um jogo:
+
+- remover caixas excessivas;
+- utilizar painéis sólidos ou imagens de interface;
+- posicionar o Navegador próximo das opções de rota;
+- utilizar o fundo marítimo também nos menus;
+- adaptar as imagens à resolução do projeto;
+- utilizar os nomes dos arquivos como tags automáticas do Ren'Py sempre que possível.
+
+## Próximas implementações
+
+A ordem de trabalho definida para a sequência do desenvolvimento é:
+
+1. finalizar o fluxo visual dos menus;
+2. fazer o Navegador aparecer corretamente nas telas de escolha;
+3. ajustar fundos, painéis e imagens;
+4. terminar o mapa visual;
+5. terminar o tutorial rolável;
+6. finalizar seleção e desbloqueio das sete fases;
+7. começar a registrar automaticamente o histórico de estados;
+8. contabilizar tentativas;
+9. detectar estados repetidos;
+10. definir e implementar o conceito de retorno;
+11. adicionar pedidos de ajuda;
+12. fazer o modo de rota completa mostrar visualmente o percurso pelas ilhas;
+13. implementar o estado interno do NPC;
+14. definir a necessidade de assistência;
+15. somente depois implementar o sistema fuzzy.
+
+## Estado ao final do dia
+
+O projeto deixou de ser apenas um teste de transição entre labels e passou a possuir uma arquitetura definida para:
+
+- interface;
+- autômato;
+- dois modos de navegação;
+- processamento Python;
+- mapa;
+- tutorial;
+- fases;
+- progressão;
+- futuras métricas do jogador;
+- futuro estado afetivo do NPC;
+- futura integração fuzzy.
+
+O foco seguinte será concluir a infraestrutura visual e de progressão antes de iniciar a coleta efetiva das métricas utilizadas pelo mecanismo adaptativo.
+
+# Diário de Desenvolvimento — 29/10/2026
+
+## Situação geral
+
+O projeto avançou da navegação básica para uma arquitetura modular capaz de suportar múltiplas fases, processamento de autômatos em Python e coleta de métricas reais do jogador.
+
+A versão atual foi testada e está funcionando sem erros após a refatoração.
+
+## Atividades realizadas
+
+### 1. Testes das métricas de navegação
+
+Foram realizados testes com percursos simples e longos nos dois modos de jogo.
+
+Foram validados:
+
+- histórico dos estados visitados;
+- contagem de estados repetidos;
+- identificação de retornos.
+
+Os testes indicaram que essas métricas estão sendo processadas corretamente.
+
+### 2. Integração com `jogador.py`
+
+O módulo `jogador.py` passou a analisar o percurso realizado pelo jogador.
+
+O Ren'Py continua responsável por armazenar o estado da partida, enquanto o Python recebe os dados, processa as métricas e devolve os resultados.
+
+### 3. Refatoração do autômato
+
+Foi realizada a separação entre:
+
+**motor genérico do autômato**
+- processamento de transições;
+- identificação de estado inicial;
+- identificação de estados finais;
+- processamento de sequências;
+
+e:
+
+**configuração específica da Fase 1**
+- estados;
+- nomes das ilhas;
+- transições;
+- estado inicial;
+- estado final.
+
+Foi criada uma estrutura específica para os autômatos das fases, permitindo futuramente adicionar novas fases sem alterar o motor geral.
+
+### 4. Estrutura preparada para múltiplas fases
+
+`automato.py` passou a funcionar como motor genérico.
+
+A configuração da Fase 1 foi movida para um módulo próprio.
+
+`fases.py` passou a relacionar cada fase à configuração de seu respectivo autômato.
+
+Essa mudança permite futuramente ter:
+
+- `fase_1.py`;
+- `fase_2.py`;
+- `fase_3.py`;
+- etc.
+
+sem duplicar a lógica geral.
+
+### 5. Correções durante a refatoração
+
+Foram corrigidos problemas de integração relacionados a:
+
+- configuração da Fase 1;
+- chamadas do motor genérico;
+- passagem da configuração do autômato para as funções;
+- chamadas de `nome_estado`;
+- chamadas de `transicao`;
+- processamento de sequências.
+
+Após as correções, o jogo voltou a funcionar normalmente.
+
+### 6. Versionamento
+
+As alterações foram commitadas no GitHub.
+
+O GitHub Desktop passou a ser utilizado como ferramenta principal de versionamento por ser mais prático para o fluxo atual.
+
+Continuar utilizando nomes claros de commit para registrar cada marco de desenvolvimento.
+
+---
+
+# Próximas tarefas definidas
+
+## Prioridade 1 — Isolar completamente as fases no Ren'Py
+
+Criar uma estrutura específica para o conteúdo Ren'Py das fases, semelhante à separação já realizada no Python.
+
+Objetivo futuro:
+
+```text
+game/
+└── fases/
+    ├── fase_1.rpy
+    ├── fase_2.rpy
+    ├── fase_3.rpy
+    └── ...
+```
+
+A Fase 1 deverá concentrar:
+
+- imagens específicas;
+- estados visuais;
+- textos;
+- labels;
+- elementos narrativos;
+- demais conteúdos exclusivos da fase.
+
+Também será criado um despachante genérico que utiliza `fase_atual` para determinar qual conteúdo deve ser apresentado.
+
+Será definido um padrão de nomenclatura única para os assets, por exemplo:
+
+- `bg_ilha1_fase1`;
+- `bg_ilha2_fase1`;
+- `bg_ilha3_fase1`;
+- `bg_final_fase1`.
+
+Essa tarefa deverá fechar completamente a Fase 1 como unidade isolada.
+
+## Tarefa sequencial 1 — Ajuda e reinício
+
+Após concluir a reorganização das fases, implementar:
+
+- botão `Pedir ajuda`;
+- botão `Reiniciar fase`.
+
+Será preparada uma estrutura contendo:
+
+- dicas genéricas;
+- dicas específicas de cada fase.
+
+Neste momento as dicas ainda não utilizarão lógica fuzzy.
+
+## Tarefa sequencial 2 — Definir tentativa
+
+Depois disso será formalizado o conceito de `tentativa`.
+
+Weslei apresentará uma proposta de funcionamento.
+
+Antes da implementação, a lógica será revisada para identificar:
+
+- ambiguidades;
+- situações inconsistentes;
+- métricas que possam ser contabilizadas incorretamente;
+- diferenças entre os modos de navegação e planejamento.
+
+Somente após essa revisão a variável `numero_tentativas` será incorporada definitivamente.
+
+## Tarefa sequencial 3 — NPC
+
+Depois será iniciada a implementação das interações com o NPC.
+
+Nome provisório:
+
+- Pirata Perdido; ou
+- Náufrago.
+
+Serão criadas:
+
+- interações;
+- escolhas de diálogo/ações;
+- histórico das interações;
+- estrutura necessária para alteração futura do estado interno afetivo.
+
+## Tarefa sequencial 4 — Necessidade de assistência
+
+Posteriormente será definida formalmente a variável de necessidade de assistência.
+
+Será necessário decidir:
+
+- nome definitivo;
+- quais métricas participarão;
+- forma de cálculo;
+- escala utilizada;
+- significado da saída;
+- forma como essa saída será posteriormente fuzzificada.
+
+Somente depois serão definidos pesos, funções de pertinência ou regras fuzzy.
+
+## Etapas posteriores
+
+Após essas tarefas:
+
+- definir estado afetivo do NPC;
+- definir seus eventos e impactos;
+- implementar o sistema fuzzy;
+- integrar necessidade de assistência + estado afetivo;
+- utilizar a saída fuzzy para selecionar nível de ajuda;
+- expandir novas fases;
+- implementar loop/redemoinho;
+- implementar estado morto/armadilha/prisão;
+- desenvolver testes sistemáticos e resultados.
