@@ -44,9 +44,24 @@ label modo_navegacao:
         jump modo_navegacao
 
 
+    # Analisa a nova visita antes de atualizar a interface.
+
+    $ novo_historico, novas_repeticoes, novos_retornos = jogador.registrar_percurso(
+        historico_estados,
+        [proximo_estado]
+        )
+
+
+    $ historico_estados = novo_historico
+
+    $ estados_repetidos += novas_repeticoes
+    $ quantidade_retornos += novos_retornos
+
+
     $ estado_atual = proximo_estado
 
     jump modo_navegacao
+    
 
 
 
@@ -68,10 +83,36 @@ label modo_rota:
     $ sequencia = _return.strip().upper()
 
 
-    $ novo_estado, percurso, erro = automato.processar_sequencia(
-        estado_atual,
-        sequencia
+    $ novo_estado, caminho, erro = automato.processar_sequencia(
+    estado_atual,
+    sequencia
     )
+
+
+    $ percurso = " -> ".join(caminho)
+
+
+    $ estados_visitados = caminho[1:]
+
+
+    $ novo_historico, novas_repeticoes, novos_retornos = jogador.registrar_percurso(
+        historico_estados,
+        estados_visitados
+    )
+
+
+    $ historico_estados = novo_historico
+
+    $ estados_repetidos += novas_repeticoes
+    $ quantidade_retornos += novos_retornos
+
+
+    $ estado_atual = novo_estado
+
+
+    "Sequência informada: [sequencia]"
+
+    "Percurso realizado: [percurso]"
 
 
     $ estado_atual = novo_estado
@@ -99,8 +140,7 @@ label modo_rota:
 
     jump modo_rota
 
-
-    label vitoria:
+label vitoria:
 
     call exibir_ilha_atual
 

@@ -59,8 +59,8 @@ def processar_sequencia(estado_inicial, sequencia):
     Processa uma sequência inteira, como AAB.
 
     Retorna:
-    - estado em que o processamento terminou;
-    - percurso realizado;
+    - estado final alcançado;
+    - lista dos estados percorridos;
     - possível mensagem de erro.
     """
 
@@ -70,33 +70,29 @@ def processar_sequencia(estado_inicial, sequencia):
     caminho = [estado]
 
     if not sequencia:
-        return estado, estado, "Nenhuma rota foi informada."
+        return estado, caminho, "Nenhuma rota foi informada."
 
     for simbolo in sequencia:
 
         if simbolo not in ("A", "B"):
-            percurso = " -> ".join(caminho)
 
             return (
                 estado,
-                percurso,
+                caminho,
                 f"Símbolo inválido: {simbolo}. Use apenas A ou B."
             )
 
         proximo_estado = transicao(estado, simbolo)
 
         if proximo_estado is None:
-            percurso = " -> ".join(caminho)
 
             return (
                 estado,
-                percurso,
+                caminho,
                 f"Não existe uma rota {simbolo} a partir de {nome_estado(estado)}."
             )
 
         estado = proximo_estado
         caminho.append(estado)
 
-    percurso = " -> ".join(caminho)
-
-    return estado, percurso, None
+    return estado, caminho, None
