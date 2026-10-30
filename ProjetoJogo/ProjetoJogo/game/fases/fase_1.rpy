@@ -4,6 +4,77 @@
 # ============================================================
 
 
+# ============================================================
+# DICAS DA FASE 1
+# ============================================================
+
+define DICAS_FASE_1 = [
+
+    "Nesta fase, a Ilha 1 representa o estado inicial q0. E a ilha 3 representa o estado final qf.",
+
+    "A Ilha 3 está próxima do objetivo final desta fase.",
+
+    "Você não precisa passar pela Ilha 2 para chegar à Ilha Final, mas pode ser necessário dependendo da rota escolhida.",]
+
+
+# ============================================================
+# PREPARAÇÃO DA FASE 1
+# ============================================================
+
+label fase_1_preparar:
+
+    # Cria uma nova lista aqui para esta partida.
+    # Não altera as listas originais DICAS_GERAIS
+    # e as DICAS_FASE_1.
+
+    $ dicas_disponiveis = list(DICAS_GERAIS) + list(DICAS_FASE_1)
+
+    $ ultima_dica = None
+
+
+    return
+
+# ============================================================
+# PEDIR DICA - FASE 1
+# ============================================================
+
+label fase_1_pedir_dica:
+
+
+    # Se todas as dicas já foram utilizadas.
+
+    if not dicas_disponiveis:
+
+        navegador "Sem mais dicas pra você!"
+
+        return
+
+
+    # Escolhe uma das dicas restantes aleatoriamente.
+
+    $ dica_escolhida = renpy.random.choice(dicas_disponiveis)
+
+
+    # Remove a dica escolhida da lista pra não aparecer de novo
+
+    $ dicas_disponiveis.remove(dica_escolhida)
+
+
+    # Guarda qual foi a última dica exibida.
+
+    $ ultima_dica = dica_escolhida
+
+
+    # Registra que uma ajuda foi solicitada e atendida.
+
+    $ pedidos_ajuda += 1
+
+
+    navegador "[dica_escolhida]"
+
+
+    return
+
 # REPRESENTAÇÃO DOS ESTADOS
 label fase_1_exibir_estado:
 

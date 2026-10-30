@@ -2,8 +2,100 @@
 # DESPACHANTE DE CONTEÚDO DAS FASES
 # ============================================================
 
-# Este arquivo faz a ligação entre a lógica geral do jogo
+# FAz a ligação entre a lógica geral do jogo
 # e o conteúdo específico de cada fase.
+
+
+# ============================================================
+# PREPARAR FASE ATUAL
+# ============================================================
+
+label preparar_fase_atual:
+
+
+    if fase_atual == 1:
+
+        call fase_1_preparar
+
+
+    elif fase_atual == 2:
+
+        pass
+
+
+    elif fase_atual == 3:
+
+        pass
+
+
+    elif fase_atual == 4:
+
+        pass
+
+
+    elif fase_atual == 5:
+
+        pass
+
+
+    elif fase_atual == 6:
+
+        pass
+
+
+    elif fase_atual == 7:
+
+        pass
+
+
+    return
+
+
+
+# ============================================================
+# PEDIR DICA DA FASE ATUAL
+# ============================================================
+
+label pedir_dica_atual:
+
+
+    if fase_atual == 1:
+
+        call fase_1_pedir_dica
+
+
+    elif fase_atual == 2:
+
+        navegador "Ainda não existem dicas para esta fase."
+
+
+    elif fase_atual == 3:
+
+        navegador "Ainda não existem dicas para esta fase."
+
+
+    elif fase_atual == 4:
+
+        navegador "Ainda não existem dicas para esta fase."
+
+
+    elif fase_atual == 5:
+
+        navegador "Ainda não existem dicas para esta fase."
+
+
+    elif fase_atual == 6:
+
+        navegador "Ainda não existem dicas para esta fase."
+
+
+    elif fase_atual == 7:
+
+        navegador "Ainda não existem dicas para esta fase."
+
+
+    return
+
 
 
 label exibir_ilha_atual:

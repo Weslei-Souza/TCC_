@@ -6,32 +6,69 @@ label modo_navegacao:
 
     call exibir_ilha_atual
 
-    if automato.eh_final(configuracao_automato, estado_atual):
+
+    # ========================================================
+    # VERIFICA SE O ESTADO ATUAL JÁ É FINAL
+    # ========================================================
+
+    if automato.eh_final(
+        configuracao_automato,
+        estado_atual
+    ):
+
         jump vitoria
 
 
-    # Consulta ao módulo Python quais estados são alcançados
-    # pelas transições A e B.
+    # ========================================================
+    # CONSULTA AS TRANSIÇÕES DISPONÍVEIS
+    # ========================================================
 
-    $ destino_a_estado = automato.transicao(configuracao_automato, estado_atual, "A")
-    $ destino_b_estado = automato.transicao(configuracao_automato, estado_atual, "B")
+    $ destino_a_estado = automato.transicao(
+        configuracao_automato,
+        estado_atual,
+        "A"
+    )
+
+    $ destino_b_estado = automato.transicao(
+        configuracao_automato,
+        estado_atual,
+        "B"
+    )
 
 
     if destino_a_estado:
-        $ destino_a = automato.nome_estado(configuracao_automato, destino_a_estado)
+
+        $ destino_a = automato.nome_estado(
+            configuracao_automato,
+            destino_a_estado
+        )
+
     else:
+
         $ destino_a = "Sem rota"
 
 
     if destino_b_estado:
-        $ destino_b = automato.nome_estado(configuracao_automato, destino_b_estado)
+
+        $ destino_b = automato.nome_estado(
+            configuracao_automato,
+            destino_b_estado
+        )
+
     else:
+
         $ destino_b = "Sem rota"
 
 
-    # Mostra as opções disponíveis para o jogador.
+    # ========================================================
+    # MOSTRA AS OPÇÕES AO JOGADOR
+    # ========================================================
+
     call screen escolha_transicao(
-        automato.nome_estado(configuracao_automato, estado_atual),
+        automato.nome_estado(
+            configuracao_automato,
+            estado_atual
+        ),
         destino_a,
         destino_b
     )
@@ -40,9 +77,38 @@ label modo_navegacao:
     $ simbolo = _return
 
 
-    # Envia ao módulo do autômato:
-    # estado atual + símbolo escolhido
-    # e recebe o próximo estado.
+    # ========================================================
+    # CONTROLES GERAIS
+    # ========================================================
+
+    if simbolo == "__AJUDA__":
+
+        call pedir_dica_atual
+        # ========================================================
+        # DEBUG TEMPORÁRIO
+        # ========================================================
+
+        "DEBUG - Histórico: [historico_estados]"
+        "DEBUG - Repetições: [estados_repetidos]"
+        "DEBUG - Retornos: [quantidade_retornos]"
+        "DEBUG - Pedidos de ajuda: [pedidos_ajuda]"
+        "DEBUG - Resets: [numero_resets]"
+        "DEBUG - Dicas restantes: [len(dicas_disponiveis)]"
+
+
+        jump modo_navegacao
+
+
+    elif simbolo == "__REINICIAR__":
+
+        call reiniciar_fase
+
+        jump modo_navegacao
+
+
+    # ========================================================
+    # EXECUTA A TRANSIÇÃO
+    # ========================================================
 
     $ proximo_estado = automato.transicao(
         configuracao_automato,
@@ -59,7 +125,7 @@ label modo_navegacao:
 
 
     # ========================================================
-    # REGISTRO DA NAVEGAÇÃO DO JOGADOR
+    # REGISTRA A NAVEGAÇÃO DO JOGADOR
     # ========================================================
 
     $ novo_historico, novas_repeticoes, novos_retornos = jogador.registrar_percurso(
@@ -67,18 +133,20 @@ label modo_navegacao:
         [proximo_estado]
     )
 
+
     $ historico_estados = novo_historico
     $ estados_repetidos += novas_repeticoes
     $ quantidade_retornos += novos_retornos
 
 
-    # Atualiza o estado da partida.
+    # ========================================================
+    # ATUALIZA O ESTADO DA PARTIDA
+    # ========================================================
+
     $ estado_atual = proximo_estado
 
-    # DEBUG TEMPORÁRIO
-    # "DEBUG - Histórico: [historico_estados]"
-    # "DEBUG - Estados repetidos: [estados_repetidos]"
-    # "DEBUG - Retornos: [quantidade_retornos]"
+
+    
 
     jump modo_navegacao
 
@@ -92,21 +160,66 @@ label modo_rota:
 
     call exibir_ilha_atual
 
-    if automato.eh_final(configuracao_automato, estado_atual):
+
+    # ========================================================
+    # VERIFICA SE O ESTADO ATUAL JÁ É FINAL
+    # ========================================================
+
+    if automato.eh_final(
+        configuracao_automato,
+        estado_atual
+    ):
+
         jump vitoria
 
 
     navegador "Capitão, podemos planejar várias rotas antes de partir."
 
+
+    # ========================================================
+    # RECEBE A ENTRADA DO JOGADOR
+    # ========================================================
+
     call screen entrada_rota(
-        automato.nome_estado(configuracao_automato, estado_atual)
+        automato.nome_estado(
+            configuracao_automato,
+            estado_atual
+        )
     )
 
 
-    $ sequencia = _return.strip().upper()
+    $ entrada_jogador = _return
 
 
-    # O módulo Python processa toda a sequência.
+    # ========================================================
+    # CONTROLES GERAIS
+    # ========================================================
+
+    if entrada_jogador == "__AJUDA__":
+
+        call pedir_dica_atual
+
+        jump modo_rota
+
+
+    elif entrada_jogador == "__REINICIAR__":
+
+        call reiniciar_fase
+
+        jump modo_rota
+
+
+    # ========================================================
+    # TRATA A SEQUÊNCIA INFORMADA
+    # ========================================================
+
+    $ sequencia = entrada_jogador.strip().upper()
+
+
+    # ========================================================
+    # PROCESSA A SEQUÊNCIA NO AUTÔMATO
+    # ========================================================
+
     $ novo_estado, caminho, erro = automato.processar_sequencia(
         configuracao_automato,
         estado_atual,
@@ -114,17 +227,19 @@ label modo_rota:
     )
 
 
-    # Cria uma versão textual apenas para mostrar na tela.
+    # Cria uma versão textual para apresentar na tela.
+
     $ percurso = " -> ".join(caminho)
 
 
-    # O primeiro elemento é o estado em que o jogador já estava.
-    # Portanto, registramos apenas os estados seguintes.
+    # O primeiro elemento é o estado em que o jogador
+    # já estava antes de iniciar a sequência.
+
     $ estados_visitados = caminho[1:]
 
 
     # ========================================================
-    # REGISTRO DA NAVEGAÇÃO DO JOGADOR
+    # REGISTRA A NAVEGAÇÃO DO JOGADOR
     # ========================================================
 
     $ novo_historico, novas_repeticoes, novos_retornos = jogador.registrar_percurso(
@@ -132,34 +247,65 @@ label modo_rota:
         estados_visitados
     )
 
+
     $ historico_estados = novo_historico
     $ estados_repetidos += novas_repeticoes
     $ quantidade_retornos += novos_retornos
 
 
-    # Atualiza onde o jogador terminou.
+    # ========================================================
+    # ATUALIZA O ESTADO ATUAL
+    # ========================================================
+
     $ estado_atual = novo_estado
 
 
+    # ========================================================
+    # MOSTRA O RESULTADO
+    # ========================================================
+
     "Sequência informada: [sequencia]"
+
     "Percurso realizado: [percurso]"
 
-    # DEBUG TEMPORÁRIO
-    # "DEBUG - Histórico: [historico_estados]"
-    # "DEBUG - Estados repetidos: [estados_repetidos]"
-    # "DEBUG - Retornos: [quantidade_retornos]"
 
+    # ========================================================
+    # DEBUG TEMPORÁRIO
+    # ========================================================
+
+    "DEBUG - Histórico: [historico_estados]"
+    "DEBUG - Repetições: [estados_repetidos]"
+    "DEBUG - Retornos: [quantidade_retornos]"
+    "DEBUG - Pedidos de ajuda: [pedidos_ajuda]"
+    "DEBUG - Resets: [numero_resets]"
+    "DEBUG - Dicas restantes: [len(dicas_disponiveis)]"
+
+
+    # ========================================================
+    # TRATA POSSÍVEIS ERROS
+    # ========================================================
 
     if erro:
+
         navegador "[erro]"
 
 
-    if automato.eh_final(configuracao_automato, estado_atual):
+    # ========================================================
+    # VERIFICA VITÓRIA
+    # ========================================================
+
+    if automato.eh_final(
+        configuracao_automato,
+        estado_atual
+    ):
+
         jump vitoria
 
 
     navegador "Terminamos em [automato.nome_estado(configuracao_automato, estado_atual)]."
+
     navegador "Podemos planejar outra rota daqui."
+
 
     jump modo_rota
 
@@ -173,20 +319,29 @@ label vitoria:
 
     call exibir_ilha_atual
 
+
     navegador "Capitão, encontramos nosso destino!"
+
     "Você concluiu a Fase [fase_atual]."
 
 
+    # ========================================================
     # DESBLOQUEAR A PRÓXIMA FASE
+    # ========================================================
+
     if fase_atual < 7:
 
         $ proxima_fase = fase_atual + 1
 
+
         if persistent.fase_max_desbloqueada < proxima_fase:
 
             $ persistent.fase_max_desbloqueada = proxima_fase
+
             $ renpy.save_persistent()
 
+
             "Uma nova fase foi desbloqueada!"
+
 
     return

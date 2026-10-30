@@ -1950,12 +1950,8 @@ screen escolha_transicao(nome_ilha, destino_a, destino_b):
 
                     action Return("B")
 
-
-                textbutton "Ver mapa":
-
-                    style "rota_button"
-
-                    action Show("mapa_atual")
+    #controles gerais, botoes de reinicar dica e mapa
+    use controles_fase
 
 #TELA da navegação
 
@@ -1993,8 +1989,8 @@ screen entrada_rota(nome_ilha):
             textbutton "Executar rota":
                 action Return(sequencia)
 
-            textbutton "Ver mapa":
-                action Show("mapa_atual")
+                
+    use controles_fase
 
 #TELA DE SELECIONAR FASE
 screen selecionar_fase():
@@ -2063,6 +2059,56 @@ screen selecionar_fase():
                         xalign 0.5
 
                         action Return(numero)
+
+
+# ============================================================
+# CONTROLES DA FASE
+# ============================================================
+
+screen controles_fase:
+
+
+    # ========================================================
+    # MAPA - CANTO INFERIOR ESQUERDO
+    # ========================================================
+
+    textbutton "Mapa":
+
+        style "rota_button"
+
+        xalign 0.03
+        yalign 0.95
+
+        action Show("mapa_atual")
+
+
+    # ========================================================
+    # AJUDA E REINÍCIO - CANTO INFERIOR DIREITO
+    # ========================================================
+
+    hbox:
+
+        xalign 0.97
+        yalign 0.95
+
+        spacing 15
+
+
+        textbutton "Dica":
+
+            style "rota_button"
+
+            action Return("__AJUDA__")
+
+
+        textbutton "Reiniciar":
+
+            style "rota_button"
+
+            action Return("__REINICIAR__")
+
+
+
 
 
 # ESTILO DOS PAINÉIS DO JOGO
