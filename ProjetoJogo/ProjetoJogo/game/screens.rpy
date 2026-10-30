@@ -1845,153 +1845,6 @@ O sistema processa os símbolos em sequência e informa onde o navio termina.
 
 
 
-#SCREEN MAPA
-screen mapa_arquipelago():
-
-    modal True
-
-
-    # ========================================================
-    # FUNDO
-    # ========================================================
-
-    add "mapa_fundo"
-
-
-    # Painel para dar contraste
-    frame:
-
-        background Solid("#111820CC")
-
-        xalign 0.5
-        yalign 0.5
-
-        xsize 1500
-        ysize 850
-
-
-        fixed:
-
-
-            # =================================================
-            # q0
-            # =================================================
-
-            add Transform(
-                "ilha_1",
-                xysize=(220, 140),
-                fit="contain"
-            ):
-
-                xpos 100
-                ypos 340
-
-
-            text "Ilha 1\nq0 - Inicial":
-
-                xpos 120
-                ypos 490
-
-
-            # =================================================
-            # q1
-            # =================================================
-
-            add Transform(
-                "ilha_2",
-                xysize=(220, 140),
-                fit="contain"
-            ):
-
-                xpos 480
-                ypos 100
-
-
-            text "Ilha 2\nq1":
-
-                xpos 530
-                ypos 250
-
-
-            # =================================================
-            # q2
-            # =================================================
-
-            add Transform(
-                "ilha_3",
-                xysize=(220, 140),
-                fit="contain"
-            ):
-
-                xpos 480
-                ypos 500
-
-
-            text "Ilha 3\nq2":
-
-                xpos 530
-                ypos 650
-
-
-            # =================================================
-            # qf
-            # =================================================
-
-            add Transform(
-                "ilha_final",
-                xysize=(220, 140),
-                fit="contain"
-            ):
-
-                xpos 950
-                ypos 300
-
-
-            text "Ilha Final\nqf - Final":
-
-                xpos 970
-                ypos 450
-
-
-            # =================================================
-            # TRANSIÇÕES
-            # =================================================
-
-            text "A":
-
-                xpos 370
-                ypos 250
-                size 36
-
-
-            text "B":
-
-                xpos 370
-                ypos 500
-                size 36
-
-
-            text "B":
-
-                xpos 800
-                ypos 300
-                size 36
-
-
-            # =================================================
-            # FECHAR
-            # =================================================
-
-            textbutton "Fechar mapa":
-
-                style "rota_button"
-
-                xpos 1000
-                ypos 680
-
-                action Hide("mapa_arquipelago")
-
-
 
 #TELA DO MODO PASSO A PASSO
 screen escolha_transicao(nome_ilha, destino_a, destino_b):
@@ -2102,7 +1955,7 @@ screen escolha_transicao(nome_ilha, destino_a, destino_b):
 
                     style "rota_button"
 
-                    action Show("mapa_arquipelago")
+                    action Show("mapa_atual")
 
 #TELA da navegação
 
@@ -2141,7 +1994,7 @@ screen entrada_rota(nome_ilha):
                 action Return(sequencia)
 
             textbutton "Ver mapa":
-                action Show("mapa_arquipelago")
+                action Show("mapa_atual")
 
 #TELA DE SELECIONAR FASE
 screen selecionar_fase():
