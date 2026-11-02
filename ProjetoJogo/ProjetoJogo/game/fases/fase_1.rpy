@@ -1,6 +1,5 @@
 # ============================================================
 # FASE 1
-# PRIMEIROS ESTADOS
 # ============================================================
 
 
@@ -8,13 +7,38 @@
 # DICAS DA FASE 1
 # ============================================================
 
-define DICAS_FASE_1 = [
+# Futuramente o sistema fuzzy escolherá qual destes
+# níveis poderá ser utilizado pelo NPC.
 
-    "Nesta fase, a Ilha 1 representa o estado inicial q0. E a ilha 3 representa o estado final qf.",
+
+# ------------------------------------------------------------
+# DICAS GENÉRICAS
+# ------------------------------------------------------------
+
+define DICAS_GENERICAS_FASE_1 = [
+
+    "Nesta fase, a Ilha 1 é o ponto de partida e a Ilha Final é o seu destino.",
+]
+
+
+# ------------------------------------------------------------
+# DICAS INTERMEDIÁRIAS
+# ------------------------------------------------------------
+
+define DICAS_INTERMEDIARIAS_FASE_1 = [
 
     "A Ilha 3 está próxima do objetivo final desta fase.",
+]
 
-    "Você não precisa passar pela Ilha 2 para chegar à Ilha Final, mas pode ser necessário dependendo da rota escolhida.",]
+
+# ------------------------------------------------------------
+# DICAS ESPECÍFICAS
+# ------------------------------------------------------------
+
+define DICAS_ESPECIFICAS_FASE_1 = [
+
+    "Você não precisa passar pela Ilha 2 para chegar à Ilha Final, mas pode ser necessário dependendo da rota escolhida.",
+]
 
 
 # ============================================================
@@ -23,22 +47,31 @@ define DICAS_FASE_1 = [
 
 label fase_1_preparar:
 
-    # Cria uma nova lista aqui para esta partida.
-    # Não altera as listas originais DICAS_GERAIS
-    # e as DICAS_FASE_1.
+    # Enquanto o fuzzy ainda não está implementado,
+    # todos os níveis de dica são reunidos em uma lista única.
 
-    $ dicas_disponiveis = list(DICAS_GERAIS) + list(DICAS_FASE_1)
+    $ dicas_disponiveis = (
+        list(DICAS_GENERICAS_FASE_1)
+        + list(DICAS_INTERMEDIARIAS_FASE_1)
+        + list(DICAS_ESPECIFICAS_FASE_1)
+    )
 
     $ ultima_dica = None
 
 
     return
 
+
 # ============================================================
 # PEDIR DICA - FASE 1
 # ============================================================
 
 label fase_1_pedir_dica:
+
+    # Cada clique no botão Dica representa uma solicitação
+    # de ajuda e deve ser contabilizado.
+
+    $ dicas_pedidas += 1
 
 
     # Se todas as dicas já foram utilizadas.
@@ -50,24 +83,23 @@ label fase_1_pedir_dica:
         return
 
 
-    # Escolhe uma das dicas restantes aleatoriamente.
+    # Escolhe uma dica restante aleatoriamente.
 
-    $ dica_escolhida = renpy.random.choice(dicas_disponiveis)
-
-
-    # Remove a dica escolhida da lista pra não aparecer de novo
-
-    $ dicas_disponiveis.remove(dica_escolhida)
+    $ dica_escolhida = renpy.random.choice(
+        dicas_disponiveis
+    )
 
 
-    # Guarda qual foi a última dica exibida.
+    # Remove a dica para impedir repetição.
+
+    $ dicas_disponiveis.remove(
+        dica_escolhida
+    )
+
+
+    # Registra a última dica exibida.
 
     $ ultima_dica = dica_escolhida
-
-
-    # Registra que uma ajuda foi solicitada e atendida.
-
-    $ pedidos_ajuda += 1
 
 
     navegador "[dica_escolhida]"
@@ -75,11 +107,16 @@ label fase_1_pedir_dica:
 
     return
 
+
+# ============================================================
 # REPRESENTAÇÃO DOS ESTADOS
+# ============================================================
+
 label fase_1_exibir_estado:
 
+
     # --------------------------------------------------------
-    # q0 - ESTADO INICIAL
+    # ILHA 1
     # --------------------------------------------------------
 
     if estado_atual == "q0":
@@ -88,12 +125,9 @@ label fase_1_exibir_estado:
 
         "Você está na Ilha 1."
 
-        "Estado atual: q0."
-
-
 
     # --------------------------------------------------------
-    # q1
+    # ILHA 2
     # --------------------------------------------------------
 
     elif estado_atual == "q1":
@@ -102,23 +136,20 @@ label fase_1_exibir_estado:
 
         "Você está na Ilha 2."
 
-        "Estado atual: q1."
-
 
     # --------------------------------------------------------
-    # q2
+    # ILHA 3
     # --------------------------------------------------------
+
     elif estado_atual == "q2":
 
         scene bg_ilha3_fase1
 
         "Você está na Ilha 3."
 
-        "Estado atual: q2."
-
 
     # --------------------------------------------------------
-    # qf - ESTADO FINAL
+    # ILHA FINAL
     # --------------------------------------------------------
 
     elif estado_atual == "qf":
@@ -127,15 +158,13 @@ label fase_1_exibir_estado:
 
         "Você chegou à Ilha Final."
 
-        "Estado atual: qf."
-
 
     return
 
 
 
 # ============================================================
-# MAPA FASE 1
+# MAPA DA FASE 1
 # ============================================================
 
 screen mapa_fase_1:
@@ -158,7 +187,7 @@ screen mapa_fase_1:
 
 
             # =================================================
-            # q0
+            # ILHA 1
             # =================================================
 
             add Transform(
@@ -171,14 +200,14 @@ screen mapa_fase_1:
                 ypos 250
 
 
-            text "Ilha 1\nq0 - Inicial":
+            text "Ilha 1":
 
                 xpos 90
                 ypos 400
 
 
             # =================================================
-            # q1
+            # ILHA 2
             # =================================================
 
             add Transform(
@@ -191,14 +220,14 @@ screen mapa_fase_1:
                 ypos 50
 
 
-            text "Ilha 2\nq1":
+            text "Ilha 2":
 
                 xpos 400
                 ypos 200
 
 
             # =================================================
-            # q2
+            # ILHA 3
             # =================================================
 
             add Transform(
@@ -211,14 +240,14 @@ screen mapa_fase_1:
                 ypos 400
 
 
-            text "Ilha 3\nq2":
+            text "Ilha 3":
 
                 xpos 400
                 ypos 550
 
 
             # =================================================
-            # qf
+            # ILHA FINAL
             # =================================================
 
             add Transform(
@@ -231,7 +260,7 @@ screen mapa_fase_1:
                 ypos 225
 
 
-            text "Ilha Final\nqf - Final":
+            text "Ilha Final":
 
                 xpos 780
                 ypos 375
@@ -271,9 +300,9 @@ screen mapa_fase_1:
 
             textbutton "Fechar mapa":
 
-                style "rota_button"
+                style "controle_button"
 
-                xpos 720
-                ypos 500
+                xpos 800
+                ypos 520
 
                 action Hide("mapa_atual")

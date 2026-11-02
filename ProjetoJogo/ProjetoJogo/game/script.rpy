@@ -36,12 +36,27 @@ default configuracao_automato = None
 # MÉTRICAS DO JOGADOR
 # ============================================================
 
+# Número de ciclos de execução da fase.
 default numero_tentativas = 0
-default quantidade_retornos = 0
+
+# Quantidade de vezes que o jogador visitou
+# novamente um estado já percorrido.
 default estados_repetidos = 0
-default entradas_armadilha = 0
-default pedidos_ajuda = 0
+
+# Quantidade de solicitações de dica.
+default dicas_pedidas = 0
+
+# Quantidade de vezes que a fase foi reiniciada.
 default numero_resets = 0
+
+# Quantidade de entradas em estados de armadilha.
+# Será utilizada apenas nas fases que possuírem armadilhas.
+default armadilhas_atingidas = 0
+
+
+# ============================================================
+# HISTÓRICOS
+# ============================================================
 
 default historico_estados = []
 default historico_interacoes = []
@@ -56,10 +71,19 @@ default ultima_dica = None
 
 
 # ============================================================
-# ESTADO DO NPC
+# NPC
 # ============================================================
 
-default estado_afetivo_npc = 0.0
+# Disposição Afetiva do NPC.
+#
+# Futuramente será um valor contínuo entre 0 e 100
+# e será fuzzificado nos conjuntos:
+#
+# Hostil / Neutro / Amigável
+#
+# O valor inicial ainda será definido.
+default disposicao_npc = None
+
 default historico_npc = []
 
 
@@ -102,17 +126,19 @@ label start:
 
 
     # ========================================================
-    # 4. REINICIA AS MÉTRICAS DA NOVA PARTIDA
+    # 4. INICIALIZA AS MÉTRICAS DA FASE
     # ========================================================
 
     $ historico_estados = [estado_atual]
 
+    # A primeira tentativa começa no momento em que
+    # o jogador inicia a fase.
+    $ numero_tentativas = 1
+
     $ estados_repetidos = 0
-    $ quantidade_retornos = 0
-    $ numero_tentativas = 0
-    $ entradas_armadilha = 0
-    $ pedidos_ajuda = 0
+    $ dicas_pedidas = 0
     $ numero_resets = 0
+    $ armadilhas_atingidas = 0
 
 
     # ========================================================

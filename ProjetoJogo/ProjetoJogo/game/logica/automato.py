@@ -3,19 +3,20 @@ Motor genérico para processamento de autômatos.
 """
 
 
+# ============================================================
+# ESTADO INICIAL
+# ============================================================
+
 def estado_inicial(configuracao):
-    """
-    Retorna o estado inicial do autômato.
-    """
 
     return configuracao["estado_inicial"]
 
 
+# ============================================================
+# NOME DO ESTADO
+# ============================================================
 
 def nome_estado(configuracao, estado):
-    """
-    Retorna o nome associado a um estado.
-    """
 
     return configuracao["nomes_estados"].get(
         estado,
@@ -23,28 +24,33 @@ def nome_estado(configuracao, estado):
     )
 
 
+# ============================================================
+# ESTADO FINAL
+# ============================================================
 
 def eh_final(configuracao, estado):
-    """
-    Verifica se um estado pertence ao conjunto
-    de estados finais.
-    """
 
     return estado in configuracao["estados_finais"]
 
 
+# ============================================================
+# ALFABETO
+# ============================================================
+
+def obter_alfabeto(configuracao):
+
+    return configuracao["alfabeto"]
+
+
+# ============================================================
+# TRANSIÇÃO
+# ============================================================
 
 def transicao(configuracao, estado_atual, simbolo):
     """
-    Executa uma transição
+    Executa uma transição.
 
-    Recebe:
-    - configuração do autômato
-    - estado atual
-    - símbolo da entrada
-
-    Retorna o próximo estado ou None caso
-    a transição não exista.
+    Retorna o próximo estado associado ao símbolo.
     """
 
     simbolo = simbolo.strip().upper()
@@ -57,6 +63,60 @@ def transicao(configuracao, estado_atual, simbolo):
     ).get(simbolo)
 
 
+# ============================================================
+# VALIDAÇÃO DO AUTÔMATO DETERMINÍSTICO
+# ============================================================
+
+def validar_determinismo(configuracao):
+    """
+    Verifica se cada estado possui exatamente um destino
+    definido para cada símbolo do alfabeto.
+
+    Como as transições são armazenadas em dicionários,
+    um mesmo símbolo não pode possuir dois destinos
+    simultaneamente.
+
+    Portanto, é necessário verificar principalmente:
+
+    - se todos os estados possuem todas as transições;
+    - se todos os destinos definidos existem.
+    """
+
+    alfabeto = configuracao["alfabeto"]
+
+    estados = configuracao["nomes_estados"]
+
+    transicoes = configuracao["transicoes"]
+
+
+    for estado in estados:
+
+        if estado not in transicoes:
+
+            return False
+
+
+        for simbolo in alfabeto:
+
+            destino = transicoes[estado].get(simbolo)
+
+
+            if destino is None:
+
+                return False
+
+
+            if destino not in estados:
+
+                return False
+
+
+    return True
+
+
+# ============================================================
+# PROCESSAMENTO DE SEQUÊNCIA
+# ============================================================
 
 def processar_sequencia(
     configuracao,
@@ -64,8 +124,8 @@ def processar_sequencia(
     sequencia
 ):
     """
-    Processa uma sequência completa de símbolos
-    
+    Processa uma sequência completa de símbolos.
+
     Retorna:
 
     - estado final alcançado;
@@ -80,6 +140,7 @@ def processar_sequencia(
         ""
     ).upper()
 
+
     caminho = [estado]
 
 
@@ -92,15 +153,25 @@ def processar_sequencia(
         )
 
 
+    alfabeto = obter_alfabeto(
+        configuracao
+    )
+
+
     for simbolo in sequencia:
 
 
-        if simbolo not in ("A", "B"):
+        if simbolo not in alfabeto:
+
+            simbolos_validos = " ou ".join(
+                sorted(alfabeto)
+            )
 
             return (
                 estado,
                 caminho,
-                f"Símbolo inválido: {simbolo}. Use apenas A ou B."
+                f"Símbolo inválido: {simbolo}. "
+                f"Use apenas {simbolos_validos}."
             )
 
 

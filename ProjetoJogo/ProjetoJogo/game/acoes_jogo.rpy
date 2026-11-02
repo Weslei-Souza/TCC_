@@ -1,42 +1,44 @@
-# 
+# ============================================================
 # AÇÕES GERAIS DO JOGO
+# ============================================================
 
 
-
-# DICAS GENÉRICAS
-
-
-# Estas dicas podem ser utilizadas em qualquer fase.
-
-define DICAS_GERAIS = [
-
-    "Observe o mapa antes de escolher uma rota.",
-
-    "Cada letra representa uma transição entre dois estados.",
-
-    "Acompanhe o estado em que você está antes de decidir o próximo caminho.",
-]
-
-
-#############
+# ============================================================
 # REINICIAR FASE
-
+# ============================================================
 
 label reiniciar_fase:
 
-    # Registra o reinício.
+    # --------------------------------------------------------
+    # ENCERRA A TENTATIVA ATUAL
+    # --------------------------------------------------------
+
+    # Um reinício significa que a tentativa atual terminou
+    # e uma nova tentativa começou.
+
     $ numero_resets += 1
 
+    $ numero_tentativas += 1
 
-    # Volta ao estado inicial definido pelo autômato
-    # correspondente à fase atual.
+
+    # --------------------------------------------------------
+    # VOLTA AO ESTADO INICIAL
+    # --------------------------------------------------------
 
     $ estado_atual = automato.estado_inicial(
         configuracao_automato
     )
 
 
-    # O percurso atual começa novamente no estado inicial.
+    # --------------------------------------------------------
+    # REINICIA O PERCURSO ATUAL
+    # --------------------------------------------------------
+
+    # As métricas acumuladas da fase NÃO são apagadas.
+    #
+    # Apenas o percurso da nova tentativa começa novamente
+    # no estado inicial.
+
     $ historico_estados = [estado_atual]
 
 

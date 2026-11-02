@@ -8,7 +8,7 @@ label modo_navegacao:
 
 
     # ========================================================
-    # VERIFICA SE O ESTADO ATUAL JÁ É FINAL
+    # VERIFICA SE O ESTADO ATUAL É FINAL
     # ========================================================
 
     if automato.eh_final(
@@ -84,17 +84,6 @@ label modo_navegacao:
     if simbolo == "__AJUDA__":
 
         call pedir_dica_atual
-        # ========================================================
-        # DEBUG TEMPORÁRIO
-        # ========================================================
-
-        "DEBUG - Histórico: [historico_estados]"
-        "DEBUG - Repetições: [estados_repetidos]"
-        "DEBUG - Retornos: [quantidade_retornos]"
-        "DEBUG - Pedidos de ajuda: [pedidos_ajuda]"
-        "DEBUG - Resets: [numero_resets]"
-        "DEBUG - Dicas restantes: [len(dicas_disponiveis)]"
-
 
         jump modo_navegacao
 
@@ -104,6 +93,19 @@ label modo_navegacao:
         call reiniciar_fase
 
         jump modo_navegacao
+
+
+    elif simbolo == "__MENU__":
+
+        # A tentativa atual é encerrada por abandono.
+        #
+        # Não incrementamos numero_tentativas aqui porque
+        # esta tentativa já foi contabilizada quando começou.
+        #
+        # Como nenhuma nova tentativa começa, apenas
+        # encerramos a execução da partida.
+
+        return
 
 
     # ========================================================
@@ -128,25 +130,23 @@ label modo_navegacao:
     # REGISTRA A NAVEGAÇÃO DO JOGADOR
     # ========================================================
 
-    $ novo_historico, novas_repeticoes, novos_retornos = jogador.registrar_percurso(
+    $ novo_historico, novas_repeticoes = jogador.registrar_percurso(
         historico_estados,
         [proximo_estado]
     )
 
 
     $ historico_estados = novo_historico
+
     $ estados_repetidos += novas_repeticoes
-    $ quantidade_retornos += novos_retornos
 
 
     # ========================================================
-    # ATUALIZA O ESTADO DA PARTIDA
+    # ATUALIZA O ESTADO
     # ========================================================
 
     $ estado_atual = proximo_estado
 
-
-    
 
     jump modo_navegacao
 
@@ -162,7 +162,7 @@ label modo_rota:
 
 
     # ========================================================
-    # VERIFICA SE O ESTADO ATUAL JÁ É FINAL
+    # VERIFICA SE O ESTADO ATUAL É FINAL
     # ========================================================
 
     if automato.eh_final(
@@ -209,15 +209,22 @@ label modo_rota:
         jump modo_rota
 
 
+    elif entrada_jogador == "__MENU__":
+
+        # Encerra a tentativa atual por abandono.
+
+        return
+
+
     # ========================================================
-    # TRATA A SEQUÊNCIA INFORMADA
+    # TRATA A SEQUÊNCIA
     # ========================================================
 
     $ sequencia = entrada_jogador.strip().upper()
 
 
     # ========================================================
-    # PROCESSA A SEQUÊNCIA NO AUTÔMATO
+    # PROCESSA A SEQUÊNCIA
     # ========================================================
 
     $ novo_estado, caminho, erro = automato.processar_sequencia(
@@ -227,34 +234,34 @@ label modo_rota:
     )
 
 
-    # Cria uma versão textual para apresentar na tela.
+    # Cria uma representação textual do percurso.
 
     $ percurso = " -> ".join(caminho)
 
 
-    # O primeiro elemento é o estado em que o jogador
-    # já estava antes de iniciar a sequência.
+    # O primeiro elemento já era o estado atual,
+    # então não deve ser registrado novamente.
 
     $ estados_visitados = caminho[1:]
 
 
     # ========================================================
-    # REGISTRA A NAVEGAÇÃO DO JOGADOR
+    # REGISTRA A NAVEGAÇÃO
     # ========================================================
 
-    $ novo_historico, novas_repeticoes, novos_retornos = jogador.registrar_percurso(
+    $ novo_historico, novas_repeticoes = jogador.registrar_percurso(
         historico_estados,
         estados_visitados
     )
 
 
     $ historico_estados = novo_historico
+
     $ estados_repetidos += novas_repeticoes
-    $ quantidade_retornos += novos_retornos
 
 
     # ========================================================
-    # ATUALIZA O ESTADO ATUAL
+    # ATUALIZA O ESTADO
     # ========================================================
 
     $ estado_atual = novo_estado
@@ -270,19 +277,7 @@ label modo_rota:
 
 
     # ========================================================
-    # DEBUG TEMPORÁRIO
-    # ========================================================
-
-    "DEBUG - Histórico: [historico_estados]"
-    "DEBUG - Repetições: [estados_repetidos]"
-    "DEBUG - Retornos: [quantidade_retornos]"
-    "DEBUG - Pedidos de ajuda: [pedidos_ajuda]"
-    "DEBUG - Resets: [numero_resets]"
-    "DEBUG - Dicas restantes: [len(dicas_disponiveis)]"
-
-
-    # ========================================================
-    # TRATA POSSÍVEIS ERROS
+    # TRATA ERROS
     # ========================================================
 
     if erro:
@@ -323,6 +318,12 @@ label vitoria:
     navegador "Capitão, encontramos nosso destino!"
 
     "Você concluiu a Fase [fase_atual]."
+
+
+    # A tentativa atual foi encerrada com sucesso.
+    #
+    # Não incrementamos numero_tentativas porque ela já
+    # foi contabilizada quando começou.
 
 
     # ========================================================
