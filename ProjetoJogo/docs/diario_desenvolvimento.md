@@ -322,6 +322,7 @@ O projeto deixou de ser apenas um teste de transição entre labels e passou a p
 
 O foco seguinte será concluir a infraestrutura visual e de progressão antes de iniciar a coleta efetiva das métricas utilizadas pelo mecanismo adaptativo.
 
+# ===============================================
 # Diário de Desenvolvimento — 29/10/2026
 
 ## Situação geral
@@ -520,4 +521,540 @@ Após essas tarefas:
 - expandir novas fases;
 - implementar loop/redemoinho;
 - implementar estado morto/armadilha/prisão;
-- desenvolver testes sistemáticos e resultados.
+- desenvolver testes sistemáticos e resultados.}
+
+# Diário de Desenvolvimento — 30/10/2026
+
+## Situação geral
+
+O desenvolvimento avançou em duas frentes principais:
+
+1. **reestruturação arquitetural do projeto para suporte a múltiplas fases**;
+2. **implementação inicial dos mecanismos de assistência ao jogador**.
+
+Ao final do dia, a Fase 1 continuou funcionando corretamente após as refatorações, e foram adicionados os controles de mapa, dicas e reinício de fase.
+
+Também foi feita uma pausa na implementação para discutir conceitos que deverão ser definidos antes da construção do modelo afetivo e fuzzy.
+
+---
+
+## 1. Isolamento do conteúdo Ren'Py das fases
+
+A estrutura do projeto foi reorganizada para separar o conteúdo específico das fases do código geral do jogo.
+
+Foi criada uma estrutura semelhante a:
+
+```text
+game/
+│
+├── script.rpy
+├── screens.rpy
+├── navegacao.rpy
+│
+├── fases/
+│   ├── despachante_fases.rpy
+│   └── fase_1.rpy
+│
+└── logica/
+    ├── automato.py
+    ├── fases.py
+    ├── jogador.py
+    ├── npc.py
+    ├── fuzzy.py
+    └── automatos/
+        └── fase_1.py
+```
+
+A divisão ficou conceitualmente organizada da seguinte forma:
+
+### `logica/automatos/fase_1.py`
+
+Contém a definição formal do autômato da Fase 1:
+
+- estados;
+- estado inicial;
+- estado final;
+- transições;
+- nomes dos estados.
+
+### `fases/fase_1.rpy`
+
+Contém a representação da Fase 1 no jogo:
+
+- imagens;
+- textos;
+- representação visual dos estados;
+- mapa específico;
+- posteriormente, dicas e demais elementos exclusivos da fase.
+
+### `fases/despachante_fases.rpy`
+
+Passou a funcionar como camada intermediária entre o sistema geral e o conteúdo específico das fases.
+
+Exemplo conceitual:
+
+```text
+navegacao.rpy
+      ↓
+exibir_ilha_atual
+      ↓
+despachante
+      ↓
+fase_atual
+      ↓
+fase_1_exibir_estado
+```
+
+Isso permite futuramente criar:
+
+```text
+fase_2.rpy
+fase_3.rpy
+...
+```
+
+sem alterar o sistema geral de navegação.
+
+---
+
+## 2. Padronização dos assets das fases
+
+Foi definida a necessidade de utilizar nomes exclusivos para os assets de cada fase.
+
+Exemplo de padrão:
+
+```text
+bg_ilha1_fase1
+bg_ilha2_fase1
+bg_ilha3_fase1
+bg_final_fase1
+```
+
+O objetivo é evitar conflitos quando novas fases utilizarem imagens de ilhas próprias.
+
+O `bg_mar` e elementos gerais do jogo permanecem fora dessa nomenclatura específica.
+
+---
+
+## 3. Separação do mapa da Fase 1
+
+O mapa também foi identificado como conteúdo específico da fase.
+
+Assim, sua responsabilidade foi deslocada para a estrutura da Fase 1.
+
+Foi criado um despachante para que a interface geral possa chamar apenas:
+
+```text
+mapa_atual
+```
+
+e o sistema determine qual mapa apresentar de acordo com `fase_atual`.
+
+Conceitualmente:
+
+```text
+botão Mapa
+    ↓
+mapa_atual
+    ↓
+fase_atual
+    ↓
+mapa_fase_1
+```
+
+---
+
+## 4. Controles gerais da partida
+
+Foi definida a interface básica da fase com três controles principais:
+
+```text
+Mapa
+Dica
+Reiniciar
+```
+
+A decisão atual é não adicionar outros botões obrigatórios neste momento.
+
+Um eventual botão para sair da fase ou retornar ao menu poderá ser avaliado posteriormente.
+
+A disposição visual planejada é:
+
+```text
+[ MAPA ]                         [ DICA ] [ REINICIAR ]
+```
+
+O mapa permanece separado, enquanto Dica e Reiniciar ficam agrupados.
+
+O acabamento visual ainda não é prioridade.
+
+---
+
+## 5. Sistema de reinício da fase
+
+Foi implementado o botão:
+
+```text
+Reiniciar
+```
+
+Seu comportamento atual é:
+
+- retornar o jogador ao estado inicial do autômato;
+- reiniciar o histórico do percurso atual;
+- manter as métricas acumuladas da partida.
+
+Foi adicionada a variável:
+
+```text
+numero_resets
+```
+
+Ela registra quantas vezes o jogador reiniciou a fase.
+
+Essa métrica poderá futuramente participar do cálculo da necessidade de assistência.
+
+### Decisão atual
+
+Ao reiniciar:
+
+```text
+estado_atual
+historico_estados
+```
+
+são reiniciados.
+
+Entretanto, permanecem acumulados:
+
+```text
+numero_resets
+estados_repetidos
+quantidade_retornos
+pedidos_ajuda
+```
+
+A intenção é preservar informações sobre o comportamento anterior do jogador.
+
+---
+
+## 6. Sistema inicial de dicas
+
+Foi implementado um sistema de dicas ainda independente de lógica fuzzy.
+
+Existem dois grupos de dicas:
+
+### Dicas gerais
+
+Podem ser utilizadas independentemente da fase.
+
+Exemplos:
+
+- observar o mapa;
+- lembrar que letras representam transições;
+- verificar o estado atual antes de escolher uma rota.
+
+### Dicas específicas
+
+Permanecem dentro do arquivo de cada fase.
+
+Para a Fase 1, foram definidas atualmente:
+
+> “Nesta fase, a Ilha 1 representa o estado inicial q0, e a Ilha Final representa o estado final qf.”
+
+> “A Ilha 3 está próxima do objetivo final desta fase.”
+
+> “Você não precisa passar pela Ilha 2 para chegar à Ilha Final, mas pode ser necessário dependendo da rota escolhida.”
+
+---
+
+## 7. Funcionamento das dicas
+
+Ao iniciar a fase, o sistema monta uma lista contendo:
+
+```text
+dicas gerais
++
+dicas específicas da fase
+```
+
+Quando o jogador solicita ajuda:
+
+1. uma dica é selecionada aleatoriamente;
+2. a dica é exibida;
+3. ela é removida da lista disponível;
+4. não pode ser sorteada novamente naquela partida.
+
+Quando todas as dicas já foram apresentadas, o NPC informa:
+
+```text
+“Sem mais dicas pra você!”
+```
+
+Também foi mantida a variável:
+
+```text
+pedidos_ajuda
+```
+
+para registrar o uso do sistema de assistência.
+
+A definição exata dessa métrica ainda deverá ser revisada: poderá representar apenas dicas efetivamente fornecidas ou todas as solicitações feitas pelo jogador.
+
+---
+
+## 8. Testes realizados
+
+Foram realizados testes dos novos controles nos dois modos de jogo.
+
+### Sistema de dicas
+
+Foi verificado:
+
+- sorteio das dicas;
+- remoção após utilização;
+- ausência de repetição;
+- esgotamento correto da lista;
+- mensagem de ausência de novas dicas.
+
+### Reinício
+
+Foi verificado:
+
+- retorno ao estado inicial;
+- atualização de `numero_resets`;
+- reinício do histórico do percurso atual;
+- preservação das métricas acumuladas.
+
+### Navegação
+
+Também foi confirmado que os mecanismos anteriores continuam funcionando:
+
+- histórico de estados;
+- estados repetidos;
+- retornos;
+- navegação passo a passo;
+- planejamento de sequência;
+- chegada ao estado final.
+
+Os códigos temporários de debug foram removidos após a validação.
+
+---
+
+# 9. Pausa na implementação para decisões conceituais
+
+Após estabilizar essa etapa, decidiu-se interromper temporariamente a implementação para discutir conceitos antes da reunião com a orientadora.
+
+O principal objetivo é evitar definir pesos, escalas ou regras fuzzy arbitrariamente.
+
+---
+
+## 10. Necessidade de Assistência
+
+Foi retomada a ideia de construir uma variável intermediária provisoriamente chamada:
+
+```text
+Necessidade de Assistência
+```
+
+Ela deverá ser obtida a partir de métricas observáveis do comportamento do jogador.
+
+Métricas candidatas atualmente:
+
+```text
+tentativas
+estados repetidos
+retornos
+reinícios
+solicitações de ajuda
+entrada em estados mortos/armadilhas
+```
+
+A arquitetura preferida até o momento é:
+
+```text
+métricas do jogador
+        ↓
+normalização/combinação
+        ↓
+Índice de Necessidade de Assistência
+        ↓
+fuzzificação
+        ↓
+Baixa / Média / Alta
+```
+
+Ainda não foi definido:
+
+- se haverá média;
+- se será média ponderada;
+- quais métricas terão maior peso;
+- como os pesos serão justificados;
+- qual escala será utilizada.
+
+---
+
+## 11. Possível redundância entre métricas
+
+Foi identificada uma questão metodológica importante.
+
+Um único comportamento pode aumentar simultaneamente:
+
+```text
+estados repetidos
+retornos
+tentativas
+```
+
+Isso pode fazer com que o mesmo comportamento seja contabilizado várias vezes no cálculo da necessidade de assistência.
+
+Será necessário discutir:
+
+- quais métricas representam fenômenos realmente distintos;
+- quais são parcialmente redundantes;
+- quais devem ser combinadas ou descartadas.
+
+---
+
+## 12. Definição de tentativa ainda pendente
+
+A variável:
+
+```text
+numero_tentativas
+```
+
+ainda não possui uma definição operacional definitiva.
+
+Foi levantada como possibilidade:
+
+> Uma tentativa começa no estado inicial e termina quando o jogador alcança o estado final, reinicia o percurso ou entra em uma condição que impossibilite a continuação.
+
+Entretanto, a definição deverá ser revisada separadamente para:
+
+- modo passo a passo;
+- modo planejamento de rota.
+
+Weslei apresentará sua proposta antes da implementação definitiva.
+
+---
+
+## 13. Estado interno do NPC
+
+Foi reforçada a arquitetura anteriormente definida:
+
+```text
+interações do jogador
+        ↓
+impactos positivos/negativos
+        ↓
+valor interno contínuo do NPC
+        ↓
+fuzzificação
+        ↓
+estado linguístico
+```
+
+Ainda não foram definidos:
+
+- escala;
+- pesos dos eventos;
+- limites;
+- função de atualização;
+- funções de pertinência.
+
+Também foi discutido que o nome da variável precisa ser escolhido com cuidado.
+
+Opções consideradas:
+
+```text
+Estado afetivo interno do NPC
+Valência afetiva do NPC
+Disposição afetiva do NPC
+```
+
+A expressão `estado afetivo interno` permanece a alternativa mais geral por enquanto.
+
+Caso a variável represente especificamente um eixo negativo–positivo, `valência afetiva` poderá ser conceitualmente mais precisa.
+
+---
+
+## 14. Estado afetivo versus disposição para ajudar
+
+Foi identificada uma distinção importante.
+
+Não é desejável utilizar diretamente:
+
+```text
+disposição para ajudar
+```
+
+como entrada do modelo, porque isso se aproxima demais da própria saída esperada.
+
+A arquitetura preferida permanece:
+
+```text
+estado afetivo do NPC
++
+necessidade de assistência do jogador
+        ↓
+sistema fuzzy
+        ↓
+nível de assistência
+```
+
+Assim, o estado afetivo influencia a disposição para ajudar, mas não é sinônimo dela.
+
+---
+
+## 15. Arquitetura conceitual atual
+
+O modelo discutido atualmente pode ser representado da seguinte forma:
+
+```text
+                    JOGADOR
+                       │
+          ┌────────────┴────────────┐
+          │                         │
+       navegação                interações
+          │                         │
+          ▼                         ▼
+   repetições                 escolhas
+   retornos                   eventos
+   resets                     diálogos
+   tentativas                     │
+   pedidos de ajuda                ▼
+          │                 Estado afetivo
+          ▼                    do NPC
+  Necessidade de                   │
+    Assistência                    │
+          │                        │
+          └───────────┬────────────┘
+                      ▼
+                SISTEMA FUZZY
+                      │
+                      ▼
+             Nível de assistência
+                      │
+                      ▼
+                resposta/dica
+```
+
+---
+
+# 16. Questões preparadas para a reunião com a orientadora
+
+Foram levantadas questões para discussão:
+
+- A Necessidade de Assistência deve ser uma única variável calculada antes do fuzzy?
+- Deve ser utilizada média simples, média ponderada ou outra abordagem?
+- Como justificar pesos diferentes para cada métrica?
+- As métricas precisam ser normalizadas antes da combinação?
+- Repetições, retornos e reinícios são suficientemente independentes?
+- Qual deve ser a definição formal de tentativa?
+- `pedidos_ajuda` deve representar dicas fornecidas ou solicitações realizadas?
+- Qual o melhor nome para o estado interno do NPC?
+- Qual escala utilizar para essa variável?
+- Os impactos das interações serão fixos ou acumulativos?
+- Deve existir decaimento do estado afetivo?
+- Faz sentido utilizar três conjuntos fuzzy por
