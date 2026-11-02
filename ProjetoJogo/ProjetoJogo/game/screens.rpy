@@ -352,30 +352,63 @@ style navigation_button_text:
 
 screen main_menu():
 
-    ## This ensures that any other menu screen is replaced.
     tag menu
 
-    add gui.main_menu_background
 
-    ## This empty frame darkens the main menu.
+    # ========================================================
+    # FUNDO
+    # ========================================================
+
+    add "bg_mar"
+
+
+    # ========================================================
+    # MENU PRINCIPAL
+    # ========================================================
+
     frame:
-        style "main_menu_frame"
 
-    ## The use statement includes another screen inside this one. The actual
-    ## contents of the main menu are in the navigation screen.
-    use navigation
+        style "painel_jogo"
 
-    if gui.show_name:
+        xalign 0.5
+        yalign 0.5
+
+        xsize 600
+
 
         vbox:
-            style "main_menu_vbox"
 
-            text "[config.name!t]":
-                style "main_menu_title"
+            xalign 0.5
 
-            text "[config.version]":
-                style "main_menu_version"
+            spacing 30
 
+
+            text "Arquipélago":
+
+                xalign 0.5
+
+                size 48
+
+
+            null height 20
+
+
+            textbutton "Jogar":
+
+                style "rota_button"
+
+                xalign 0.5
+
+                action Start()
+
+
+            textbutton "Sair":
+
+                style "rota_button"
+
+                xalign 0.5
+
+                action Quit(confirm=True)
 
 style main_menu_frame is empty
 style main_menu_vbox is vbox
@@ -1753,7 +1786,7 @@ screen como_jogar():
         yalign 0.5
 
         xsize 1000
-        ysize 750
+        ysize 680
 
 
         vbox:
@@ -1761,19 +1794,22 @@ screen como_jogar():
             spacing 20
 
 
-            text "Como jogar":
+            text "Como Jogar":
 
                 size 42
+
                 xalign 0.5
 
 
             viewport:
 
                 xsize 920
-                ysize 570
+                ysize 500
 
                 scrollbars "vertical"
+
                 mousewheel True
+
                 draggable True
 
 
@@ -1787,50 +1823,46 @@ screen como_jogar():
                     text """
 OBJETIVO
 
-Seu objetivo é navegar pelo arquipélago até encontrar a Ilha Final.
-
-Cada ilha representa um estado.
-"""
-
-
-                    text """
-ESTADO INICIAL
-
-O estado inicial representa o ponto onde o percurso começa.
-
-Na primeira fase, a Ilha 1 representa o estado inicial q0.
-"""
-
-
-                    text """
-TRANSIÇÕES
-
-As rotas representam transições entre estados.
-
-Cada rota possui um símbolo, como A ou B.
-"""
-
-
-                    text """
-ESTADO FINAL
-
-Uma sequência correta de transições poderá levar o navio até o estado final.
+Navegue entre as ilhas e encontre o caminho até a Ilha Final.
 """
 
 
                     text """
 NAVEGAÇÃO PASSO A PASSO
 
-Neste modo você escolhe cada transição individualmente.
+Neste modo, você escolhe uma rota por vez e acompanha o caminho percorrido entre as ilhas.
 """
 
 
                     text """
 PLANEJAMENTO DE ROTA
 
-Neste modo você informa uma sequência completa, como ABB.
+Neste modo, você informa uma sequência completa de rotas, como ABB.
 
-O sistema processa os símbolos em sequência e informa onde o navio termina.
+O jogo percorre a sequência informada e mostra em qual ilha você terminou.
+"""
+
+
+                    text """
+MAPA
+
+O mapa permite observar as ilhas e as rotas disponíveis na fase.
+"""
+
+
+                    text """
+DICAS
+
+Você pode pedir uma dica quando precisar de ajuda.
+
+As dicas disponíveis dependem da fase atual.
+"""
+
+
+                    text """
+REINICIAR
+
+O botão Reiniciar encerra a tentativa atual e inicia uma nova tentativa a partir da primeira ilha.
 """
 
 
@@ -1841,8 +1873,6 @@ O sistema processa os símbolos em sequência e informa onde o navio termina.
                 xalign 0.5
 
                 action Hide("como_jogar")
-
-
 
 
 
@@ -2060,7 +2090,6 @@ screen selecionar_fase():
 
                         action Return(numero)
 
-
 # ============================================================
 # CONTROLES DA FASE
 # ============================================================
@@ -2069,46 +2098,50 @@ screen controles_fase:
 
 
     # ========================================================
-    # MAPA - CANTO INFERIOR ESQUERDO
+    # MAPA - LADO ESQUERDO
     # ========================================================
 
     textbutton "Mapa":
 
-        style "rota_button"
+        style "controle_button"
 
-        xalign 0.03
-        yalign 0.95
+        xalign 0.02
+        yalign 0.97
 
         action Show("mapa_atual")
 
 
     # ========================================================
-    # AJUDA E REINÍCIO - CANTO INFERIOR DIREITO
+    # CONTROLES - LADO DIREITO
     # ========================================================
 
     hbox:
 
-        xalign 0.97
-        yalign 0.95
+        xalign 0.98
+        yalign 0.97
 
-        spacing 15
+        spacing 10
 
 
         textbutton "Dica":
 
-            style "rota_button"
+            style "controle_button"
 
             action Return("__AJUDA__")
 
 
         textbutton "Reiniciar":
 
-            style "rota_button"
+            style "controle_button"
 
             action Return("__REINICIAR__")
 
 
+        textbutton "Menu":
 
+            style "controle_button"
+
+            action Return("__MENU__")
 
 
 # ESTILO DOS PAINÉIS DO JOGO
@@ -2142,3 +2175,20 @@ style rota_button_text:
 
     xalign 0.5
     yalign 0.5
+
+# ============================================================
+# BOTÕES DOS CONTROLES DA PARTIDA
+# ============================================================
+
+style controle_button is rota_button:
+
+    xsize 160
+    ysize 55
+
+    xpadding 12
+    ypadding 8
+
+
+style controle_button_text is rota_button_text:
+
+    size 21
