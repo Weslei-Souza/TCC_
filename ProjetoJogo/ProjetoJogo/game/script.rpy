@@ -19,8 +19,16 @@ init python:
 # PERSONAGENS
 # ============================================================
 
-define navegador = Character('Navegador', color="#c8ffc8")
+define navegador = Character(
+    'Navegador', 
+    color="#c8ffc8"
+)
 
+
+define naufrago = Character(
+    'Náufrago',
+    color="#ffd6a5"
+)
 
 # ============================================================
 # ESTADO DA PARTIDA
@@ -74,19 +82,34 @@ default dicas_disponiveis = []
 # NPC
 # ============================================================
 
-# Valor atual da Disposição do NPC encontrado.
+# Disposição atual do NPC encontrado.
+#
 # Escala:
 # 0 a 100.
 #
-# No texto do tcc lembrar de chamar de Disposição Afetiva.
+# No texto acadêmico lembrar de chamar de Disposição Afetiva.
 default disposicao_npc = None
 
 
-# Indica se existe um NPC ativo no encontro atual.
+# Classificação narrativa temporária:
+# hostil
+# neutro
+# amigavel
+# Não representa ainda a classificação fuzzy.
+default classificacao_npc = None
+
+
+# ve se existe um NPC participando
+# de um encontro neste momento.
 default npc_presente = False
 
 
-# Guarda as interações realizadas com NPCs.
+# Quantidade de encontros realizados
+# na fase atual.
+default contador_encontros_npc = 0
+
+
+# Histórico dos encontros
 default historico_npc = []
 
 
@@ -97,7 +120,7 @@ default historico_npc = []
 label start:
 
     # ========================================================
-    # 1. ESCOLHA DO MODO DE JOGO
+    #  ESCOLHA DO MODO DE JOGO
     # ========================================================
 
     call screen menu_modo_jogo
@@ -106,7 +129,7 @@ label start:
 
 
     # ========================================================
-    # 2. ESCOLHA DA FASE
+    #  ESCOLHA DA FASE
     # ========================================================
 
     call screen selecionar_fase
@@ -115,7 +138,7 @@ label start:
 
 
     # ========================================================
-    # 3. CARREGA O AUTÔMATO DA FASE
+    #  CARREGA O AUTÔMATO DA FASE
     # ========================================================
 
     $ configuracao_automato = fases.obter_automato(
@@ -129,7 +152,7 @@ label start:
 
 
     # ========================================================
-    # 4. INICIALIZA AS MÉTRICAS DA FASE
+    # INICIALIZA AS MÉTRICAS DA FASE
     # ========================================================
 
     $ historico_estados = [estado_atual]
@@ -143,16 +166,30 @@ label start:
     $ armadilhas_atingidas = 0
     $ necessidade_assistencia = 0.0
 
+    # ========================================================
+    # INICIALIZA O SISTEMA DE NPC
+    # ========================================================
+
+    $ npc_presente = False
+
+    $ disposicao_npc = None
+
+    $ classificacao_npc = None
+
+    $ contador_encontros_npc = 0
+
+    $ historico_npc = []
+
 
     # ========================================================
-    # 5. PREPARA CONTEÚDO ESPECÍFICO DA FASE
+    # PREPARA CONTEÚDO ESPECÍFICO DA FASE
     # ========================================================
 
     call preparar_fase_atual
 
 
     # ========================================================
-    # 6. INICIA O MODO ESCOLHIDO
+    # INICIA O MODO ESCOLHIDO
     # ========================================================
 
     if modo_jogo == "navegacao":

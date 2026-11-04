@@ -36,9 +36,15 @@ define DICAS_ESPECIFICAS_FASE_1 = [
     "Você não precisa passar pela Ilha 2 para chegar à Ilha Final, mas pode ser necessário dependendo da rota escolhida.",
 ]
 
+
 # ============================================================
-# PREPARAÇÃO DA FASE 1
+# CONTROLE DO ENCONTRO DA FASE 1
 # ============================================================
+
+# A Fase 1 possui um encontro obrigatório com NPC.
+# Ele acontece apenas uma vez durante a execução da fase.
+
+default encontro_npc_fase1_realizado = False
 
 # ============================================================
 # PREPARAÇÃO DA FASE 1
@@ -50,10 +56,12 @@ label fase_1_preparar:
     #
     # As dicas intermediárias e específicas ficam 
     # para o sistema de assistência do NPC.
-
+    
     $ dicas_disponiveis = list(
         DICAS_GENERICAS_FASE_1
     )
+    #O encontro tutorial do npc ainda não aconteceu
+    $ encontro_npc_fase1_realizado = False
 
     return
 
@@ -127,6 +135,13 @@ label fase_1_exibir_estado:
 
         "Você está na Ilha 3."
 
+        # ========================================================
+        # ENCONTRO TUTORIAL COM NPC
+        # ========================================================
+
+        if not encontro_npc_fase1_realizado:
+
+            call fase_1_encontro_npc
 
 
     # --------------------------------------------------------
@@ -288,3 +303,58 @@ screen mapa_fase_1:
                 ypos 500
 
                 action Hide("mapa_atual")
+
+# ============================================================
+# ENCONTRO COM NPC - FASE 1
+# ============================================================
+
+label fase_1_encontro_npc:
+
+    # Marca imediatamente o encontro como realizado
+    # para impedir que ele seja disparado novamente
+    # ao revisitar a Ilha 3.
+
+    $ encontro_npc_fase1_realizado = True
+
+
+    "Há alguém nesta ilha."
+
+
+    # ========================================================
+    # INICIA O SISTEMA GERAL DO NPC
+    # ========================================================
+
+    call iniciar_encontro_npc
+
+    "DEBUG - Disposição inicial: [disposicao_npc]"
+
+    "DEBUG - Classificação: [classificacao_npc]"
+
+
+    # ========================================================
+    # INTRODUÇÃO DO NÁUFRAGO
+    # ========================================================
+
+    naufrago "Ei! Vocês aí!"
+
+
+    naufrago "Não esperava encontrar outro navio por aqui."
+
+
+    # Por enquanto ainda não existem escolhas.
+    #
+    # Na próxima etapa entraremos aqui com:
+    #
+    # - opções de diálogo;
+    # - impactos positivos/negativos;
+    # - atualização da Disposição.
+
+
+    # ========================================================
+    # ENCERRA O ENCONTRO
+    # ========================================================
+
+    call encerrar_encontro_npc
+
+
+    return
