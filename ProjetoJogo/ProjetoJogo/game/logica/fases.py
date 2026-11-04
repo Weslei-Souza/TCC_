@@ -2,12 +2,6 @@
 Configuração geral das fases do jogo.
 """
 from logica.automatos import fase_1
-from logica.automatos import fase_2
-from logica.automatos import fase_3
-from logica.automatos import fase_4
-from logica.automatos import fase_5
-from logica.automatos import fase_6
-from logica.automatos import fase_7
 
 FASES = {
 

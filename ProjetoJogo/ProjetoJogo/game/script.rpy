@@ -190,6 +190,8 @@ label start:
 
     $ historico_npc = []
 
+    $ historico_interacoes = []
+
 
 
     $ resultado_fuzzy = None

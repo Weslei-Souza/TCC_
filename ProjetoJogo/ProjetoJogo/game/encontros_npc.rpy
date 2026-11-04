@@ -46,6 +46,9 @@ label iniciar_encontro_npc:
     # Indica que existe um NPC ativo neste momento.
     $ npc_presente = True
 
+    $ resultado_fuzzy = None
+    $ valor_assistencia_fuzzy = None
+    $ categoria_assistencia = None
 
     # Conta quantos encontros aconteceram nesta fase.
     $ contador_encontros_npc += 1

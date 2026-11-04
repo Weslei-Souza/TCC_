@@ -8,16 +8,10 @@
 
 label atualizar_necessidade_assistencia:
 
-    # Obtém os limites definidos especificamente
-    # para a fase atual.
-
     $ limites_assistencia = configuracao_automato.get(
         "limites_assistencia",
         {}
     )
-
-
-    # Calcula o índice atual entre 0 e 100.
 
     $ necessidade_assistencia = jogador.calcular_necessidade_assistencia(
         numero_resets,
@@ -26,8 +20,6 @@ label atualizar_necessidade_assistencia:
         armadilhas_atingidas,
         limites_assistencia
     )
-
-    "DEBUG - Necessidade de Assistência: [necessidade_assistencia]"
 
     return
 

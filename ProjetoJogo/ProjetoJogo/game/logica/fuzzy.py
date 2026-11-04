@@ -1,39 +1,55 @@
 """
-Sistema fuzzy responsável por determinar o nível
-de assistência oferecido pelo NPC.
+Sistema de inferência fuzzy responsável por determinar
+o nível de assistência oferecido pelo NPC.
 
-Entradas:
+ENTRADA 1
+Necessidade de Assistência: 0 a 100
+- baixa
+- media
+- alta
 
-1. Necessidade de Assistência
-   - baixa
-   - media
-   - alta
+ENTRADA 2
+Disposição Afetiva do NPC: 0 a 100
+- hostil
+- neutro
+- amigavel
 
-2. Disposição do NPC
-   - hostil
-   - neutro
-   - amigavel
+SAÍDA
+Nível de Assistência: 0 a 100
+- nenhuma
+- generica
+- intermediaria
+- especifica
 
-Saída:
+O sistema utiliza:
 
-Nível de Assistência
-   - nenhuma
-   - generica
-   - intermediaria
-   - especifica
-
-Universo de discurso das entradas e saída:
-0 a 100.
+1. fuzzificação das duas entradas;
+2. inferência Mamdani;
+3. operador AND pelo mínimo;
+4. agregação pelo máximo;
+5. defuzzificação pelo centroide;
+6. seleção do conjunto com maior pertinência
+   no valor crisp resultante.
 """
 
 
 # ============================================================
-# FUNÇÕES DE PERTINÊNCIA
+# FUNÇÕES DE PERTINÊNCIA BÁSICAS
 # ============================================================
 
 def triangular(x, a, b, c):
     """
     Função de pertinência triangular.
+
+    a = início do conjunto
+    b = ponto de pertinência máxima (1)
+    c = final do conjunto
+
+            1
+            /\
+           /  \
+          /    \
+    0 ---a--b--c--->
     """
 
     if x <= a or x >= c:
@@ -51,6 +67,13 @@ def triangular(x, a, b, c):
 def trapezoidal(x, a, b, c, d):
     """
     Função de pertinência trapezoidal.
+
+    Entre b e c a pertinência é máxima.
+
+            ______
+           /      \
+          /        \
+    0 ---a-b------c-d--->
     """
 
     if x < a or x > d:
@@ -77,98 +100,98 @@ def trapezoidal(x, a, b, c, d):
 
 
 # ============================================================
-# NECESSIDADE DE ASSISTÊNCIA
+# FUZZIFICAÇÃO DA NECESSIDADE DE ASSISTÊNCIA
 # ============================================================
 
 def pertinencia_necessidade(valor):
     """
-    Calcula os graus de pertinência da Necessidade
-    de Assistência.
+    Transforma o valor crisp da Necessidade de Assistência
+    em graus de pertinência nos conjuntos:
+
+    baixa
+    media
+    alta
+
+    Um mesmo valor pode pertencer parcialmente
+    a mais de um conjunto.
     """
 
     valor = max(
         0.0,
         min(float(valor), 100.0)
     )
-
 
     return {
 
         "baixa": trapezoidal(
             valor,
-            0,
-            0,
-            25,
-            45
+            0, 0, 25, 45
         ),
 
         "media": triangular(
             valor,
-            30,
-            50,
-            70
+            30, 50, 70
         ),
 
         "alta": trapezoidal(
             valor,
-            55,
-            75,
-            100,
-            100
+            55, 75, 100, 100
         ),
     }
 
 
 # ============================================================
-# DISPOSIÇÃO DO NPC
+# FUZZIFICAÇÃO DA DISPOSIÇÃO AFETIVA
 # ============================================================
 
 def pertinencia_disposicao(valor):
     """
-    Calcula os graus de pertinência da
-    Disposição Afetiva do NPC.
+    Transforma a Disposição do NPC em graus de pertinência:
+
+    hostil
+    neutro
+    amigavel
+
+    Esta é a classificação fuzzy.
+
+    Ela é diferente da classificação narrativa simples
+    usada pelo Navegador no início do encontro.
     """
 
     valor = max(
         0.0,
         min(float(valor), 100.0)
     )
-
 
     return {
 
         "hostil": trapezoidal(
             valor,
-            0,
-            0,
-            25,
-            45
+            0, 0, 25, 45
         ),
 
         "neutro": triangular(
             valor,
-            30,
-            50,
-            70
+            30, 50, 70
         ),
 
         "amigavel": trapezoidal(
             valor,
-            55,
-            75,
-            100,
-            100
+            55, 75, 100, 100
         ),
     }
 
 
 # ============================================================
-# SAÍDA - NÍVEL DE ASSISTÊNCIA
+# CONJUNTOS FUZZY DA SAÍDA
 # ============================================================
 
 def pertinencia_saida(valor):
     """
-    Calcula os graus de pertinência da saída fuzzy.
+    Define os quatro níveis possíveis de assistência.
+
+    O valor final ainda é fuzzy e pode possuir pertinência
+    simultânea em conjuntos vizinhos.
     """
 
     valor = max(
@@ -176,37 +199,26 @@ def pertinencia_saida(valor):
         min(float(valor), 100.0)
     )
 
-
     return {
 
         "nenhuma": trapezoidal(
             valor,
-            0,
-            0,
-            15,
-            30
+            0, 0, 15, 30
         ),
 
         "generica": triangular(
             valor,
-            20,
-            40,
-            55
+            20, 40, 55
         ),
 
         "intermediaria": triangular(
             valor,
-            45,
-            65,
-            80
+            45, 65, 80
         ),
 
         "especifica": trapezoidal(
             valor,
-            70,
-            85,
-            100,
-            100
+            70, 85, 100, 100
         ),
     }
 
@@ -215,50 +227,45 @@ def pertinencia_saida(valor):
 # BASE DE REGRAS
 # ============================================================
 
+# Cada regra relaciona:
+#
+# Necessidade + Disposição -> Nível de Assistência
+
 REGRAS = {
 
     # Necessidade baixa
-
     ("baixa", "hostil"): "nenhuma",
-
     ("baixa", "neutro"): "nenhuma",
-
     ("baixa", "amigavel"): "generica",
 
-
     # Necessidade média
-
     ("media", "hostil"): "nenhuma",
-
     ("media", "neutro"): "generica",
-
     ("media", "amigavel"): "intermediaria",
 
-
     # Necessidade alta
-
     ("alta", "hostil"): "generica",
-
     ("alta", "neutro"): "intermediaria",
-
     ("alta", "amigavel"): "especifica",
 }
 
 
 # ============================================================
-# EXECUÇÃO DAS REGRAS
+# INFERÊNCIA DAS REGRAS
 # ============================================================
 
-def calcular_ativacoes(
-    necessidade,
-    disposicao
-):
+def calcular_ativacoes(necessidade, disposicao):
     """
-    Calcula a ativação de cada conjunto de saída
-    usando operador AND = mínimo.
+    Avalia as nove regras fuzzy.
 
-    Quando mais de uma regra produz a mesma saída,
-    utilizamos o máximo das ativações.
+    O operador AND é implementado pelo mínimo:
+
+    ativacao_regra =
+        min(pertinencia_necessidade,
+            pertinencia_disposicao)
+
+    Se mais de uma regra produz a mesma categoria de saída,
+    fica a maior ativação encontrada.
     """
 
     graus_necessidade = pertinencia_necessidade(
@@ -269,44 +276,27 @@ def calcular_ativacoes(
         disposicao
     )
 
-
     ativacoes_saida = {
-
         "nenhuma": 0.0,
-
         "generica": 0.0,
-
         "intermediaria": 0.0,
-
         "especifica": 0.0,
     }
-
 
     for (
         conjunto_necessidade,
         conjunto_disposicao
     ), conjunto_saida in REGRAS.items():
 
-
         ativacao = min(
-            graus_necessidade[
-                conjunto_necessidade
-            ],
-            graus_disposicao[
-                conjunto_disposicao
-            ]
+            graus_necessidade[conjunto_necessidade],
+            graus_disposicao[conjunto_disposicao]
         )
 
-
-        ativacoes_saida[
-            conjunto_saida
-        ] = max(
-            ativacoes_saida[
-                conjunto_saida
-            ],
+        ativacoes_saida[conjunto_saida] = max(
+            ativacoes_saida[conjunto_saida],
             ativacao
         )
-
 
     return ativacoes_saida
 
@@ -315,23 +305,21 @@ def calcular_ativacoes(
 # AGREGAÇÃO DA SAÍDA
 # ============================================================
 
-def pertinencia_agregada_saida(
-    x,
-    ativacoes
-):
+def pertinencia_agregada_saida(x, ativacoes):
     """
-    Aplica o corte das funções de saída de acordo
-    com a ativação das regras e agrega os resultados
-    pelo operador máximo.
+    Aplica a inferência Mamdani às funções da saída.
+
+    Para cada categoria:
+
+    1. calcula a pertinência original de x;
+    2. corta essa pertinência no nível de ativação da regra
+       usando o operador mínimo;
+    3. agrega todos os conjuntos usando o operador máximo.
     """
 
-    graus_saida = pertinencia_saida(
-        x
-    )
-
+    graus_saida = pertinencia_saida(x)
 
     valores_cortados = []
-
 
     for categoria, grau_original in graus_saida.items():
 
@@ -344,27 +332,28 @@ def pertinencia_agregada_saida(
             grau_cortado
         )
 
-
-    return max(
-        valores_cortados
-    )
+    return max(valores_cortados)
 
 
 # ============================================================
-# DEFUZZIFICAÇÃO
+# DEFUZZIFICAÇÃO PELO CENTROIDE
 # ============================================================
 
 def defuzzificar(ativacoes):
     """
-    Realiza a defuzzificação pelo método do centroide.
+    Converte a saída fuzzy agregada em um único número.
 
-    O universo de saída é discretizado de 0 a 100.
+    É utilizado o método do centroide:
+
+        soma(x * pertinencia(x))
+        ------------------------
+          soma(pertinencia(x))
+
+    O universo 0–100 é discretizado em valores inteiros.
     """
 
     numerador = 0.0
-
     denominador = 0.0
-
 
     for x in range(0, 101):
 
@@ -373,41 +362,39 @@ def defuzzificar(ativacoes):
             ativacoes
         )
 
-
-        numerador += (
-            x * grau
-        )
-
+        numerador += x * grau
         denominador += grau
 
-
     if denominador == 0:
-
         return 0.0
-
 
     return numerador / denominador
 
 
 # ============================================================
-# ESCOLHER CATEGORIA DA DICA
+# TRANSFORMAR A SAÍDA NUMÉRICA EM CATEGORIA
 # ============================================================
 
-def escolher_categoria_saida(
-    valor_saida
-):
+def escolher_categoria_saida(valor_saida):
     """
-    Após a defuzzificação, verifica em qual conjunto
-    o valor crisp possui maior grau de pertinência.
+    O centroide produz um valor crisp.
 
-    Em caso de empate, a opção de menor assistência
-    é priorizada.
+    Exemplo:
+        61.7
+
+    Esse valor pode continuar pertencendo parcialmente
+    a dois conjuntos.
+
+    O jogo precisa escolher uma ação concreta, então
+    selecionamos o conjunto no qual o valor possui
+    MAIOR grau de pertinência.
+
+    Em empate, prevalece o nível de menor assistência.
     """
 
     graus = pertinencia_saida(
         valor_saida
     )
-
 
     ordem = [
         "nenhuma",
@@ -416,49 +403,36 @@ def escolher_categoria_saida(
         "especifica",
     ]
 
-
     melhor_categoria = ordem[0]
-
-    melhor_grau = graus[
-        melhor_categoria
-    ]
-
+    melhor_grau = graus[melhor_categoria]
 
     for categoria in ordem[1:]:
 
         if graus[categoria] > melhor_grau:
 
             melhor_categoria = categoria
-
-            melhor_grau = graus[
-                categoria
-            ]
-
+            melhor_grau = graus[categoria]
 
     return melhor_categoria, graus
 
 
 # ============================================================
-# SISTEMA FUZZY COMPLETO
+# EXECUÇÃO COMPLETA DO SISTEMA FUZZY
 # ============================================================
 
-def calcular_assistencia(
-    necessidade,
-    disposicao
-):
+def calcular_assistencia(necessidade, disposicao):
     """
-    Executa todo o sistema fuzzy.
+    Executa o processo completo:
 
-    Retorna:
+    1. fuzzifica Necessidade;
+    2. fuzzifica Disposição;
+    3. executa as regras;
+    4. agrega as saídas;
+    5. defuzzifica pelo centroide;
+    6. escolhe a categoria final.
 
-    - valor crisp da saída;
-    - categoria escolhida;
-    - graus das entradas;
-    - ativações das regras;
-    - graus da saída final.
-
-    Esses dados adicionais serão úteis nos testes
-    e na validação do modelo.
+    Retorna também os valores intermediários para que
+    posteriormente possamos validar e explicar o sistema.
     """
 
     graus_necessidade = pertinencia_necessidade(
@@ -469,37 +443,24 @@ def calcular_assistencia(
         disposicao
     )
 
-
     ativacoes = calcular_ativacoes(
         necessidade,
         disposicao
     )
 
-
     valor_saida = defuzzificar(
         ativacoes
     )
-
 
     categoria, graus_saida = escolher_categoria_saida(
         valor_saida
     )
 
-
     return {
-
-        "valor": round(
-            valor_saida,
-            2
-        ),
-
+        "valor": round(valor_saida, 2),
         "categoria": categoria,
-
         "necessidade": graus_necessidade,
-
         "disposicao": graus_disposicao,
-
         "ativacoes": ativacoes,
-
         "saida": graus_saida,
     }

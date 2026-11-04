@@ -197,7 +197,7 @@ screen mapa_fase_1:
                 ypos 250
 
 
-            text "Ilha 1\n Inicial":
+            text "Ilha 1":
 
                 xpos 90
                 ypos 400
@@ -257,7 +257,7 @@ screen mapa_fase_1:
                 ypos 225
 
 
-            text "Ilha Final - Final":
+            text "Ilha Final":
 
                 xpos 780
                 ypos 375
@@ -372,12 +372,6 @@ label fase_1_encontro_npc:
         
         call interacao_npc_despedida
 
-    call calcular_assistencia_npc
-
-    "DEBUG - Necessidade: [necessidade_assistencia]"
-    "DEBUG - Disposição: [disposicao_npc]"
-    "DEBUG - Saída: [valor_assistencia_fuzzy]"
-    "DEBUG - Categoria: [categoria_assistencia]"
 
     # ========================================================
     # ENCERRA O ENCONTRO
