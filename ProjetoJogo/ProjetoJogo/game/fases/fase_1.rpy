@@ -40,18 +40,20 @@ define DICAS_ESPECIFICAS_FASE_1 = [
 # PREPARAÇÃO DA FASE 1
 # ============================================================
 
+# ============================================================
+# PREPARAÇÃO DA FASE 1
+# ============================================================
+
 label fase_1_preparar:
 
-    # Cria uma nova lista aqui para esta partida.
+    # O botão Dica utiliza somente ad dica genéricas da fase.
+    #
+    # As dicas intermediárias e específicas ficam 
+    # para o sistema de assistência do NPC.
 
-    $ dicas_disponiveis = (
-        list(DICAS_GENERICAS_FASE_1)
-        + list(DICAS_INTERMEDIARIAS_FASE_1)
-        + list(DICAS_ESPECIFICAS_FASE_1)
+    $ dicas_disponiveis = list(
+        DICAS_GENERICAS_FASE_1
     )
-
-    $ ultima_dica = None
-
 
     return
 

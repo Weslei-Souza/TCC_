@@ -7,6 +7,7 @@ init python:
     from logica import automato
     from logica import fases
     from logica import jogador
+    from logica import npc
 
     # Se nunca houve progresso salvo,
     # somente a primeira fase fica liberada.
@@ -73,16 +74,19 @@ default dicas_disponiveis = []
 # NPC
 # ============================================================
 
-# Disposição Afetiva do NPC.
+# Valor atual da Disposição do NPC encontrado.
+# Escala:
+# 0 a 100.
 #
-# Futuramente será um valor contínuo entre 0 e 100
-# e será fuzzificado nos conjuntos:
-#
-# Hostil / Neutro / Amigável
-#
-# O valor inicial ainda será definido.
+# No texto do tcc lembrar de chamar de Disposição Afetiva.
 default disposicao_npc = None
 
+
+# Indica se existe um NPC ativo no encontro atual.
+default npc_presente = False
+
+
+# Guarda as interações realizadas com NPCs.
 default historico_npc = []
 
 
