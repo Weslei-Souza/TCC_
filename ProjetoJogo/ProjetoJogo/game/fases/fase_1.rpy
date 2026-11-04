@@ -303,7 +303,7 @@ screen mapa_fase_1:
                 ypos 500
 
                 action Hide("mapa_atual")
-                
+
 # ============================================================
 # ENCONTRO COM NPC - FASE 1
 # ============================================================
@@ -369,8 +369,15 @@ label fase_1_encontro_npc:
         #
         # ----------------------------------------------------
 
+        
         call interacao_npc_despedida
 
+    call calcular_assistencia_npc
+
+    "DEBUG - Necessidade: [necessidade_assistencia]"
+    "DEBUG - Disposição: [disposicao_npc]"
+    "DEBUG - Saída: [valor_assistencia_fuzzy]"
+    "DEBUG - Categoria: [categoria_assistencia]"
 
     # ========================================================
     # ENCERRA O ENCONTRO

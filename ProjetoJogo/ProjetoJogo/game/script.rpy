@@ -8,6 +8,7 @@ init python:
     from logica import fases
     from logica import jogador
     from logica import npc
+    from logica import fuzzy
 
     # Se nunca houve progresso salvo,
     # somente a primeira fase fica liberada.
@@ -90,7 +91,6 @@ default dicas_disponiveis = []
 # No texto acadêmico lembrar de chamar de Disposição Afetiva.
 default disposicao_npc = None
 
-
 # Classificação narrativa temporária:
 # hostil
 # neutro
@@ -98,19 +98,29 @@ default disposicao_npc = None
 # Não representa ainda a classificação fuzzy.
 default classificacao_npc = None
 
-
 # ve se existe um NPC participando
 # de um encontro neste momento.
 default npc_presente = False
-
 
 # Quantidade de encontros realizados
 # na fase atual.
 default contador_encontros_npc = 0
 
-
 # Histórico dos encontros
 default historico_npc = []
+
+# Último resultado calculado pelo sistema fuzzy.
+default resultado_fuzzy = None
+
+# Valor crisp da última saída fuzzy.
+default valor_assistencia_fuzzy = None
+
+# Categoria de assistência selecionada:
+# nenhuma
+# generica
+# intermediaria
+# especifica
+default categoria_assistencia = None
 
 
 # ============================================================
@@ -180,6 +190,13 @@ label start:
 
     $ historico_npc = []
 
+
+
+    $ resultado_fuzzy = None
+
+    $ valor_assistencia_fuzzy = None
+    
+    $ categoria_assistencia = None
 
     # ========================================================
     # PREPARA CONTEÚDO ESPECÍFICO DA FASE

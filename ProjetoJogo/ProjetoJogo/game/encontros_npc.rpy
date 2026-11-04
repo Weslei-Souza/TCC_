@@ -231,11 +231,6 @@ label aplicar_escolha_npc(acao):
         registro_interacao
     ]
 
-    "DEBUG - Ação: [acao]"
-    "DEBUG - Impacto: [impacto_aplicado]"
-    "DEBUG - Antes: [disposicao_anterior]"
-    "DEBUG - Depois: [disposicao_npc]"
-
 
     return
 
@@ -339,6 +334,35 @@ label npc_recusar_dica:
 
 
     naufrago "[resposta_sem_dica]"
+
+
+    return
+
+# ============================================================
+# CALCULAR ASSISTÊNCIA DO NPC
+# ============================================================
+
+label calcular_assistencia_npc:
+
+    # Executa o sistema fuzzy utilizando:
+    #
+    # - Necessidade de Assistência atual do jogador;
+    # - Disposição atual do NPC.
+
+    $ resultado_fuzzy = fuzzy.calcular_assistencia(
+        necessidade_assistencia,
+        disposicao_npc
+    )
+
+
+    $ valor_assistencia_fuzzy = resultado_fuzzy[
+        "valor"
+    ]
+
+
+    $ categoria_assistencia = resultado_fuzzy[
+        "categoria"
+    ]
 
 
     return
