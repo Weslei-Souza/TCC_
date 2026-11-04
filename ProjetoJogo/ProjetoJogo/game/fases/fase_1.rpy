@@ -303,16 +303,15 @@ screen mapa_fase_1:
                 ypos 500
 
                 action Hide("mapa_atual")
-
+                
 # ============================================================
 # ENCONTRO COM NPC - FASE 1
 # ============================================================
 
 label fase_1_encontro_npc:
 
-    # Marca imediatamente o encontro como realizado
-    # para impedir que ele seja disparado novamente
-    # ao revisitar a Ilha 3.
+    # Impede que o encontro tutorial aconteça novamente
+    # nesta mesma execução da fase.
 
     $ encontro_npc_fase1_realizado = True
 
@@ -321,28 +320,56 @@ label fase_1_encontro_npc:
 
 
     # ========================================================
-    # INICIA O SISTEMA GERAL DO NPC
+    # INICIA O ENCONTRO
     # ========================================================
 
     call iniciar_encontro_npc
 
+
     # ========================================================
-    # INTRODUÇÃO DO NÁUFRAGO
+    # INTRODUÇÃO
     # ========================================================
 
     naufrago "Ei! Vocês aí!"
 
-
     naufrago "Não esperava encontrar outro navio por aqui."
 
 
-    # Por enquanto ainda não existem escolhas.
-    #
-    # Na próxima etapa entraremos aqui com:
-    #
-    # - opções de diálogo;
-    # - impactos positivos/negativos;
-    # - atualização da Disposição.
+    # ========================================================
+    # PRIMEIRA INTERAÇÃO
+    # ========================================================
+
+    call interacao_npc_inicial
+
+    $ resultado_interacao = _return
+
+
+    # ========================================================
+    # SEGUNDA INTERAÇÃO
+    # ========================================================
+
+    # Se o jogador não jogou o Náufrago ao mar,
+    # o encontro continua normalmente.
+
+    if resultado_interacao != "encerrar":
+
+        # ----------------------------------------------------
+        # FUTURO
+        # ----------------------------------------------------
+        #
+        # Aqui será inserido o pedido de ajuda ao NPC:
+        #
+        # Necessidade de Assistência
+        # +
+        # Disposição do NPC
+        # ↓
+        # FUZZY
+        # ↓
+        # Dica
+        #
+        # ----------------------------------------------------
+
+        call interacao_npc_despedida
 
 
     # ========================================================

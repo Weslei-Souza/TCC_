@@ -19,6 +19,25 @@
 
 
 # ============================================================
+# RESPOSTAS GERAIS - NPC NÃO FORNECE DICA
+# ============================================================
+
+# Estas respostas poderão ser utilizadas em qualquer fase
+# quando a saída fuzzy indicar:
+#
+# NENHUMA ASSISTÊNCIA.
+
+define RESPOSTAS_NPC_SEM_DICA = [
+
+    "Não vou te dizer nada.",
+
+    "Você vai ter que se virar.",
+
+    "Humpf, Descubra o caminho sozinho então.",
+
+]
+
+# ============================================================
 # INICIAR NOVO ENCONTRO
 # ============================================================
 
@@ -151,6 +170,175 @@ label encerrar_encontro_npc:
     $ disposicao_npc = None
 
     $ classificacao_npc = None
+
+
+    return
+
+# ============================================================
+# APLICAR ESCOLHA DO JOGADOR AO NPC
+# ============================================================
+
+label aplicar_escolha_npc(acao):
+
+    # Guarda o valor anterior para registro.
+
+    $ disposicao_anterior = disposicao_npc
+
+
+    # Aplica o impacto cadastrado em npc.py.
+
+    $ nova_disposicao, impacto_aplicado = npc.aplicar_interacao(
+        disposicao_npc,
+        acao
+    )
+
+
+    # Atualiza a disposição atual.
+
+    $ disposicao_npc = nova_disposicao
+
+
+    # Atualiza também a classificação narrativa interna.
+
+    $ classificacao_npc = npc.classificar_disposicao_narrativa(
+        disposicao_npc
+    )
+
+
+    # ========================================================
+    # REGISTRO DA INTERAÇÃO
+    # ========================================================
+
+    $ registro_interacao = {
+
+        "encontro": contador_encontros_npc,
+
+        "fase": fase_atual,
+
+        "estado": estado_atual,
+
+        "acao": acao,
+
+        "impacto": impacto_aplicado,
+
+        "disposicao_anterior": disposicao_anterior,
+
+        "disposicao_posterior": disposicao_npc,
+    }
+
+
+    $ historico_interacoes = historico_interacoes + [
+        registro_interacao
+    ]
+
+    "DEBUG - Ação: [acao]"
+    "DEBUG - Impacto: [impacto_aplicado]"
+    "DEBUG - Antes: [disposicao_anterior]"
+    "DEBUG - Depois: [disposicao_npc]"
+
+
+    return
+
+# ============================================================
+# PRIMEIRA INTERAÇÃO COM O NÁUFRAGO
+# ============================================================
+
+label interacao_npc_inicial:
+
+    naufrago "Estou aqui há horas."
+
+    naufrago "Vocês têm água ou alguma coisa para comer?"
+
+
+    menu:
+
+        "Ajudar o Náufrago":
+
+            call aplicar_escolha_npc(
+                "ajudar"
+            )
+
+            naufrago "Obrigado. Isso vai me ajudar bastante."
+
+            return "continuar"
+
+
+        "Não ajudar":
+
+            call aplicar_escolha_npc(
+                "nao_ajudar"
+            )
+
+            naufrago "Entendi... achei que vocês poderiam ajudar."
+
+            return "continuar"
+
+
+        "Jogá-lo ao mar":
+
+            call aplicar_escolha_npc(
+                "jogar_ao_mar"
+            )
+
+            naufrago "Ei! O que você está fazendo?!"
+
+            "Você empurra o Náufrago para o mar."
+
+            return "encerrar"
+
+
+# ============================================================
+# SEGUNDA INTERAÇÃO COM O NÁUFRAGO
+# ============================================================
+
+label interacao_npc_despedida:
+
+    naufrago "Bom... acho que vocês devem continuar viagem."
+
+
+    menu:
+
+        "Se despedir educadamente":
+
+            call aplicar_escolha_npc(
+                "despedir_educadamente"
+            )
+
+            naufrago "Boa sorte na viagem, capitão."
+
+
+        "Insultar":
+
+            call aplicar_escolha_npc(
+                "insultar"
+            )
+
+            naufrago "Não precisava falar assim."
+
+
+        "Ignorar":
+
+            call aplicar_escolha_npc(
+                "ignorar"
+            )
+
+            "Você simplesmente vira as costas e retorna ao navio."
+
+
+    return
+
+# ============================================================
+# NPC RECUSA FORNECER DICA
+# ============================================================
+
+label npc_recusar_dica:
+
+    $ resposta_sem_dica = renpy.random.choice(
+        RESPOSTAS_NPC_SEM_DICA
+    )
+
+
+    naufrago "[resposta_sem_dica]"
 
 
     return
