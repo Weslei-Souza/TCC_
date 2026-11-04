@@ -1,44 +1,55 @@
-# ============================================================
+# 
 # AÇÕES GERAIS DO JOGO
-# ============================================================
 
 
 # ============================================================
+# ATUALIZAR NECESSIDADE DE ASSISTÊNCIA
+# ============================================================
+
+label atualizar_necessidade_assistencia:
+
+    # Obtém os limites definidos especificamente
+    # para a fase atual.
+
+    $ limites_assistencia = configuracao_automato.get(
+        "limites_assistencia",
+        {}
+    )
+
+
+    # Calcula o índice atual entre 0 e 100.
+
+    $ necessidade_assistencia = jogador.calcular_necessidade_assistencia(
+        numero_resets,
+        dicas_pedidas,
+        estados_repetidos,
+        armadilhas_atingidas,
+        limites_assistencia
+    )
+
+    "DEBUG - Necessidade de Assistência: [necessidade_assistencia]"
+
+    return
+
+#############
 # REINICIAR FASE
-# ============================================================
+
 
 label reiniciar_fase:
 
-    # --------------------------------------------------------
-    # ENCERRA A TENTATIVA ATUAL
-    # --------------------------------------------------------
-
-    # Um reinício significa que a tentativa atual terminou
-    # e uma nova tentativa começou.
-
+    # Registra o reinício.
     $ numero_resets += 1
 
-    $ numero_tentativas += 1
+    #atualiza o indice de necessidade 
+    call atualizar_necessidade_assistencia 
 
-
-    # --------------------------------------------------------
-    # VOLTA AO ESTADO INICIAL
-    # --------------------------------------------------------
-
+    #retorna ao estado inicial 
     $ estado_atual = automato.estado_inicial(
         configuracao_automato
     )
 
 
-    # --------------------------------------------------------
-    # REINICIA O PERCURSO ATUAL
-    # --------------------------------------------------------
-
-    # As métricas acumuladas da fase NÃO são apagadas.
-    #
-    # Apenas o percurso da nova tentativa começa novamente
-    # no estado inicial.
-
+    # O percurso atual começa novamente no estado inicial.
     $ historico_estados = [estado_atual]
 
 

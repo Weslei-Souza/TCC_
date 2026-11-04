@@ -18,7 +18,6 @@ init python:
 # PERSONAGENS
 # ============================================================
 
-define m = Character('Me', color="#c8c8ff")
 define navegador = Character('Navegador', color="#c8ffc8")
 
 
@@ -36,9 +35,6 @@ default configuracao_automato = None
 # MÉTRICAS DO JOGADOR
 # ============================================================
 
-# Número de ciclos de execução da fase.
-default numero_tentativas = 0
-
 # Quantidade de vezes que o jogador visitou
 # novamente um estado já percorrido.
 default estados_repetidos = 0
@@ -52,6 +48,10 @@ default numero_resets = 0
 # Quantidade de entradas em estados de armadilha.
 # Será utilizada apenas nas fases que possuírem armadilhas.
 default armadilhas_atingidas = 0
+
+# Valor calculado entre 0 e 100.
+# Será utilizado futuramente como entrada do sistema fuzzy.
+default necessidade_assistencia = 0.0
 
 
 # ============================================================
@@ -67,7 +67,6 @@ default historico_interacoes = []
 # ============================================================
 
 default dicas_disponiveis = []
-default ultima_dica = None
 
 
 # ============================================================
@@ -133,12 +132,12 @@ label start:
 
     # A primeira tentativa começa no momento em que
     # o jogador inicia a fase.
-    $ numero_tentativas = 1
 
     $ estados_repetidos = 0
     $ dicas_pedidas = 0
     $ numero_resets = 0
     $ armadilhas_atingidas = 0
+    $ necessidade_assistencia = 0.0
 
 
     # ========================================================

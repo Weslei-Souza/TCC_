@@ -400,6 +400,15 @@ screen main_menu():
                 xalign 0.5
 
                 action Start()
+            
+
+            textbutton "Como Jogar":
+
+                style "rota_button"
+
+                xalign 0.5
+
+                action Show("como_jogar")
 
 
             textbutton "Sair":
@@ -1653,56 +1662,22 @@ style slider_slider:
     variant "small"
     xsize 600
 
-
-
-
-
-
-
-#----------------------------------------------------------------
-#MENU ESCOLHA DE ROTA
-screen escolha_rota(nome_ilha, fala_npc, texto_a, texto_b):
-
-    modal True
-
-    frame:
-        xalign 0.5
-        yalign 0.5
-
-        hbox:
-            spacing 80
-
-            # COLUNA ESQUERDA
-            frame:
-                xsize 500
-                ysize 500
-
-                vbox:
-                    spacing 20
-
-                    text nome_ilha
-                    text fala_npc
-
-                    # Futuramente:
-                    # add "ch navegador"
-
-
-            # COLUNA DIREITA
-            frame:
-                xsize 400
-                ysize 500
-
-                vbox:
-                    spacing 25
-
-                    text "Escolha uma rota:"
-
-                    textbutton texto_a:
-                        action Return("A")
-
-                    textbutton texto_b:
-                        action Return("B")
-
+#————————————————————————————————————————————
+#————————————————————————————————————————————
+#————————————————————————————————————————————
+#————————————————————————————————————————————
+#————————————————————————————————————————————
+#————————————————————————————————————————————
+#————————————————————————————————————————————
+#————————————————————————————————————————————
+#————————————————————————————————————————————
+#————————————————————————————————————————————
+#————————————————————————————————————————————
+#————————————————————————————————————————————
+#————————————————————————————————————————————
+#————————————————————————————————————————————
+#————————————————————————————————————————————
+#————————————————————————————————————————————
 #MENU JOGO
 screen menu_modo_jogo():
 
@@ -1762,13 +1737,6 @@ screen menu_modo_jogo():
 
             null height 20
 
-
-            textbutton "Como jogar":
-
-                style "rota_button"
-                xalign 0.5
-
-                action Show("como_jogar")
 
 #MENU COMO JOGAR
 screen como_jogar():
@@ -1862,7 +1830,7 @@ As dicas disponíveis dependem da fase atual.
                     text """
 REINICIAR
 
-O botão Reiniciar encerra a tentativa atual e inicia uma nova tentativa a partir da primeira ilha.
+O botão Reiniciar retorna o jogador à primeira ilha da fase e inicia novamente o percurso.
 """
 
 

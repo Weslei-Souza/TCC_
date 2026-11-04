@@ -8,7 +8,7 @@ label modo_navegacao:
 
 
     # ========================================================
-    # VERIFICA SE O ESTADO ATUAL É FINAL
+    # VERIFICA SE O ESTADO ATUAL JÁ É FINAL
     # ========================================================
 
     if automato.eh_final(
@@ -94,16 +94,8 @@ label modo_navegacao:
 
         jump modo_navegacao
 
-
+    
     elif simbolo == "__MENU__":
-
-        # A tentativa atual é encerrada por abandono.
-        #
-        # Não incrementamos numero_tentativas aqui porque
-        # esta tentativa já foi contabilizada quando começou.
-        #
-        # Como nenhuma nova tentativa começa, apenas
-        # encerramos a execução da partida.
 
         return
 
@@ -131,22 +123,26 @@ label modo_navegacao:
     # ========================================================
 
     $ novo_historico, novas_repeticoes = jogador.registrar_percurso(
-        historico_estados,
-        [proximo_estado]
+    historico_estados,
+    [proximo_estado]
     )
 
 
     $ historico_estados = novo_historico
-
     $ estados_repetidos += novas_repeticoes
 
 
+    call atualizar_necessidade_assistencia
+
+
     # ========================================================
-    # ATUALIZA O ESTADO
+    # ATUALIZA O ESTADO DA PARTIDA
     # ========================================================
 
     $ estado_atual = proximo_estado
 
+
+    
 
     jump modo_navegacao
 
@@ -162,7 +158,7 @@ label modo_rota:
 
 
     # ========================================================
-    # VERIFICA SE O ESTADO ATUAL É FINAL
+    # VERIFICA SE O ESTADO ATUAL JÁ É FINAL
     # ========================================================
 
     if automato.eh_final(
@@ -209,22 +205,19 @@ label modo_rota:
         jump modo_rota
 
 
-    elif entrada_jogador == "__MENU__":
-
-        # Encerra a tentativa atual por abandono.
+    elif simbolo == "__MENU__":
 
         return
 
-
     # ========================================================
-    # TRATA A SEQUÊNCIA
+    # TRATA A SEQUÊNCIA INFORMADA
     # ========================================================
 
     $ sequencia = entrada_jogador.strip().upper()
 
 
     # ========================================================
-    # PROCESSA A SEQUÊNCIA
+    # PROCESSA A SEQUÊNCIA NO AUTÔMATO
     # ========================================================
 
     $ novo_estado, caminho, erro = automato.processar_sequencia(
@@ -234,34 +227,36 @@ label modo_rota:
     )
 
 
-    # Cria uma representação textual do percurso.
+    # Cria uma versão textual para apresentar na tela.
 
     $ percurso = " -> ".join(caminho)
 
 
-    # O primeiro elemento já era o estado atual,
-    # então não deve ser registrado novamente.
+    # O primeiro elemento é o estado em que o jogador
+    # já estava antes de iniciar a sequência.
 
     $ estados_visitados = caminho[1:]
 
 
     # ========================================================
-    # REGISTRA A NAVEGAÇÃO
+    # REGISTRA A NAVEGAÇÃO DO JOGADOR
     # ========================================================
 
     $ novo_historico, novas_repeticoes = jogador.registrar_percurso(
-        historico_estados,
-        estados_visitados
+    historico_estados,
+    estados_visitados
     )
 
 
     $ historico_estados = novo_historico
-
     $ estados_repetidos += novas_repeticoes
 
 
+    call atualizar_necessidade_assistencia
+
+
     # ========================================================
-    # ATUALIZA O ESTADO
+    # ATUALIZA O ESTADO ATUAL
     # ========================================================
 
     $ estado_atual = novo_estado
@@ -275,9 +270,8 @@ label modo_rota:
 
     "Percurso realizado: [percurso]"
 
-
     # ========================================================
-    # TRATA ERROS
+    # TRATA POSSÍVEIS ERROS
     # ========================================================
 
     if erro:
@@ -318,12 +312,6 @@ label vitoria:
     navegador "Capitão, encontramos nosso destino!"
 
     "Você concluiu a Fase [fase_atual]."
-
-
-    # A tentativa atual foi encerrada com sucesso.
-    #
-    # Não incrementamos numero_tentativas porque ela já
-    # foi contabilizada quando começou.
 
 
     # ========================================================

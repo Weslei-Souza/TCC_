@@ -35,6 +35,27 @@ ESTADOS_FINAIS = {
     "qf"
 }
 
+# ============================================================
+# LIMITES DAS MÉTRICAS DE ASSISTÊNCIA
+# ============================================================
+
+# Estes valores representam os pontos de saturação
+# utilizados na normalização das métricas desta fase.
+#
+# São valores iniciais de projeto e poderão ser ajustados
+# posteriormente por meio dos testes de simulação.
+
+LIMITES_ASSISTENCIA = {
+
+    "reinicios": 3,
+
+    "dicas_pedidas": 3,
+
+    "estados_repetidos": 3,
+
+    # A Fase 1 não possui estados de armadilha.
+    "armadilhas": None,
+}
 
 # ============================================================
 # NOMES DOS ESTADOS
@@ -101,4 +122,6 @@ CONFIGURACAO = {
     "nomes_estados": NOMES_ESTADOS,
 
     "transicoes": TRANSICOES,
+
+    "limites_assistencia": LIMITES_ASSISTENCIA,
 }
