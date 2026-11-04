@@ -6,18 +6,6 @@ label modo_navegacao:
 
     call exibir_ilha_atual
 
-    $ teste_disposicao = npc.aplicar_impacto(40, 20)
-
-    "DEBUG: [teste_disposicao]"
-
-    $ teste_disposicao = npc.aplicar_impacto(10, -30)
-
-    "DEBUG: [teste_disposicao]"
-
-    $ teste_classificacao = npc.classificar_disposicao_narrativa(80)
-
-    "DEBUG: [teste_classificacao]"
-
 
     # ========================================================
     # VERIFICA SE O ESTADO ATUAL JÁ É FINAL
@@ -217,7 +205,7 @@ label modo_rota:
         jump modo_rota
 
 
-    elif simbolo == "__MENU__":
+    elif entrada_jogador == "__MENU__":
 
         return
 

@@ -326,11 +326,6 @@ label fase_1_encontro_npc:
 
     call iniciar_encontro_npc
 
-    "DEBUG - Disposição inicial: [disposicao_npc]"
-
-    "DEBUG - Classificação: [classificacao_npc]"
-
-
     # ========================================================
     # INTRODUÇÃO DO NÁUFRAGO
     # ========================================================
