@@ -1058,3 +1058,454 @@ Foram levantadas questões para discussão:
 - Os impactos das interações serão fixos ou acumulativos?
 - Deve existir decaimento do estado afetivo?
 - Faz sentido utilizar três conjuntos fuzzy por
+
+# Diário de Desenvolvimento — Atualização de 31/10 a 04/11/2026
+
+## 31/10/2026 — Consolidação da estrutura e preparação das próximas implementações
+
+O desenvolvimento permaneceu concentrado na consolidação da estrutura já construída para o protótipo. Os testes realizados anteriormente sobre histórico de estados, estados repetidos e navegação nos dois modos continuaram apresentando resultados coerentes. O fluxo entre Ren'Py e os módulos Python permaneceu funcional tanto no modo de navegação passo a passo quanto no modo de planejamento de rota.
+
+A organização modular do projeto foi mantida, separando a lógica geral do autômato, o conteúdo específico das fases e os elementos de interface. O objetivo dessa separação passou a ser permitir que, futuramente, novas fases pudessem utilizar o mesmo motor lógico e alterar apenas sua configuração específica.
+
+Também foi mantido o uso do GitHub Desktop para controle de versão, com commits progressivos das funcionalidades implementadas.
+
+Neste momento, o próximo foco passou a ser a definição das variáveis utilizadas para representar o comportamento do jogador e o estado interno dos NPCs, visando preparar a integração posterior com o sistema fuzzy.
+
+---
+
+## 01/11/2026 — Manutenção das decisões arquiteturais
+
+Não houve alteração estrutural significativa no protótipo neste período. Foram mantidas como prioridades a estabilização do sistema atual, a definição das métricas do jogador e a preparação da futura integração entre Necessidade de Assistência, estado interno do NPC e lógica fuzzy.
+
+Permaneceu a decisão de evitar expansão desnecessária do escopo visual ou de mecânicas antes da conclusão do núcleo computacional.
+
+---
+
+## 02/11/2026 — Reunião de orientação e redefinição do MVP
+
+A reunião com a orientadora foi utilizada para revisar o escopo do projeto e reduzir funcionalidades que poderiam aumentar excessivamente o tempo de desenvolvimento.
+
+Foi reafirmado que o trabalho deve priorizar um protótipo funcional, com foco na contribuição computacional central, e não em um jogo completo ou visualmente sofisticado.
+
+O núcleo mínimo definido para o protótipo passou a incluir:
+
+- representação de autômatos e navegação entre estados;
+- interação com NPCs;
+- estado interno do NPC;
+- cálculo de Necessidade de Assistência;
+- sistema fuzzy;
+- assistência adaptativa;
+- progressão simples entre fases;
+- menus e controles básicos.
+
+Também foi reforçada a decisão de utilizar somente autômatos determinísticos no TCC. A implementação de autômatos não determinísticos foi reservada para trabalhos futuros.
+
+A interface lúdica também foi separada da representação formal. Os identificadores internos do autômato, como `q0`, `q1` e `qf`, continuam sendo utilizados na implementação, mas deixaram de ser apresentados diretamente ao jogador. Na interface são utilizados nomes como Ilha 1, Ilha 2 e Ilha Final.
+
+Foi consolidada a definição operacional de tentativa:
+
+“Uma tentativa é um ciclo de execução da fase iniciado no estado inicial e encerrado por conclusão, reinício ou abandono da fase.”
+
+Apesar dessa definição permanecer documentada, decidiu-se posteriormente que o número de tentativas não entraria no cálculo da Necessidade de Assistência, evitando duplicidade com a métrica de reinícios.
+
+Também foi consolidada a justificativa metodológica inicial para os pesos das métricas:
+
+“Os pesos foram definidos a priori com base na interpretação funcional de cada métrica no contexto da tarefa, atribuindo maior influência a comportamentos que representam interrupção ou incapacidade de prosseguir autonomamente.”
+
+---
+
+## 03/11/2026 — Implementação da Necessidade de Assistência
+
+Foi implementado o cálculo da Necessidade de Assistência do jogador no módulo `logica/jogador.py`.
+
+As métricas utilizadas foram definidas como:
+
+- Reinícios: peso 0,35;
+- Dicas pedidas: peso 0,25;
+- Estados repetidos: peso 0,15;
+- Armadilhas: peso 0,25.
+
+O número de tentativas foi retirado do cálculo. A decisão foi tomada porque cada reinício já representa o encerramento de uma tentativa e o início de outra. Utilizar simultaneamente reinícios e número de tentativas poderia representar uma dupla valorização do mesmo comportamento.
+
+Cada métrica passou a ser normalizada para o intervalo entre 0 e 1 por meio de um limite de referência específico da fase.
+
+A normalização utilizada foi:
+
+`n_i = min(valor_observado / limite_de_referencia, 1)`
+
+A Necessidade de Assistência passou a ser calculada por média ponderada:
+
+`NA = 100 × [Σ(w_i × n_i) / Σ(w_i ativos)]`
+
+Métricas inexistentes em determinada fase não participam do cálculo. Dessa forma, seus pesos também são retirados do denominador.
+
+Na configuração provisória da Fase 1 foram definidos os seguintes limites:
+
+Reinícios = 3  
+Dicas pedidas = 3  
+Estados repetidos = 3  
+Armadilhas = não aplicável
+
+Os limites foram tratados como parâmetros iniciais de projeto e não como valores empiricamente validados. A intenção é posteriormente verificar sua adequação por meio de cenários simulados.
+
+Foram realizados testes manuais do cálculo. Entre os resultados confirmados:
+
+- uma dica solicitada produziu aproximadamente 11,11;
+- três dicas produziram aproximadamente 33,33;
+- três reinícios produziram aproximadamente 46,67;
+- uma ocorrência de cada métrica ativa produziu aproximadamente 33,33;
+- saturação de todas as métricas ativas produziu 100.
+
+Os resultados obtidos coincidiram com os valores calculados manualmente.
+
+Durante essa etapa também foram eliminados resíduos de versões anteriores, como a métrica de retornos, referências antigas a `pedidos_ajuda` e chamadas que ainda esperavam três valores de retorno da função `registrar_percurso`.
+
+---
+
+## 04/11/2026 — Implementação do NPC e da Disposição Afetiva
+
+Foi iniciada e concluída a primeira implementação funcional do sistema de NPC.
+
+O módulo `logica/npc.py` passou a controlar uma variável contínua denominada, no código, Disposição do NPC e, na escrita acadêmica, Disposição Afetiva.
+
+A variável utiliza o intervalo de 0 a 100.
+
+Cada novo encontro recebe um valor inicial aleatório dentro dessa escala. A decisão de não utilizar sempre o valor 50 teve como objetivo permitir que encontros distintos comecem em condições diferentes e produzam comportamentos variados.
+
+A geração do valor inicial é realizada pelo Ren'Py, enquanto `npc.py` permanece responsável pelas operações matemáticas sobre a variável.
+
+Foi criada uma classificação narrativa simples para permitir ao Navegador fornecer ao jogador uma percepção aproximada do NPC antes da interação:
+
+0 a 33 → hostil  
+34 a 66 → neutro  
+67 a 100 → amigável
+
+Essa classificação é utilizada apenas para a narrativa e não representa a fuzzificação propriamente dita.
+
+O encontro tutorial da Fase 1 foi configurado para ocorrer de maneira fixa na Ilha 3. Essa decisão foi utilizada apenas na versão atual da fase, garantindo que o jogador encontre o NPC antes de chegar à Ilha Final.
+
+Foi criado o arquivo `encontros_npc.rpy`, responsável pelo controle geral dos encontros.
+
+O sistema passou a registrar informações como:
+
+- número do encontro;
+- fase;
+- estado em que ocorreu;
+- disposição inicial;
+- classificação narrativa;
+- ações realizadas;
+- impacto das ações;
+- disposição anterior;
+- disposição posterior.
+
+### Interações e impactos na Disposição
+
+Foram implementadas duas etapas de interação antes da possibilidade de solicitar ajuda.
+
+Na primeira etapa:
+
+Ajudar o Náufrago → +20  
+Não ajudar → -10  
+Jogar o Náufrago ao mar → -40 e encerramento imediato do encontro
+
+Na segunda etapa:
+
+Responder/conversar educadamente → +10  
+Insultar → -20  
+Ignorar → -5
+
+Os impactos foram definidos como valores fixos para manter interpretabilidade, reprodutibilidade e facilidade de validação.
+
+A variável é limitada ao intervalo 0–100. Portanto, valores resultantes inferiores a zero são convertidos para zero e valores superiores a 100 são limitados a 100.
+
+Somente após essas interações o jogador recebe a opção de:
+
+“Perguntar sobre as ilhas”
+
+ou
+
+“Ir embora”.
+
+A escolha “Ir embora” encerra a conversa sem alterar a métrica de dicas.
+
+Ao selecionar “Perguntar sobre as ilhas”, ocorre o seguinte fluxo:
+
+`dicas_pedidas += 1`
+
+→ recálculo da Necessidade de Assistência
+
+→ execução do sistema fuzzy
+
+→ escolha do nível de assistência
+
+→ resposta do NPC.
+
+---
+
+## 04/11/2026 — Implementação do sistema fuzzy
+
+O arquivo `logica/fuzzy.py`, anteriormente utilizado como placeholder, passou a conter o sistema de inferência fuzzy do protótipo.
+
+Foram definidas duas entradas.
+
+### Entrada 1 — Necessidade de Assistência
+
+Universo de discurso: 0–100.
+
+Conjuntos linguísticos:
+
+Baixa  
+Média  
+Alta
+
+### Entrada 2 — Disposição Afetiva
+
+Universo de discurso: 0–100.
+
+Conjuntos linguísticos:
+
+Hostil  
+Neutro  
+Amigável
+
+### Saída — Nível de Assistência
+
+Universo de discurso: 0–100.
+
+Conjuntos linguísticos:
+
+Nenhuma  
+Genérica  
+Intermediária  
+Específica
+
+Foram utilizadas funções de pertinência triangulares e trapezoidais.
+
+O sistema atual utiliza inferência do tipo Mamdani.
+
+Na execução das regras:
+
+- o operador AND utiliza o mínimo;
+- regras que produzem a mesma saída são agregadas pelo máximo;
+- os conjuntos de saída são cortados de acordo com o grau de ativação;
+- a agregação final utiliza o máximo;
+- a defuzzificação utiliza o método do centroide.
+
+Após a defuzzificação, o valor crisp é novamente avaliado nos conjuntos de saída. A categoria que possuir maior grau de pertinência é utilizada como decisão concreta do jogo.
+
+Em caso de empate, é priorizada a categoria de menor assistência.
+
+A base inicial possui nove regras, combinando os três níveis de Necessidade de Assistência com os três níveis de Disposição Afetiva.
+
+A base de regras atual ainda será revisada posteriormente e deverá ser documentada explicitamente no formato linguístico SE–ENTÃO.
+
+Foi identificado que regras futuras precisam preservar conscientemente o papel das duas entradas. Por exemplo, uma regra direta do tipo “SE a Necessidade for alta ENTÃO a dica será específica” poderia reduzir ou eliminar a influência da Disposição do NPC nessa região. Essa decisão deverá ser avaliada posteriormente.
+
+---
+
+## 04/11/2026 — Integração do fuzzy com as dicas
+
+O sistema fuzzy foi integrado ao fluxo real do NPC.
+
+As dicas da fase foram divididas em três bancos:
+
+`DICAS_GENERICAS_FASE_1`
+
+`DICAS_INTERMEDIARIAS_FASE_1`
+
+`DICAS_ESPECIFICAS_FASE_1`
+
+O botão comum “Dica” utiliza somente o banco de dicas genéricas.
+
+O NPC, por outro lado, utiliza a categoria produzida pelo sistema fuzzy.
+
+Quando a saída é:
+
+Nenhuma → o NPC utiliza uma frase padrão de recusa.
+
+Genérica → escolhe uma dica do conjunto genérico.
+
+Intermediária → escolhe uma dica do conjunto intermediário.
+
+Específica → escolhe uma dica do conjunto específico.
+
+Foram também cadastradas respostas reutilizáveis para ausência de assistência, como:
+
+“Não vou te dizer nada.”
+
+“Você vai ter que se virar.”
+
+“Humpf, descubra o caminho sozinho então.”
+
+O fuzzy deixou de ser executado automaticamente no encontro. Ele passou a ser acionado somente quando o jogador efetivamente seleciona “Perguntar sobre as ilhas”.
+
+---
+
+## 04/11/2026 — Correções de apresentação
+
+Durante os testes foi identificado que alguns identificadores internos dos estados ainda apareciam no modo Planejamento de Rota, por exemplo:
+
+`q0`, `q1`, `q2`, `qf`.
+
+Foi criada uma conversão entre o caminho interno do autômato e os nomes utilizados na interface.
+
+Internamente:
+
+`q0 → q2 → qf`
+
+Visualmente:
+
+`Ilha 1 → Ilha 3 → Ilha Final`
+
+Os identificadores formais continuam sendo utilizados pelo motor do autômato, pelo histórico e pelos cálculos. Apenas a camada de apresentação utiliza os nomes das ilhas.
+
+Mensagens de símbolos inválidos também foram ajustadas para apresentar o nome da ilha em vez do identificador interno do estado.
+
+---
+
+## 04/11/2026 — Bateria automatizada de testes
+
+Foi criada uma estrutura específica de testes composta por:
+
+`game/logica/testes_sistema.py`
+
+e
+
+`game/testes.rpy`.
+
+A bateria automatizada passou a testar:
+
+- normalização das métricas;
+- cálculo da Necessidade de Assistência;
+- saturação das métricas;
+- monotonicidade da Necessidade de Assistência;
+- histórico de estados;
+- estados repetidos;
+- limites da Disposição;
+- impactos de todas as interações;
+- classificação narrativa do NPC;
+- validade das funções de pertinência;
+- cobertura do universo fuzzy;
+- casos de referência do sistema fuzzy;
+- grade completa de combinações fuzzy;
+- determinismo do autômato;
+- sequências válidas;
+- símbolos inválidos.
+
+A grade fuzzy percorreu todas as combinações inteiras possíveis das duas entradas:
+
+101 valores de Necessidade × 101 valores de Disposição = 10.201 combinações.
+
+Resultado final da bateria:
+
+- 43 testes aprovados;
+- 0 falhas automáticas.
+
+Também foi executado um diagnóstico de monotonicidade do valor crisp.
+
+Foram observadas:
+
+- 630 pequenas quedas numéricas ao aumentar a Necessidade de Assistência;
+- 630 pequenas quedas numéricas ao aumentar a Disposição.
+
+Essas quedas não foram classificadas automaticamente como erros, pois podem ocorrer devido à geometria resultante da sobreposição das funções de pertinência, da inferência Mamdani e da defuzzificação pelo centroide.
+
+Foi então implementado um segundo diagnóstico mais importante para o comportamento concreto do jogo: verificar se essas oscilações poderiam provocar regressão na categoria de assistência.
+
+Resultado:
+
+- regressões de categoria ao aumentar a Necessidade: 0;
+- regressões de categoria ao aumentar a Disposição: 0.
+
+Portanto, apesar das pequenas oscilações no valor crisp, nenhuma delas fez o sistema reduzir o nível concreto de assistência.
+
+Não foi observado comportamento como:
+
+Específica → Intermediária
+
+Intermediária → Genérica
+
+Genérica → Nenhuma
+
+como consequência do aumento de uma das entradas.
+
+Com esse resultado, a implementação atual do núcleo foi considerada suficientemente estável para prosseguir para a próxima etapa de desenvolvimento.
+
+---
+
+# Estado do projeto ao final desta atualização
+
+O protótipo possui atualmente um fluxo completo entre comportamento do jogador, estado interno do NPC e assistência adaptativa:
+
+Navegação no autômato  
+→ coleta das métricas do jogador  
+→ cálculo da Necessidade de Assistência  
+→ encontro com NPC  
+→ geração da Disposição Afetiva  
+→ interações alteram a Disposição  
+→ jogador decide se solicita ajuda  
+→ Necessidade é atualizada  
+→ sistema fuzzy combina Necessidade + Disposição  
+→ nível de assistência é calculado  
+→ NPC recusa ou fornece dica genérica, intermediária ou específica.
+
+O núcleo computacional principal encontra-se funcional.
+
+---
+
+# Próximas etapas definidas
+
+A próxima etapa será construir uma arquitetura genérica para as fases posteriores.
+
+O objetivo será permitir que cada fase seja definida principalmente por sua configuração, evitando replicação da lógica já implementada.
+
+Entre os parâmetros que deverão variar por fase estão:
+
+- autômato;
+- textos introdutórios;
+- bancos de dicas;
+- limites de normalização;
+- existência de armadilhas;
+- chance de encontro com NPC;
+- quantidade possível de encontros;
+- mapa;
+- elementos visuais específicos.
+
+Após a arquitetura genérica, serão modelados os autômatos das sete fases.
+
+A progressão deverá introduzir gradualmente novos comportamentos, utilizando representações lúdicas.
+
+Exemplos já considerados incluem:
+
+mais de um caminho possível até o destino;
+
+redemoinhos representando loops e retornos;
+
+prisão representando estados de armadilha;
+
+combinações progressivamente mais complexas nas fases posteriores.
+
+A Fase 1 atual poderá ser remodelada durante essa etapa.
+
+Somente depois da definição estrutural das fases serão fixados parâmetros como chance de encontro com NPC, número máximo de encontros, limites de métricas e conteúdo definitivo das dicas.
+
+Após a implementação das fases, serão realizados ajustes visuais e de identidade, incluindo backgrounds, botões, mapas específicos de cada fase, nome, ícone e símbolo do jogo.
+
+Por fim será realizada uma nova bateria de testes e um teste final de integração do protótipo completo.
+
+---
+
+# Trabalhos futuros já reservados
+
+Foram registrados como possibilidades fora do escopo atual:
+
+- diferentes tipos de NPC;
+- associação de NPCs mais hostis a categorias narrativas específicas, como piratas rivais ou integrantes da Marinha;
+- associação de NPCs amigáveis a aliados, conhecidos ou grupos parceiros;
+- memória persistente dos NPCs sobre encontros anteriores, eventos e ajudas;
+- maior quantidade de opções de diálogo e interação;
+- múltiplas dimensões afetivas;
+- autômatos não determinísticos;
+- seleção probabilística de categorias fuzzy;
+- avaliação com usuários/alunos;
+- animações e maior refinamento visual.
