@@ -167,9 +167,6 @@ label start:
 
     $ historico_estados = [estado_atual]
 
-    # A primeira tentativa começa no momento em que
-    # o jogador inicia a fase.
-
     $ estados_repetidos = 0
     $ dicas_pedidas = 0
     $ numero_resets = 0

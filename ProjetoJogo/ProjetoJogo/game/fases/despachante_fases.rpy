@@ -98,6 +98,52 @@ label pedir_dica_atual:
 
 
 
+# ============================================================
+# DICA DO NPC DA FASE ATUAL
+# ============================================================
+
+label fornecer_dica_npc_atual:
+
+
+    if fase_atual == 1:
+
+        call fase_1_fornecer_dica_npc
+
+
+    elif fase_atual == 2:
+
+        naufrago "Ainda não tenho informações sobre esta fase."
+
+
+    elif fase_atual == 3:
+
+        naufrago "Ainda não tenho informações sobre esta fase."
+
+
+    elif fase_atual == 4:
+
+        naufrago "Ainda não tenho informações sobre esta fase."
+
+
+    elif fase_atual == 5:
+
+        naufrago "Ainda não tenho informações sobre esta fase."
+
+
+    elif fase_atual == 6:
+
+        naufrago "Ainda não tenho informações sobre esta fase."
+
+
+    elif fase_atual == 7:
+
+        naufrago "Ainda não tenho informações sobre esta fase."
+
+
+    return
+
+
+
 label exibir_ilha_atual:
 
 

@@ -46,6 +46,7 @@ label iniciar_encontro_npc:
     # Indica que existe um NPC ativo neste momento.
     $ npc_presente = True
 
+    # Um novo encontro não herda a última saída fuzzy.
     $ resultado_fuzzy = None
     $ valor_assistencia_fuzzy = None
     $ categoria_assistencia = None
@@ -214,6 +215,8 @@ label aplicar_escolha_npc(acao):
 
     $ registro_interacao = {
 
+        "tipo": "interacao",
+
         "encontro": contador_encontros_npc,
 
         "fase": fase_atual,
@@ -284,28 +287,27 @@ label interacao_npc_inicial:
 
             return "encerrar"
 
-
 # ============================================================
 # SEGUNDA INTERAÇÃO COM O NÁUFRAGO
 # ============================================================
 
-label interacao_npc_despedida:
+label interacao_npc_social:
 
-    naufrago "Bom... acho que vocês devem continuar viagem."
+    naufrago "Vocês parecem conhecer estas águas melhor do que eu."
 
 
     menu:
 
-        "Se despedir educadamente":
+        "Responder educadamente":
 
             call aplicar_escolha_npc(
-                "despedir_educadamente"
+                "conversar_educadamente"
             )
 
-            naufrago "Boa sorte na viagem, capitão."
+            naufrago "Pelo menos ainda existem pessoas educadas por aqui."
 
 
-        "Insultar":
+        "Insultá-lo":
 
             call aplicar_escolha_npc(
                 "insultar"
@@ -314,16 +316,18 @@ label interacao_npc_despedida:
             naufrago "Não precisava falar assim."
 
 
-        "Ignorar":
+        "Ignorá-lo":
 
             call aplicar_escolha_npc(
                 "ignorar"
             )
 
-            "Você simplesmente vira as costas e retorna ao navio."
+            "Você ignora o comentário do Náufrago."
 
 
     return
+
+
 
 # ============================================================
 # NPC RECUSA FORNECER DICA
@@ -366,6 +370,98 @@ label calcular_assistencia_npc:
     $ categoria_assistencia = resultado_fuzzy[
         "categoria"
     ]
+
+
+    return
+
+# ============================================================
+# SOLICITAR AJUDA AO NPC
+# ============================================================
+
+label solicitar_ajuda_npc:
+
+    # O jogador realizou uma nova solicitação de assistência.
+    #
+    # Essa solicitação entra na métrica Dicas Pedidas,
+    # independentemente de o NPC efetivamente ajudar.
+
+    $ dicas_pedidas += 1
+
+
+    # A nova solicitação altera a Necessidade de Assistência.
+    call atualizar_necessidade_assistencia
+
+
+    # Com a Necessidade atualizada e a Disposição atual
+    # do NPC, executamos o sistema fuzzy.
+    call calcular_assistencia_npc
+
+
+    # ========================================================
+    # REGISTRO PARA TESTES FUTUROS
+    # ========================================================
+
+    $ registro_assistencia = {
+
+        "tipo": "assistencia",
+
+        "encontro": contador_encontros_npc,
+
+        "fase": fase_atual,
+
+        "estado": estado_atual,
+
+        "necessidade_assistencia": necessidade_assistencia,
+
+        "disposicao_npc": disposicao_npc,
+
+        "valor_saida_fuzzy": valor_assistencia_fuzzy,
+
+        "categoria": categoria_assistencia,
+    }
+
+
+    $ historico_interacoes = historico_interacoes + [
+        registro_assistencia
+    ]
+
+
+    # ========================================================
+    # EXECUTA A RESPOSTA CONCRETA
+    # ========================================================
+
+    if categoria_assistencia == "nenhuma":
+
+        call npc_recusar_dica
+
+
+    else:
+
+        call fornecer_dica_npc_atual
+
+
+    return
+
+
+# ============================================================
+# DECIDIR SE VAI PEDIR AJUDA AO NPC
+# ============================================================
+
+label decidir_ajuda_npc:
+
+    naufrago "Bom... acho que vocês devem continuar a viagem."
+
+
+    menu:
+
+        "Perguntar sobre as ilhas":
+
+            call solicitar_ajuda_npc
+
+
+        "Ir embora":
+
+            naufrago "Tudo bem. Boa sorte então."
 
 
     return

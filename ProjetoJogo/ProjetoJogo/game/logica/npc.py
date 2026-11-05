@@ -38,7 +38,7 @@ IMPACTOS_INTERACOES = {
 
     "jogar_ao_mar": -40,
 
-    "despedir_educadamente": 10,
+    "conversar_educadamente": 10,
 
     "insultar": -20,
 

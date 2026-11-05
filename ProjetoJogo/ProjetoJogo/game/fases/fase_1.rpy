@@ -345,32 +345,31 @@ label fase_1_encontro_npc:
 
 
     # ========================================================
+    # JOGAR AO MAR ENCERRA O ENCONTRO
+    # ========================================================
+
+    if resultado_interacao == "encerrar":
+
+        call encerrar_encontro_npc
+
+        return
+
+
+    # ========================================================
     # SEGUNDA INTERAÇÃO
     # ========================================================
 
-    # Se o jogador não jogou o Náufrago ao mar,
-    # o encontro continua normalmente.
+    call interacao_npc_social
 
-    if resultado_interacao != "encerrar":
 
-        # ----------------------------------------------------
-        # FUTURO
-        # ----------------------------------------------------
-        #
-        # Aqui será inserido o pedido de ajuda ao NPC:
-        #
-        # Necessidade de Assistência
-        # +
-        # Disposição do NPC
-        # ↓
-        # FUZZY
-        # ↓
-        # Dica
-        #
-        # ----------------------------------------------------
+    # ========================================================
+    # DECISÃO FINAL
+    # ========================================================
 
-        
-        call interacao_npc_despedida
+    # Somente depois das interações o jogador decide
+    # se deseja perguntar sobre as ilhas.
+
+    call decidir_ajuda_npc
 
 
     # ========================================================
@@ -378,6 +377,62 @@ label fase_1_encontro_npc:
     # ========================================================
 
     call encerrar_encontro_npc
+
+
+    return
+
+# ============================================================
+# FORNECER DICA DO NPC - FASE 1
+# ============================================================
+
+label fase_1_fornecer_dica_npc:
+
+
+    # ========================================================
+    # DICA GENÉRICA
+    # ========================================================
+
+    if categoria_assistencia == "generica":
+
+        $ dica_npc = renpy.random.choice(
+            DICAS_GENERICAS_FASE_1
+        )
+
+
+    # ========================================================
+    # DICA INTERMEDIÁRIA
+    # ========================================================
+
+    elif categoria_assistencia == "intermediaria":
+
+        $ dica_npc = renpy.random.choice(
+            DICAS_INTERMEDIARIAS_FASE_1
+        )
+
+
+    # ========================================================
+    # DICA ESPECÍFICA
+    # ========================================================
+
+    elif categoria_assistencia == "especifica":
+
+        $ dica_npc = renpy.random.choice(
+            DICAS_ESPECIFICAS_FASE_1
+        )
+
+
+    # ========================================================
+    # PROTEÇÃO
+    # ========================================================
+
+    else:
+
+        call npc_recusar_dica
+
+        return
+
+
+    naufrago "[dica_npc]"
 
 
     return
