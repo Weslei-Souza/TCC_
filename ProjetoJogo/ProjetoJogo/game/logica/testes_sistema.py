@@ -575,6 +575,106 @@ def executar_todos_testes():
         )
     )
 
+    # ========================================================
+    # 10.1 DIAGNÓSTICO DE REGRESSÃO DAS CATEGORIAS
+    # ========================================================
+
+    ordem_categorias = {
+        "nenhuma": 0,
+        "generica": 1,
+        "intermediaria": 2,
+        "especifica": 3,
+    }
+
+
+    regressoes_categoria_necessidade = 0
+    regressoes_categoria_disposicao = 0
+
+
+    # --------------------------------------------------------
+    # AUMENTANDO A NECESSIDADE
+    # --------------------------------------------------------
+
+    for disposicao in range(0, 101):
+
+        categoria_anterior = None
+
+
+        for necessidade in range(0, 101):
+
+            resultado = fuzzy.calcular_assistencia(
+                necessidade,
+                disposicao
+            )
+
+            categoria_atual = resultado[
+                "categoria"
+            ]
+
+
+            if categoria_anterior is not None:
+
+                if (
+                    ordem_categorias[categoria_atual]
+                    <
+                    ordem_categorias[categoria_anterior]
+                ):
+
+                    regressoes_categoria_necessidade += 1
+
+
+            categoria_anterior = categoria_atual
+
+
+    # --------------------------------------------------------
+    # AUMENTANDO A DISPOSIÇÃO
+    # --------------------------------------------------------
+
+    for necessidade in range(0, 101):
+
+        categoria_anterior = None
+
+
+        for disposicao in range(0, 101):
+
+            resultado = fuzzy.calcular_assistencia(
+                necessidade,
+                disposicao
+            )
+
+            categoria_atual = resultado[
+                "categoria"
+            ]
+
+
+            if categoria_anterior is not None:
+
+                if (
+                    ordem_categorias[categoria_atual]
+                    <
+                    ordem_categorias[categoria_anterior]
+                ):
+
+                    regressoes_categoria_disposicao += 1
+
+
+            categoria_anterior = categoria_atual
+
+
+    diagnosticos.append(
+        (
+            "Regressões de categoria ao aumentar Necessidade: "
+            f"{regressoes_categoria_necessidade}"
+        )
+    )
+
+    diagnosticos.append(
+        (
+            "Regressões de categoria ao aumentar Disposição: "
+            f"{regressoes_categoria_disposicao}"
+        )
+    )
+
 
     # ========================================================
     # 11. AUTÔMATO DA FASE 1

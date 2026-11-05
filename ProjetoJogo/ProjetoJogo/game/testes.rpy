@@ -67,15 +67,14 @@ label executar_testes_sistema:
 
         "Diagnósticos do sistema fuzzy:"
 
+        python:
 
-        $ diagnostico_necessidade = resultado_testes["diagnosticos"][0]
+            for diagnostico in resultado_testes["diagnosticos"]:
 
-        $ diagnostico_disposicao = resultado_testes["diagnosticos"][1]
-
-
-        "[diagnostico_necessidade]"
-
-        "[diagnostico_disposicao]"
+                renpy.say(
+                    None,
+                    diagnostico
+                )
 
 
     return
