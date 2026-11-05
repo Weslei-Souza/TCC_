@@ -229,7 +229,15 @@ label modo_rota:
 
     # Cria uma versão textual para apresentar na tela.
 
-    $ percurso = " -> ".join(caminho)
+    $ caminho_exibicao = automato.nomes_caminho(
+    configuracao_automato,
+    caminho
+    )
+
+
+    $ percurso = " -> ".join(
+        caminho_exibicao
+    )
 
 
     # O primeiro elemento é o estado em que o jogador
@@ -267,8 +275,6 @@ label modo_rota:
     # ========================================================
 
     "Sequência informada: [sequencia]"
-
-    "Percurso realizado: [percurso]"
 
     # ========================================================
     # TRATA POSSÍVEIS ERROS

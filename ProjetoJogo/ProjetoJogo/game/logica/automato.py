@@ -23,6 +23,31 @@ def nome_estado(configuracao, estado):
         "Estado desconhecido"
     )
 
+# ============================================================
+# NOMES DE UM PERCURSO
+# ============================================================
+
+def nomes_caminho(configuracao, caminho):
+    """
+    Converte uma sequência de identificadores internos
+    de estados para seus nomes apresentados ao jogador.
+
+    Exemplo:
+
+    ["q0", "q2", "qf"]
+
+    torna-se:
+
+    ["Ilha 1", "Ilha 3", "Ilha Final"]
+    """
+
+    return [
+        nome_estado(
+            configuracao,
+            estado
+        )
+        for estado in caminho
+    ]
 
 # ============================================================
 # ESTADO FINAL
