@@ -8,22 +8,16 @@
 # DICAS
 # ============================================================
 
-define DICAS_GENERICAS_FASE_6
- = [
-    "Dica genérica da Fase 6
-    .",
+define DICAS_GENERICAS_FASE_6 = [
+    "Dica genérica da Fase 6.",
 ]
 
-define DICAS_INTERMEDIARIAS_FASE_6
- = [
-    "Dica intermediária da Fase 6
-    .",
+define DICAS_INTERMEDIARIAS_FASE_6 = [
+    "Dica intermediária da Fase 6.",
 ]
 
-define DICAS_ESPECIFICAS_FASE_6
- = [
-    "Dica específica da Fase 6
-    .",
+define DICAS_ESPECIFICAS_FASE_6 = [
+    "Dica específica da Fase 6.",
 ]
 
 
@@ -31,8 +25,7 @@ define DICAS_ESPECIFICAS_FASE_6
 # INTRODUÇÃO
 # ============================================================
 
-label fase_6
-_introducao:
+label fase_6_introducao:
 
     navegador "Esta fase ainda será configurada."
 
@@ -43,12 +36,11 @@ _introducao:
 # PREPARAÇÃO
 # ============================================================
 
-label fase_6
-_preparar:
+label fase_6_preparar:
 
     $ dicas_disponiveis = list(
         DICAS_GENERICAS_FASE_6
-        
+
     )
 
     return
@@ -58,8 +50,7 @@ _preparar:
 # DICA NORMAL
 # ============================================================
 
-label fase_6
-_pedir_dica:
+label fase_6_pedir_dica:
 
     $ dicas_pedidas += 1
 
@@ -93,15 +84,14 @@ _pedir_dica:
 # DICA DO NPC
 # ============================================================
 
-label fase_6
-_fornecer_dica_npc:
+label fase_6_fornecer_dica_npc:
 
 
     if categoria_assistencia == "generica":
 
         call fornecer_dica_npc_com_banco(
             DICAS_GENERICAS_FASE_6
-            
+
         )
 
 
@@ -109,7 +99,7 @@ _fornecer_dica_npc:
 
         call fornecer_dica_npc_com_banco(
             DICAS_INTERMEDIARIAS_FASE_6
-            
+
         )
 
 
@@ -117,7 +107,7 @@ _fornecer_dica_npc:
 
         call fornecer_dica_npc_com_banco(
             DICAS_ESPECIFICAS_FASE_6
-            
+
         )
 
 
@@ -133,8 +123,7 @@ _fornecer_dica_npc:
 # REPRESENTAÇÃO DOS ESTADOS
 # ============================================================
 
-label fase_6
-_exibir_estado:
+label fase_6_exibir_estado:
 
     "Visual da Fase 6
      ainda não configurado."

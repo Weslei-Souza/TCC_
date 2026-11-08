@@ -72,6 +72,8 @@ label fase_1_preparar:
 # ============================================================
 
 label fase_1_introducao:
+    
+    scene bg_mar
 
     navegador "Vamos começar explorando estas ilhas."
 
