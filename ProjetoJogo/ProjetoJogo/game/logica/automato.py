@@ -57,6 +57,59 @@ def eh_final(configuracao, estado):
 
     return estado in configuracao["estados_finais"]
 
+# ============================================================
+# ESTADO INICIAL
+# ============================================================
+
+def eh_inicial(configuracao, estado):
+    """
+    Verifica se o estado informado é o estado inicial
+    da fase atual.
+    """
+
+    return estado == configuracao["estado_inicial"]
+
+
+# ============================================================
+# ESTADO DE ARMADILHA
+# ============================================================
+
+def eh_armadilha(configuracao, estado):
+    """
+    Verifica se o estado atual está marcado como armadilha.
+
+    Fases sem armadilhas possuem um conjunto vazio.
+    """
+
+    estados_armadilha = configuracao.get(
+        "estados_armadilha",
+        set()
+    )
+
+    return estado in estados_armadilha
+
+
+# ============================================================
+# ESTADO INTERMEDIÁRIO
+# ============================================================
+
+def eh_intermediario(configuracao, estado):
+    """
+    Um estado intermediário:
+
+    - não é inicial;
+    - não é final;
+    - não é armadilha.
+
+    Esses serão os estados elegíveis para encontros
+    aleatórios com NPC.
+    """
+
+    return (
+        not eh_inicial(configuracao, estado)
+        and not eh_final(configuracao, estado)
+        and not eh_armadilha(configuracao, estado)
+    )
 
 # ============================================================
 # ALFABETO
@@ -196,7 +249,9 @@ def processar_sequencia(
                 estado,
                 caminho,
                 f"Símbolo inválido: {simbolo}. "
-                f"Use apenas {simbolos_validos}."
+                f"Use apenas {simbolos_validos}. "
+                f"Você permanece em "
+                f"{nome_estado(configuracao, estado)}."
             )
 
 

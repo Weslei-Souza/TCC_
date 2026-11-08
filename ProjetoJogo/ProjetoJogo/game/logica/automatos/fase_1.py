@@ -1,13 +1,23 @@
 """
-Configuração do autômato utilizado na Fase 1.
+Configuração lógica da Fase 1.
 
-Este arquivo contém somente os dados específicos
-desta fase.
+Este arquivo contém somente dados específicos da fase.
 
-A lógica de processamento permanece em:
-
-logica/automato.py
+A lógica de processamento permanece nos módulos gerais:
+- automato.py
+- jogador.py
+- npc.py
+- fuzzy.py
 """
+
+
+# ============================================================
+# IDENTIFICAÇÃO DA FASE
+# ============================================================
+
+NUMERO_FASE = 1
+
+NOME_FASE = "Fase 1"
 
 
 # ============================================================
@@ -28,38 +38,37 @@ ESTADO_INICIAL = "q0"
 
 
 # ============================================================
-# ESTADOS FINAIS
+# ESTADO FINAL
 # ============================================================
 
 ESTADOS_FINAIS = {
     "qf"
 }
 
+
 # ============================================================
-# LIMITES DAS MÉTRICAS DE ASSISTÊNCIA
+# ESTADOS DE ARMADILHA
 # ============================================================
 
-# Estes valores representam os pontos de saturação
-# utilizados na normalização das métricas desta fase.
+# A Fase 1 atual não possui armadilhas.
 #
-# São valores iniciais de projeto e poderão ser ajustados
-# posteriormente por meio dos testes de simulação.
+# Em fases futuras poderemos ter, por exemplo:
+#
+# ESTADOS_ARMADILHA = {
+#     "q4"
+# }
 
-LIMITES_ASSISTENCIA = {
+ESTADOS_ARMADILHA = set()
 
-    "reinicios": 3,
-
-    "dicas_pedidas": 3,
-
-    "estados_repetidos": 3,
-
-    # A Fase 1 não possui estados de armadilha.
-    "armadilhas": None,
-}
 
 # ============================================================
-# NOMES DOS ESTADOS
+# NOMES EXIBIDOS AO JOGADOR
 # ============================================================
+
+# Os identificadores q0, q1 etc. são usados apenas
+# internamente.
+#
+# A interface utiliza os nomes definidos aqui.
 
 NOMES_ESTADOS = {
 
@@ -94,11 +103,8 @@ TRANSICOES = {
         "B": "qf",
     },
 
-    # O estado final funciona como estado absorvente.
-    #
-    # Mesmo que o jogo encerre a fase quando qf é atingido,
-    # formalmente cada símbolo continua possuindo
-    # uma transição definida.
+    # O estado final permanece absorvente para que
+    # o autômato continue completo.
 
     "qf": {
         "A": "qf",
@@ -108,10 +114,67 @@ TRANSICOES = {
 
 
 # ============================================================
-# CONFIGURAÇÃO
+# LIMITES DA NECESSIDADE DE ASSISTÊNCIA
+# ============================================================
+
+# Valores provisórios da Fase 1.
+#
+# Serão redefinidos quando os autômatos definitivos
+# das sete fases forem modelados.
+
+LIMITES_ASSISTENCIA = {
+
+    "reinicios": 3,
+
+    "dicas_pedidas": 3,
+
+    "estados_repetidos": 3,
+
+    "armadilhas": None,
+}
+
+
+# ============================================================
+# CONFIGURAÇÃO DOS ENCONTROS COM NPC
+# ============================================================
+
+# Modos possíveis:
+#
+# "nenhum"
+# "fixo"
+# "aleatorio"
+#
+# A Fase 1 atual utiliza um encontro tutorial fixo.
+
+CONFIGURACAO_NPC = {
+
+    "modo": "fixo",
+
+    # Usado somente quando modo == "fixo".
+    "estado_fixo": "q2",
+
+    # Probabilidade entre 0.0 e 1.0.
+    #
+    # No modo fixo ela não é utilizada, mas mantemos
+    # a chave para que todas as fases possuam a mesma
+    # estrutura de configuração.
+    "chance_encontro": 1.0,
+
+    # Quantidade máxima de encontros durante
+    # uma execução da fase.
+    "max_encontros": 1,
+}
+
+
+# ============================================================
+# CONFIGURAÇÃO COMPLETA
 # ============================================================
 
 CONFIGURACAO = {
+
+    "numero_fase": NUMERO_FASE,
+
+    "nome_fase": NOME_FASE,
 
     "alfabeto": ALFABETO,
 
@@ -119,9 +182,13 @@ CONFIGURACAO = {
 
     "estados_finais": ESTADOS_FINAIS,
 
+    "estados_armadilha": ESTADOS_ARMADILHA,
+
     "nomes_estados": NOMES_ESTADOS,
 
     "transicoes": TRANSICOES,
 
     "limites_assistencia": LIMITES_ASSISTENCIA,
+
+    "npc": CONFIGURACAO_NPC,
 }

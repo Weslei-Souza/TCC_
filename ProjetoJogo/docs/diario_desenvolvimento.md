@@ -1509,3 +1509,5 @@ Foram registrados como possibilidades fora do escopo atual:
 - seleção probabilística de categorias fuzzy;
 - avaliação com usuários/alunos;
 - animações e maior refinamento visual.
+
+# DIA 08/11
