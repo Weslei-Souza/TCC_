@@ -777,6 +777,118 @@ def executar_todos_testes():
         )
     )
 
+
+    # ========================================================
+    # 12. VALIDAÇÃO DA CONFIGURAÇÃO GENÉRICA DAS FASES
+    # ========================================================
+
+    verificar(
+        fases.validar_configuracao(
+            fase_1.CONFIGURACAO
+        ),
+        "Configuração Fase 1: contrato genérico válido"
+    )
+
+
+    # --------------------------------------------------------
+    # SÍMBOLO EXTRA
+    # --------------------------------------------------------
+
+    config_extra = deepcopy(
+        fase_1.CONFIGURACAO
+    )
+
+
+    config_extra[
+        "transicoes"
+    ]["q0"]["C"] = "q1"
+
+
+    verificar(
+        not automato.validar_determinismo(
+            config_extra
+        ),
+        "Validação: rejeita símbolo fora do alfabeto"
+    )
+
+
+    # --------------------------------------------------------
+    # MAIS DE UM ESTADO FINAL
+    # --------------------------------------------------------
+
+    config_multiplos_finais = deepcopy(
+        fase_1.CONFIGURACAO
+    )
+
+
+    config_multiplos_finais[
+        "estados_finais"
+    ] = {
+        "q2",
+        "qf",
+    }
+
+
+    erro_multiplos_finais = False
+
+
+    try:
+
+        fases.validar_configuracao(
+            config_multiplos_finais
+        )
+
+
+    except ValueError:
+
+        erro_multiplos_finais = True
+
+
+    verificar(
+        erro_multiplos_finais,
+        "Validação: rejeita múltiplos estados finais"
+    )
+
+
+    # --------------------------------------------------------
+    # ARMADILHA SEM LIMITE DA MÉTRICA
+    # --------------------------------------------------------
+
+    config_armadilha_invalida = deepcopy(
+        fase_1.CONFIGURACAO
+    )
+
+
+    config_armadilha_invalida[
+        "estados_armadilha"
+    ] = {
+        "q1"
+    }
+
+
+    # O limite continua None propositalmente.
+
+    erro_armadilha_sem_limite = False
+
+
+    try:
+
+        fases.validar_configuracao(
+            config_armadilha_invalida
+        )
+
+
+    except ValueError:
+
+        erro_armadilha_sem_limite = True
+
+
+    verificar(
+        erro_armadilha_sem_limite,
+        "Validação: rejeita armadilha sem limite ativo"
+    )
+
+
     # ========================================================
     # RESULTADO
     # ========================================================

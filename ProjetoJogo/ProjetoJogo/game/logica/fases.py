@@ -340,9 +340,14 @@ def validar_configuracao(configuracao):
 
     config_npc = configuracao["npc"]
 
+
+    # --------------------------------------------------------
+    # CHAVES OBRIGATÓRIAS
+    # --------------------------------------------------------
+
     chaves_npc_faltando = (
-    CHAVES_NPC_OBRIGATORIAS
-    - set(config_npc.keys())
+        CHAVES_NPC_OBRIGATORIAS
+        - set(config_npc.keys())
     )
 
 
@@ -354,9 +359,13 @@ def validar_configuracao(configuracao):
         )
 
 
-    modo_npc = config_npc.get(
+    # --------------------------------------------------------
+    # MODO DO NPC
+    # --------------------------------------------------------
+
+    modo_npc = config_npc[
         "modo"
-    )
+    ]
 
 
     modos_validos = {
@@ -373,18 +382,63 @@ def validar_configuracao(configuracao):
         )
 
 
-    chance = config_npc.get(
-        "chance_encontro",
-        0.0
-    )
+    # --------------------------------------------------------
+    # CHANCE DE ENCONTRO
+    # --------------------------------------------------------
+
+    chance = config_npc[
+        "chance_encontro"
+    ]
 
 
-    if not 0.0 <= chance <= 1.0:
+    if (
+        not isinstance(
+            chance,
+            (int, float)
+        )
+        or isinstance(
+            chance,
+            bool
+        )
+        or not 0.0 <= chance <= 1.0
+    ):
 
         raise ValueError(
-            "chance_encontro deve estar "
+            "chance_encontro deve ser um número "
             "entre 0.0 e 1.0."
         )
+
+
+    # --------------------------------------------------------
+    # MÁXIMO DE ENCONTROS
+    # --------------------------------------------------------
+
+    # IMPORTANTE:
+    # precisamos criar esta variável ANTES de utilizá-la
+    # nas verificações abaixo.
+
+    max_encontros = config_npc[
+        "max_encontros"
+    ]
+
+
+    if (
+        not isinstance(
+            max_encontros,
+            int
+        )
+        or isinstance(
+            max_encontros,
+            bool
+        )
+        or max_encontros < 0
+    ):
+
+        raise ValueError(
+            "max_encontros deve ser um "
+            "número inteiro maior ou igual a zero."
+        )
+
 
     # --------------------------------------------------------
     # COERÊNCIA DO MODO DE NPC
@@ -426,20 +480,6 @@ def validar_configuracao(configuracao):
                 "Uma fase com NPC aleatório precisa possuir "
                 "chance_encontro maior que zero."
             )
-
-
-    max_encontros = config_npc["max_encontros"]
-
-    if (not isinstance(max_encontros,int)
-        or 
-        isinstance(max_encontros,bool)
-        or 
-        max_encontros < 0):
-
-        raise ValueError(
-            "max_encontros deve ser um "
-            "número inteiro maior ou igual a zero."
-        )
 
 
     # --------------------------------------------------------
