@@ -1990,10 +1990,14 @@ screen entrada_rota(nome_ilha):
                 
     use controles_fase
 
-#TELA DE SELECIONAR FASE
-screen selecionar_fase():
+# ============================================================
+# SELEÇÃO DE FASE
+# ============================================================
+
+screen selecionar_fase:
 
     modal True
+
 
     add "bg_mar"
 
@@ -2005,7 +2009,7 @@ screen selecionar_fase():
         xalign 0.5
         yalign 0.5
 
-        xsize 900
+        xsize 850
 
 
         vbox:
@@ -2015,18 +2019,47 @@ screen selecionar_fase():
             spacing 20
 
 
-            text "Selecione uma fase":
+            text "Escolha a fase":
 
-                size 42
                 xalign 0.5
 
+                size 42
+
+
+            null height 10
+
+
+            # =================================================
+            # FASES 1 A 7
+            # =================================================
 
             for numero in range(1, 8):
 
-                $ dados = fases.FASES[numero]
+
+                # ---------------------------------------------
+                # VERIFICA PROGRESSÃO
+                # ---------------------------------------------
+
+                $ desbloqueada = (
+                    numero
+                    <= persistent.fase_max_desbloqueada
+                )
 
 
-                if numero > persistent.fase_max_desbloqueada:
+                # ---------------------------------------------
+                # VERIFICA IMPLEMENTAÇÃO
+                # ---------------------------------------------
+
+                $ implementada = fases.fase_implementada(
+                    numero
+                )
+
+
+                # ---------------------------------------------
+                # FASE BLOQUEADA
+                # ---------------------------------------------
+
+                if not desbloqueada:
 
                     textbutton "Fase [numero] - Bloqueada":
 
@@ -2037,9 +2070,13 @@ screen selecionar_fase():
                         sensitive False
 
 
-                elif not dados["implementada"]:
+                # ---------------------------------------------
+                # FASE AINDA NÃO IMPLEMENTADA
+                # ---------------------------------------------
 
-                    textbutton "Fase [numero] - [dados['nome']] - Em desenvolvimento":
+                elif not implementada:
+
+                    textbutton "Fase [numero] - Em desenvolvimento":
 
                         style "rota_button"
 
@@ -2048,15 +2085,21 @@ screen selecionar_fase():
                         sensitive False
 
 
+                # ---------------------------------------------
+                # FASE DISPONÍVEL
+                # ---------------------------------------------
+
                 else:
 
-                    textbutton "Fase [numero] - [dados['nome']]":
+                    textbutton "Fase [numero]":
 
                         style "rota_button"
 
                         xalign 0.5
 
                         action Return(numero)
+
+
 
 # ============================================================
 # CONTROLES DA FASE
