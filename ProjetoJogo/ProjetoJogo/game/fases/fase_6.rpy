@@ -125,7 +125,6 @@ label fase_6_fornecer_dica_npc:
 
 label fase_6_exibir_estado:
 
-    "Visual da Fase 6
-     ainda não configurado."
+    "Visual da Fase 6 ainda não configurado."
 
     return

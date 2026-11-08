@@ -57,6 +57,36 @@ CHAVES_OBRIGATORIAS = {
     "npc",
 }
 
+# ============================================================
+# LIMITES OBRIGATÓRIOS
+# ============================================================
+
+LIMITES_OBRIGATORIOS = {
+
+    "reinicios",
+
+    "dicas_pedidas",
+
+    "estados_repetidos",
+
+    "armadilhas",
+}
+
+
+# ============================================================
+# CONFIGURAÇÃO OBRIGATÓRIA DO NPC
+# ============================================================
+
+CHAVES_NPC_OBRIGATORIAS = {
+
+    "modo",
+
+    "estado_fixo",
+
+    "chance_encontro",
+
+    "max_encontros",
+}
 
 # ============================================================
 # VERIFICAR SE UMA FASE ESTÁ IMPLEMENTADA
@@ -142,10 +172,14 @@ def validar_configuracao(configuracao):
         )
 
 
-    if not estados_finais:
+    # ========================================================
+    # EXATAMENTE UM ESTADO FINAL
+    # ========================================================
+
+    if len(estados_finais) != 1:
 
         raise ValueError(
-            "A fase precisa possuir pelo menos "
+            "Cada fase deve possuir exatamente "
             "um estado final."
         )
 
@@ -175,6 +209,118 @@ def validar_configuracao(configuracao):
 
 
     # --------------------------------------------------------
+    # LIMITES DA NECESSIDADE DE ASSISTÊNCIA
+    # --------------------------------------------------------
+
+    limites = configuracao[
+        "limites_assistencia"
+    ]
+
+
+    limites_faltando = (
+        LIMITES_OBRIGATORIOS
+        - set(limites.keys())
+    )
+
+
+    if limites_faltando:
+
+        raise ValueError(
+            "Limites de assistência incompletos. "
+            f"Ausentes: {sorted(limites_faltando)}"
+        )
+
+
+    # --------------------------------------------------------
+    # MÉTRICAS SEMPRE ATIVAS
+    # --------------------------------------------------------
+
+    metricas_obrigatorias = {
+
+        "reinicios",
+
+        "dicas_pedidas",
+
+        "estados_repetidos",
+    }
+
+
+    for metrica in metricas_obrigatorias:
+
+        limite = limites[
+            metrica
+        ]
+
+
+        if (
+            limite is None
+            or not isinstance(
+                limite,
+                (int, float)
+            )
+            or isinstance(
+                limite,
+                bool
+            )
+            or limite <= 0
+        ):
+
+            raise ValueError(
+                f"Limite inválido para {metrica}: "
+                f"{limite}"
+            )
+
+
+    # --------------------------------------------------------
+    # ARMADILHAS
+    # --------------------------------------------------------
+
+    limite_armadilhas = limites[
+        "armadilhas"
+    ]
+
+
+    if estados_armadilha:
+
+        # Se a fase possui armadilha,
+        # essa métrica precisa estar ativa.
+
+        if (
+            limite_armadilhas is None
+            or not isinstance(
+                limite_armadilhas,
+                (int, float)
+            )
+            or isinstance(
+                limite_armadilhas,
+                bool
+            )
+            or limite_armadilhas <= 0
+        ):
+
+            raise ValueError(
+                "Fases com estados de armadilha precisam "
+                "possuir um limite positivo para a métrica "
+                "armadilhas."
+            )
+
+
+    else:
+
+        # Se a fase não possui nenhuma armadilha,
+        # ela deve ser retirada da média ponderada.
+
+        if limite_armadilhas is not None:
+
+            raise ValueError(
+                "Fases sem armadilhas devem utilizar "
+                "armadilhas = None nos limites de assistência."
+            )
+
+        
+
+
+    # --------------------------------------------------------
     # DETERMINISMO E COMPLETUDE
     # --------------------------------------------------------
 
@@ -193,6 +339,19 @@ def validar_configuracao(configuracao):
     # --------------------------------------------------------
 
     config_npc = configuracao["npc"]
+
+    chaves_npc_faltando = (
+    CHAVES_NPC_OBRIGATORIAS
+    - set(config_npc.keys())
+    )
+
+
+    if chaves_npc_faltando:
+
+        raise ValueError(
+            "Configuração do NPC incompleta. "
+            f"Ausentes: {sorted(chaves_npc_faltando)}"
+        )
 
 
     modo_npc = config_npc.get(
@@ -227,17 +386,59 @@ def validar_configuracao(configuracao):
             "entre 0.0 e 1.0."
         )
 
+    # --------------------------------------------------------
+    # COERÊNCIA DO MODO DE NPC
+    # --------------------------------------------------------
 
-    max_encontros = config_npc.get(
-        "max_encontros",
-        0
-    )
+    if modo_npc == "nenhum":
+
+        if max_encontros != 0:
+
+            raise ValueError(
+                "Uma fase sem NPC deve possuir "
+                "max_encontros = 0."
+            )
 
 
-    if max_encontros < 0:
+    elif modo_npc == "fixo":
+
+        if max_encontros < 1:
+
+            raise ValueError(
+                "Uma fase com NPC fixo precisa permitir "
+                "pelo menos um encontro."
+            )
+
+
+    elif modo_npc == "aleatorio":
+
+        if max_encontros < 1:
+
+            raise ValueError(
+                "Uma fase com NPC aleatório precisa permitir "
+                "pelo menos um encontro."
+            )
+
+
+        if chance <= 0:
+
+            raise ValueError(
+                "Uma fase com NPC aleatório precisa possuir "
+                "chance_encontro maior que zero."
+            )
+
+
+    max_encontros = config_npc["max_encontros"]
+
+    if (not isinstance(max_encontros,int)
+        or 
+        isinstance(max_encontros,bool)
+        or 
+        max_encontros < 0):
 
         raise ValueError(
-            "max_encontros não pode ser negativo."
+            "max_encontros deve ser um "
+            "número inteiro maior ou igual a zero."
         )
 
 
@@ -295,6 +496,13 @@ def obter_configuracao(numero_fase):
     configuracao = FASES[
         numero_fase
     ]
+
+    if configuracao["numero_fase"] != numero_fase:
+
+        raise ValueError(
+            "O número declarado na configuração da fase "
+            "não corresponde ao número usado no registro."
+        )
 
 
     validar_configuracao(

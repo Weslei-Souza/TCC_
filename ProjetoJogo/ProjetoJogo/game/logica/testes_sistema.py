@@ -21,6 +21,10 @@ from logica import npc
 from logica import fuzzy
 from logica import automato
 
+from copy import deepcopy
+
+from logica import fases
+
 from logica.automatos import fase_1
 
 

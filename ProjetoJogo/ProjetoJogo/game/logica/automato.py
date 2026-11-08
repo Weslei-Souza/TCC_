@@ -141,48 +141,104 @@ def transicao(configuracao, estado_atual, simbolo):
     ).get(simbolo)
 
 
+
+
 # ============================================================
 # VALIDAÇÃO DO AUTÔMATO DETERMINÍSTICO
 # ============================================================
 
 def validar_determinismo(configuracao):
     """
-    Verifica se cada estado possui exatamente um destino
-    definido para cada símbolo do alfabeto.
+    Verifica se o autômato está corretamente configurado
+    como determinístico e completo.
 
-    Como as transições são armazenadas em dicionários,
-    um mesmo símbolo não pode possuir dois destinos
-    simultaneamente.
+    Para ser aceito:
 
-    Portanto, é necessário verificar principalmente:
-
-    - se todos os estados possuem todas as transições;
-    - se todos os destinos definidos existem.
+    - todos os estados cadastrados devem possuir transições;
+    - cada estado deve possuir exatamente uma transição
+      para cada símbolo do alfabeto;
+    - não podem existir símbolos extras nas transições;
+    - não podem existir estados extras no dicionário
+      de transições;
+    - todos os destinos devem ser estados existentes.
     """
 
-    alfabeto = configuracao["alfabeto"]
+    alfabeto = set(
+        configuracao["alfabeto"]
+    )
 
-    estados = configuracao["nomes_estados"]
+    estados = set(
+        configuracao["nomes_estados"].keys()
+    )
 
-    transicoes = configuracao["transicoes"]
+    transicoes = configuracao[
+        "transicoes"
+    ]
 
+
+    # ========================================================
+    # PROTEÇÕES BÁSICAS
+    # ========================================================
+
+    if not alfabeto:
+
+        return False
+
+
+    if not estados:
+
+        return False
+
+
+    # ========================================================
+    # ESTADOS DAS TRANSIÇÕES
+    # ========================================================
+
+    # O conjunto de estados que possuem transições
+    # deve ser exatamente igual ao conjunto de estados
+    # cadastrados.
+
+    if set(transicoes.keys()) != estados:
+
+        return False
+
+
+    # ========================================================
+    # TRANSIÇÕES DE CADA ESTADO
+    # ========================================================
 
     for estado in estados:
 
-        if estado not in transicoes:
+        regras_estado = transicoes[
+            estado
+        ]
+
+
+        # Cada estado deve possuir exatamente os símbolos
+        # definidos no alfabeto.
+        #
+        # Exemplo:
+        #
+        # alfabeto = {"A", "B"}
+        #
+        # então não aceitamos:
+        #
+        # {"A": q1}
+        #
+        # nem:
+        #
+        # {"A": q1, "B": q2, "C": q3}
+
+        if set(
+            regras_estado.keys()
+        ) != alfabeto:
 
             return False
 
 
-        for simbolo in alfabeto:
+        # Todos os destinos precisam existir.
 
-            destino = transicoes[estado].get(simbolo)
-
-
-            if destino is None:
-
-                return False
-
+        for destino in regras_estado.values():
 
             if destino not in estados:
 
