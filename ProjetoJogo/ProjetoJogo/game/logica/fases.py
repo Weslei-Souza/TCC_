@@ -35,6 +35,12 @@ from logica.automatos import (
 FASES = {
 
     1: fase_1.CONFIGURACAO,
+    2: fase_2.CONFIGURACAO,
+    3: fase_3.CONFIGURACAO,
+    4: fase_4.CONFIGURACAO,
+    5: fase_5.CONFIGURACAO,
+    6: fase_6.CONFIGURACAO,
+    7: fase_7.CONFIGURACAO,
 }
 
 

@@ -7,10 +7,15 @@ init python:
     from logica import testes_sistema
 
 
-
 label executar_testes_sistema:
 
+
+    # ========================================================
+    # EXECUTA A BATERIA
+    # ========================================================
+
     $ resultado_testes = testes_sistema.executar_todos_testes()
+
 
     $ relatorio_testes = testes_sistema.formatar_relatorio(
         resultado_testes
@@ -18,7 +23,7 @@ label executar_testes_sistema:
 
 
     # ========================================================
-    # REGISTRA O RELATÓRIO NO LOG
+    # SALVA NO LOG
     # ========================================================
 
     python:
@@ -31,17 +36,25 @@ label executar_testes_sistema:
 
 
     # ========================================================
-    # RESULTADO GERAL
+    # RESUMO
     # ========================================================
 
     "Testes automatizados concluídos."
 
+
     "Aprovados: [resultado_testes['aprovados']]"
 
 
+    "Falhas: [len(resultado_testes['falhas'])]"
+
+
+    # ========================================================
+    # MOSTRAR AS FALHAS NA TELA
+    # ========================================================
+
     if resultado_testes["falhas"]:
 
-        "Foram encontradas [len(resultado_testes['falhas'])] falhas."
+        "Foram encontradas falhas:"
 
 
         python:
@@ -60,12 +73,13 @@ label executar_testes_sistema:
 
 
     # ========================================================
-    # DIAGNÓSTICOS DO FUZZY
+    # DIAGNÓSTICOS
     # ========================================================
 
     if resultado_testes["diagnosticos"]:
 
-        "Diagnósticos do sistema fuzzy:"
+        "Diagnósticos do sistema:"
+
 
         python:
 

@@ -126,6 +126,29 @@ label fase_6_fornecer_dica_npc:
 
 label fase_6_exibir_estado:
 
-    "Visual da Fase 6 ainda não configurado."
+    scene bg_mar
+
+    $ nome_estado_fase = automato.nome_estado(
+        configuracao_automato,
+        estado_atual
+    )
+
+    if automato.eh_armadilha(
+        configuracao_automato,
+        estado_atual
+    ):
+
+        "Você chegou à [nome_estado_fase]."
+
+    elif automato.eh_final(
+        configuracao_automato,
+        estado_atual
+    ):
+
+        "Você chegou à [nome_estado_fase]."
+
+    else:
+
+        "Você está em [nome_estado_fase]."
 
     return
