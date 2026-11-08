@@ -1510,4 +1510,713 @@ Foram registrados como possibilidades fora do escopo atual:
 - avaliação com usuários/alunos;
 - animações e maior refinamento visual.
 
-# DIA 08/11
+# Diário de Desenvolvimento — Atualização de 05/11 a 08/11/2026
+
+## 05/11/2026 — Correções finais da bateria de testes e consolidação do núcleo
+
+Após a criação da bateria automatizada de testes, foram identificados pequenos problemas exclusivamente no próprio código de testes, sem relação com a lógica principal do jogo.
+
+Um dos problemas ocorreu na geração da representação legível dos caminhos do autômato. A variável `caminho_legivel` era utilizada em um teste antes de ter sido inicializada. O bloco de testes foi reorganizado para que cada sequência seja processada, convertida para nomes visíveis das ilhas e somente depois utilizada no relatório.
+
+Também foi ajustada a forma de execução da bateria dentro do Ren'Py. A tentativa inicial de utilizar `jump executar_testes_sistema` diretamente a partir do menu principal resultava em erro porque o script Ren'Py não estava ativo naquele contexto. O sistema de testes foi então executado em contexto apropriado, permitindo a conclusão da bateria.
+
+A bateria inicial apresentou:
+
+- 43 testes aprovados;
+- nenhuma falha automática.
+
+Foram testadas, entre outras funcionalidades:
+
+- normalização das métricas;
+- cálculo da Necessidade de Assistência;
+- saturação dos valores;
+- monotonicidade da Necessidade de Assistência;
+- histórico de estados;
+- detecção de estados repetidos;
+- limites da Disposição do NPC;
+- impactos das interações;
+- classificação narrativa da Disposição;
+- funções de pertinência;
+- cobertura do universo fuzzy;
+- casos de referência do fuzzy;
+- grade completa de combinações de entrada;
+- processamento do autômato;
+- detecção de símbolos inválidos;
+- determinismo e completude do autômato.
+
+### Diagnóstico da superfície fuzzy
+
+Além dos testes binários de aprovação/falha, foi criada uma análise diagnóstica da superfície produzida pelo sistema fuzzy.
+
+Foram examinadas todas as combinações inteiras entre:
+
+- Necessidade de Assistência: 0–100;
+- Disposição do NPC: 0–100.
+
+Total:
+
+101 × 101 = 10.201 combinações.
+
+A primeira análise identificou:
+
+- 630 pequenas quedas no valor crisp ao aumentar a Necessidade de Assistência;
+- 630 pequenas quedas no valor crisp ao aumentar a Disposição.
+
+Essas quedas não foram consideradas automaticamente como falha, pois o valor crisp resulta da geometria da agregação fuzzy e da defuzzificação pelo centroide.
+
+Foi então criado um segundo diagnóstico, mais relevante para o comportamento do jogo: verificar se alguma dessas oscilações fazia a categoria final de assistência diminuir.
+
+As categorias foram ordenadas como:
+
+Nenhuma → Genérica → Intermediária → Específica.
+
+Resultado:
+
+- regressões de categoria ao aumentar Necessidade: 0;
+- regressões de categoria ao aumentar Disposição: 0.
+
+Portanto, apesar das oscilações numéricas do valor crisp, aumentar uma das entradas nunca produziu uma categoria concreta de ajuda inferior.
+
+Com isso, o núcleo fuzzy atual foi considerado funcional para prosseguir com o desenvolvimento.
+
+---
+
+## 08/11/2026 — Início da generalização completa da arquitetura das fases
+
+Com o núcleo funcional e testado, iniciou-se a transformação da Fase 1 em um modelo genérico que pudesse ser reutilizado pelas demais fases.
+
+O objetivo principal passou a ser evitar duplicação de lógica. A intenção é que as futuras fases sejam definidas principalmente por configurações e conteúdo próprio, enquanto navegação, encontros, métricas, armadilhas e fuzzy permaneçam em motores comuns.
+
+Foi estabelecida a seguinte separação conceitual:
+
+### Arquivos `.rpy`
+
+Responsáveis pelo comportamento ligado ao Ren'Py:
+
+- fluxo do jogo;
+- telas;
+- botões;
+- diálogos;
+- menus;
+- cenas;
+- conteúdo narrativo;
+- integração entre a interface e os módulos Python.
+
+### Arquivos `.py`
+
+Responsáveis pela lógica computacional:
+
+- autômatos;
+- transições;
+- validações;
+- métricas;
+- Necessidade de Assistência;
+- Disposição do NPC;
+- funções fuzzy;
+- configurações estruturais das fases.
+
+Essa separação foi mantida como parte central da arquitetura do projeto.
+
+---
+
+# Generalização da configuração das fases
+
+O arquivo `logica/automatos/fase_1.py` foi reorganizado para servir como modelo de configuração das próximas fases.
+
+A configuração passou a possuir explicitamente:
+
+- número da fase;
+- nome da fase;
+- alfabeto;
+- estado inicial;
+- estado final;
+- estados de armadilha;
+- nomes exibidos dos estados;
+- função de transição;
+- limites das métricas de assistência;
+- configuração dos encontros com NPC.
+
+A configuração do NPC passou a aceitar três modos:
+
+- `nenhum`;
+- `fixo`;
+- `aleatorio`.
+
+Também foram incluídos os parâmetros:
+
+- `estado_fixo`;
+- `chance_encontro`;
+- `max_encontros`.
+
+A Fase 1 atual continuou utilizando um encontro fixo, mas a estrutura passou a estar preparada para fases com encontros aleatórios.
+
+---
+
+# Generalização dos tipos de estado
+
+O motor `automato.py` passou a reconhecer genericamente:
+
+- estado inicial;
+- estado final;
+- estado de armadilha;
+- estado intermediário.
+
+Um estado intermediário é definido como um estado que não é:
+
+- inicial;
+- final;
+- armadilha.
+
+Essa definição passou a ser utilizada para determinar quais estados podem receber encontros aleatórios com NPC.
+
+Foi mantida a decisão de que:
+
+- estado inicial não pode conter NPC;
+- estado final não pode conter NPC;
+- estado de armadilha não pode conter NPC;
+- somente ilhas intermediárias podem gerar encontros.
+
+---
+
+# Registro e validação genérica das fases
+
+O arquivo `logica/fases.py` passou a funcionar como registro central das fases implementadas.
+
+Somente fases efetivamente configuradas devem entrar no registro.
+
+Neste momento:
+
+- Fase 1 está registrada;
+- Fases 2–7 ainda não estão registradas porque seus autômatos não foram definidos.
+
+Foi criada uma rotina de validação estrutural para impedir que uma fase incorreta seja utilizada pelo jogo.
+
+Entre as verificações implementadas:
+
+- existência das chaves obrigatórias;
+- existência do estado inicial;
+- existência do estado final;
+- exatamente um estado final por fase;
+- validade dos estados de armadilha;
+- impossibilidade de um estado ser simultaneamente final e armadilha;
+- determinismo;
+- completude;
+- validade do alfabeto;
+- inexistência de símbolos extras nas transições;
+- validade dos destinos;
+- validade dos limites das métricas;
+- coerência entre existência de armadilha e ativação de sua métrica;
+- validade da chance de encontro;
+- validade do número máximo de encontros;
+- coerência entre modo de NPC e número de encontros;
+- validade da posição de NPC fixo;
+- correspondência entre o número declarado pela fase e seu número no registro.
+
+Durante essa etapa foi identificado um erro de ordem na validação: `max_encontros` era consultado antes de ter sido atribuído. A ordem do bloco foi corrigida para primeiro recuperar e validar o valor e somente depois utilizá-lo nas regras de coerência.
+
+---
+
+# Correção da seleção de fases
+
+A tela de seleção de fases ainda utilizava uma estrutura antiga baseada em uma chave `implementada`.
+
+Após a mudança para o novo registro central, a screen foi atualizada para utilizar:
+
+`fases.fase_implementada(numero)`
+
+A presença de uma fase no registro passou a indicar diretamente se ela está implementada.
+
+A tela agora diferencia:
+
+- fase bloqueada;
+- fase desbloqueada, porém ainda em desenvolvimento;
+- fase implementada e disponível.
+
+A variável persistente:
+
+`persistent.fase_max_desbloqueada`
+
+continuou sendo utilizada para controlar a progressão.
+
+O aviso visual apresentado pelo editor sobre essa propriedade não representa erro, pois atributos de `persistent` são criados dinamicamente pelo Ren'Py.
+
+---
+
+# Motor genérico de eventos dos estados
+
+Foi criado o arquivo:
+
+`eventos_estado.rpy`
+
+Esse arquivo centraliza o comportamento executado quando o jogador chega a um novo estado.
+
+A ordem atual de avaliação é:
+
+estado final  
+→ armadilha  
+→ estado intermediário  
+→ possível encontro com NPC.
+
+Isso retirou da Fase 1 a responsabilidade de controlar manualmente seus eventos.
+
+### Estados finais
+
+Quando o estado atual é final:
+
+- a fase é encerrada;
+- a próxima fase é desbloqueada;
+- o jogador retorna à seleção de fases.
+
+### Estados de armadilha
+
+Ao entrar em uma armadilha:
+
+- `armadilhas_atingidas` é incrementado;
+- a Necessidade de Assistência é recalculada;
+- ocorre Game Over.
+
+O jogador pode:
+
+- Reiniciar;
+- Voltar ao Menu.
+
+Se escolher Reiniciar:
+
+- `numero_resets` também é incrementado;
+- a Necessidade é recalculada;
+- o jogador retorna ao estado inicial.
+
+Se escolher Menu:
+
+- não é contabilizado um novo reinício.
+
+Entrar novamente na mesma armadilha posteriormente contará como uma nova ocorrência.
+
+---
+
+# Generalização dos encontros com NPC
+
+A aparição dos NPCs deixou de ser controlada diretamente pela Fase 1.
+
+O arquivo `encontros_npc.rpy` passou a consultar a configuração da fase atual.
+
+O sistema verifica:
+
+1. se a fase possui NPC;
+2. se o limite de encontros já foi atingido;
+3. se o estado é intermediário;
+4. se o encontro é fixo ou aleatório;
+5. se o sorteio permite o encontro.
+
+Para encontros aleatórios, a lógica utiliza:
+
+`renpy.random.random()`
+
+comparado à probabilidade configurada pela fase.
+
+Ficou definido que:
+
+- revisitar uma ilha pode gerar novo sorteio;
+- o limite máximo de encontros continua valendo após reinício;
+- sair da fase e entrar novamente zera o contador;
+- cada encontro representa um Náufrago diferente;
+- cada novo Náufrago recebe uma nova Disposição inicial.
+
+---
+
+# Generalização dos dois modos de jogo
+
+A navegação passo a passo e o planejamento de rota foram adaptados para utilizar o mesmo motor de eventos.
+
+No modo passo a passo:
+
+transição  
+→ registro das métricas  
+→ atualização do estado  
+→ exibição da ilha  
+→ processamento dos eventos.
+
+No modo Planejamento de Rota, foi realizada uma alteração estrutural importante.
+
+Anteriormente uma sequência completa poderia ser processada diretamente.
+
+O modo passou a percorrer cada símbolo individualmente.
+
+Exemplo:
+
+`ABBABA`
+
+é processado estado a estado.
+
+Dessa forma, eventos intermediários podem interromper corretamente a execução.
+
+Por exemplo:
+
+Ilha normal  
+→ NPC  
+→ continuação  
+→ armadilha  
+→ Game Over.
+
+Ou:
+
+Ilha normal  
+→ estado final  
+→ vitória imediata.
+
+Isso garante que NPCs, armadilhas e vitória possuam o mesmo comportamento nos dois modos de jogo.
+
+---
+
+# Reorganização do fluxo entre fases
+
+O `script.rpy` foi dividido conceitualmente em:
+
+- início;
+- seleção de fase;
+- preparação da execução.
+
+A preparação de uma fase passou a:
+
+- carregar a configuração;
+- validar o autômato;
+- definir o estado inicial;
+- zerar métricas;
+- zerar dados de NPC;
+- zerar dados fuzzy;
+- preparar o conteúdo da fase;
+- executar sua introdução;
+- iniciar o modo selecionado.
+
+Após a vitória, o jogador retorna à seleção de fases mantendo o modo atual.
+
+---
+
+# Generalização das dicas de NPC
+
+Foi criado um sistema genérico para evitar repetição de dicas fornecidas por NPCs.
+
+As dicas usadas são controladas separadamente por categoria:
+
+- genérica;
+- intermediária;
+- específica.
+
+Enquanto houver dicas não utilizadas naquela categoria, um NPC não repetirá uma dica já dada anteriormente por outro NPC.
+
+Exemplo:
+
+Banco específico:
+
+A  
+B  
+C
+
+Encontros:
+
+NPC 1 → A  
+NPC 2 → C  
+NPC 3 → B
+
+Após o esgotamento do banco, todas as dicas daquela mesma categoria voltam a ficar disponíveis.
+
+A categoria decidida pelo fuzzy nunca é alterada por falta de dicas inéditas.
+
+Assim:
+
+Específica
+
+não é substituída por:
+
+Intermediária
+
+quando seu banco é esgotado.
+
+O Navegador e o NPC continuam podendo fornecer a mesma dica porque seus históricos são independentes.
+
+---
+
+# Generalização do conteúdo das fases
+
+Foi criado um contrato comum para os arquivos:
+
+`fases/fase_X.rpy`
+
+Cada fase passa a possuir os labels:
+
+- `fase_X_introducao`;
+- `fase_X_preparar`;
+- `fase_X_pedir_dica`;
+- `fase_X_fornecer_dica_npc`;
+- `fase_X_exibir_estado`.
+
+Também possui três bancos:
+
+- `DICAS_GENERICAS_FASE_X`;
+- `DICAS_INTERMEDIARIAS_FASE_X`;
+- `DICAS_ESPECIFICAS_FASE_X`.
+
+A Fase 1 permanece com conteúdo funcional.
+
+As Fases 2–7 receberam arquivos `.rpy` de scaffolding, contendo a mesma estrutura, porém com textos provisórios.
+
+Os arquivos:
+
+`logica/automatos/fase_2.py`
+
+até:
+
+`logica/automatos/fase_7.py`
+
+permanecem vazios propositalmente até a definição dos autômatos.
+
+---
+
+# Despachante das fases
+
+O arquivo:
+
+`fases/despachante_fases.rpy`
+
+passou a encaminhar genericamente:
+
+- preparação;
+- introdução;
+- dica comum;
+- dica de NPC;
+- exibição visual do estado.
+
+Isso permite que o restante da aplicação não precise saber qual conteúdo pertence a cada fase.
+
+---
+
+# Fortalecimento da validação
+
+Antes de iniciar a criação dos seis novos autômatos, a validação foi reforçada.
+
+O motor passou a rejeitar:
+
+- símbolos de transição não pertencentes ao alfabeto;
+- estados extras no dicionário de transições;
+- múltiplos estados finais;
+- armadilhas sem limite de métrica correspondente;
+- métricas obrigatórias sem limites válidos;
+- configuração incompleta do NPC;
+- chances fora do intervalo 0–1;
+- número máximo de encontros inválido;
+- configuração incoerente entre modo de NPC e número de encontros;
+- número interno de fase diferente do registro utilizado.
+
+A bateria automatizada foi ampliada para testar também essas proteções.
+
+---
+
+# Resultado atual da bateria de testes
+
+Após as novas validações:
+
+- 47 testes aprovados;
+- 0 falhas.
+
+Os diagnósticos fuzzy permaneceram inalterados:
+
+- 630 oscilações crisp ao aumentar Necessidade;
+- 630 oscilações crisp ao aumentar Disposição;
+- 0 regressões de categoria ao aumentar Necessidade;
+- 0 regressões de categoria ao aumentar Disposição.
+
+Portanto, a generalização da arquitetura não alterou o comportamento previamente validado do núcleo.
+
+---
+
+# Guia de arquitetura consolidado
+
+Ao final dessa etapa foi consolidada a seguinte responsabilidade dos principais arquivos.
+
+## `script.rpy`
+
+Responsável por:
+
+- entrada do jogo;
+- seleção;
+- preparação;
+- inicialização de variáveis.
+
+## `screens.rpy`
+
+Responsável por:
+
+- interface;
+- botões;
+- seleção de modo;
+- seleção de fase;
+- entrada de rota;
+- controles de jogo.
+
+## `navegacao.rpy`
+
+Responsável por:
+
+- execução dos dois modos;
+- transições;
+- registro dos percursos;
+- integração com eventos dos estados.
+
+## `eventos_estado.rpy`
+
+Responsável por:
+
+- reagir à chegada em estados;
+- final;
+- armadilha;
+- NPC.
+
+## `encontros_npc.rpy`
+
+Responsável por:
+
+- encontros;
+- criação dos NPCs;
+- interações;
+- pedidos de ajuda;
+- integração com fuzzy;
+- seleção das dicas.
+
+## `fases/fase_X.rpy`
+
+Responsável pelo conteúdo específico:
+
+- textos;
+- falas;
+- dicas;
+- introdução;
+- representação visual.
+
+## `logica/automatos/fase_X.py`
+
+Responsável pela configuração estrutural:
+
+- estados;
+- nomes das ilhas;
+- transições;
+- estado inicial;
+- estado final;
+- armadilhas;
+- limites das métricas;
+- configuração dos NPCs.
+
+## `automato.py`
+
+Motor genérico dos autômatos.
+
+## `jogador.py`
+
+Métricas e cálculo da Necessidade de Assistência.
+
+## `npc.py`
+
+Cálculo e atualização da Disposição Afetiva.
+
+## `fuzzy.py`
+
+Inferência fuzzy e seleção do nível de assistência.
+
+## `fases.py`
+
+Registro e validação das fases.
+
+---
+
+# Estado do desenvolvimento em 08/11/2026
+
+A infraestrutura lógica genérica do jogo foi considerada concluída e validada.
+
+O sistema possui atualmente:
+
+- motor genérico de autômatos;
+- validação estrutural das fases;
+- dois modos de navegação;
+- métricas do jogador;
+- Necessidade de Assistência;
+- encontros fixos e aleatórios;
+- Disposição Afetiva;
+- interações;
+- sistema fuzzy;
+- quatro níveis de assistência;
+- controle de repetição das dicas;
+- estados de armadilha;
+- Game Over;
+- progressão entre fases;
+- scaffolding narrativo das sete fases;
+- bateria automatizada de testes.
+
+A próxima etapa deixa de ser a construção da infraestrutura e passa a ser a **modelagem efetiva das fases e dos autômatos**.
+
+---
+
+# Próxima etapa planejada
+
+A intenção atual para a progressão é:
+
+## Fase 1
+
+Fase extremamente simples e introdutória.
+
+A ideia inicial é utilizar um autômato essencialmente linear, permitindo ao jogador compreender o funcionamento básico da navegação.
+
+## Fases 2–4
+
+Devem introduzir progressivamente os elementos necessários para compreender e utilizar as mecânicas presentes no jogo.
+
+Entre os elementos candidatos estão:
+
+- caminhos alternativos;
+- mais de uma possibilidade de rota;
+- loops;
+- retornos;
+- armadilhas;
+- maior número de estados.
+
+Cada elemento novo deverá ser contextualizado por uma fala simples do Navegador no início da fase.
+
+## Fases 5–7
+
+Devem funcionar mais como desafios completos, combinando os elementos introduzidos anteriormente e exigindo que o jogador encontre rotas adequadas em estruturas progressivamente mais complexas.
+
+Os autômatos ainda não foram definidos.
+
+A próxima atividade será revisar o material utilizado na disciplina de Linguagens Formais e Autômatos e, a partir dele, desenhar os sete modelos.
+
+Somente depois de desenhar cada autômato serão definidos, por fase:
+
+- número de estados;
+- transições;
+- chance de encontro com NPC;
+- limite máximo de encontros;
+- presença de armadilhas;
+- limites de normalização das métricas;
+- dicas genéricas;
+- dicas intermediárias;
+- dicas específicas;
+- texto introdutório;
+- mapa.
+
+---
+
+# Etapas posteriores
+
+Após a implementação das sete fases:
+
+1. revisar explicitamente a base de regras fuzzy SE–ENTÃO;
+2. executar novamente toda a bateria de testes;
+3. realizar testes funcionais das sete fases;
+4. iniciar o polimento visual;
+5. substituir backgrounds temporários;
+6. criar mapas definitivos;
+7. ajustar botões e interface;
+8. definir nome do jogo;
+9. criar símbolo/logo;
+10. criar ícone da aplicação;
+11. configurar ícone exibido na janela/barra de tarefas;
+12. gerar versão executável;
+13. executar teste final de integração.
