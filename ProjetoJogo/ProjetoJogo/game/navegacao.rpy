@@ -1,26 +1,28 @@
 # ============================================================
-# MODO DE NAVEGAÇÃO PASSO A PASSO
+# MODO NAVEGAÇÃO PASSO A PASSO
 # ============================================================
 
 label modo_navegacao:
 
+
+    # Mostra o estado inicial.
+
     call exibir_ilha_atual
 
 
+    jump navegacao_escolher_transicao
+
+
+
+# ============================================================
+# ESCOLHER PRÓXIMA TRANSIÇÃO
+# ============================================================
+
+label navegacao_escolher_transicao:
+
+
     # ========================================================
-    # VERIFICA SE O ESTADO ATUAL JÁ É FINAL
-    # ========================================================
-
-    if automato.eh_final(
-        configuracao_automato,
-        estado_atual
-    ):
-
-        jump vitoria
-
-
-    # ========================================================
-    # CONSULTA AS TRANSIÇÕES DISPONÍVEIS
+    # DESTINOS
     # ========================================================
 
     $ destino_a_estado = automato.transicao(
@@ -28,6 +30,7 @@ label modo_navegacao:
         estado_atual,
         "A"
     )
+
 
     $ destino_b_estado = automato.transicao(
         configuracao_automato,
@@ -61,7 +64,7 @@ label modo_navegacao:
 
 
     # ========================================================
-    # MOSTRA AS OPÇÕES AO JOGADOR
+    # ESCOLHA
     # ========================================================
 
     call screen escolha_transicao(
@@ -78,30 +81,40 @@ label modo_navegacao:
 
 
     # ========================================================
-    # CONTROLES GERAIS
+    # DICA
     # ========================================================
 
     if simbolo == "__AJUDA__":
 
         call pedir_dica_atual
 
-        jump modo_navegacao
+        jump navegacao_escolher_transicao
 
+
+    # ========================================================
+    # REINICIAR
+    # ========================================================
 
     elif simbolo == "__REINICIAR__":
 
         call reiniciar_fase
 
-        jump modo_navegacao
+        call exibir_ilha_atual
 
-    
+        jump navegacao_escolher_transicao
+
+
+    # ========================================================
+    # MENU
+    # ========================================================
+
     elif simbolo == "__MENU__":
 
         return
 
 
     # ========================================================
-    # EXECUTA A TRANSIÇÃO
+    # EXECUTA TRANSIÇÃO
     # ========================================================
 
     $ proximo_estado = automato.transicao(
@@ -115,20 +128,21 @@ label modo_navegacao:
 
         navegador "Não existe uma rota [simbolo] saindo desta ilha."
 
-        jump modo_navegacao
+        jump navegacao_escolher_transicao
 
 
     # ========================================================
-    # REGISTRA A NAVEGAÇÃO DO JOGADOR
+    # REGISTRA PERCURSO
     # ========================================================
 
     $ novo_historico, novas_repeticoes = jogador.registrar_percurso(
-    historico_estados,
-    [proximo_estado]
+        historico_estados,
+        [proximo_estado]
     )
 
 
     $ historico_estados = novo_historico
+
     $ estados_repetidos += novas_repeticoes
 
 
@@ -136,45 +150,96 @@ label modo_navegacao:
 
 
     # ========================================================
-    # ATUALIZA O ESTADO DA PARTIDA
+    # ATUALIZA ESTADO
     # ========================================================
 
     $ estado_atual = proximo_estado
 
 
-    
-
-    jump modo_navegacao
-
-
-
-# ============================================================
-# MODO DE PLANEJAMENTO DE ROTA
-# ============================================================
-
-label modo_rota:
+    # Mostra visualmente a nova ilha.
 
     call exibir_ilha_atual
 
 
     # ========================================================
-    # VERIFICA SE O ESTADO ATUAL JÁ É FINAL
+    # PROCESSA EVENTOS DA CHEGADA
     # ========================================================
 
-    if automato.eh_final(
-        configuracao_automato,
-        estado_atual
-    ):
+    call processar_eventos_estado_atual
+
+    $ resultado_evento = _return
+
+
+    # ========================================================
+    # VITÓRIA
+    # ========================================================
+
+    if resultado_evento == "vitoria":
 
         jump vitoria
 
 
+    # ========================================================
+    # GAME OVER + REINÍCIO
+    # ========================================================
+
+    elif resultado_evento == "reiniciado":
+
+        call exibir_ilha_atual
+
+        jump navegacao_escolher_transicao
+
+
+    # ========================================================
+    # GAME OVER + MENU
+    # ========================================================
+
+    elif resultado_evento == "menu":
+
+        return
+
+
+    jump navegacao_escolher_transicao
+
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
+
+
+# ============================================================
+# MODO PLANEJAMENTO DE ROTA
+# ============================================================
+
+label modo_rota:
+
+
+    call exibir_ilha_atual
+
+
+    jump planejar_nova_rota
+
+
+
+# ============================================================
+# PLANEJAR NOVA ROTA
+# ============================================================
+
+label planejar_nova_rota:
+
+
     navegador "Capitão, podemos planejar várias rotas antes de partir."
 
-
-    # ========================================================
-    # RECEBE A ENTRADA DO JOGADOR
-    # ========================================================
 
     call screen entrada_rota(
         automato.nome_estado(
@@ -188,131 +253,265 @@ label modo_rota:
 
 
     # ========================================================
-    # CONTROLES GERAIS
+    # DICA
     # ========================================================
 
     if entrada_jogador == "__AJUDA__":
 
         call pedir_dica_atual
 
-        jump modo_rota
+        jump planejar_nova_rota
 
+
+    # ========================================================
+    # REINICIAR
+    # ========================================================
 
     elif entrada_jogador == "__REINICIAR__":
 
         call reiniciar_fase
 
-        jump modo_rota
+        call exibir_ilha_atual
 
+        jump planejar_nova_rota
+
+
+    # ========================================================
+    # MENU
+    # ========================================================
 
     elif entrada_jogador == "__MENU__":
 
         return
 
-    # ========================================================
-    # TRATA A SEQUÊNCIA INFORMADA
-    # ========================================================
-
-    $ sequencia = entrada_jogador.strip().upper()
-
 
     # ========================================================
-    # PROCESSA A SEQUÊNCIA NO AUTÔMATO
+    # PREPARA SEQUÊNCIA
     # ========================================================
 
-    $ novo_estado, caminho, erro = automato.processar_sequencia(
-        configuracao_automato,
-        estado_atual,
-        sequencia
-    )
+    $ sequencia = entrada_jogador.strip().replace(
+        " ",
+        ""
+    ).upper()
 
 
-    # Cria uma versão textual para apresentar na tela.
+    if not sequencia:
 
-    $ caminho_exibicao = automato.nomes_caminho(
-    configuracao_automato,
-    caminho
-    )
+        navegador "Nenhuma rota foi informada."
 
+        jump planejar_nova_rota
+
+
+    # Caminho exibido ao jogador.
+
+    $ caminho_exibicao = [
+        automato.nome_estado(
+            configuracao_automato,
+            estado_atual
+        )
+    ]
+
+
+    $ indice_rota = 0
+
+    $ rota_interrompida = False
+
+    $ resultado_evento = "continuar"
+
+
+    # ========================================================
+    # EXECUTA A SEQUÊNCIA PASSO A PASSO
+    # ========================================================
+
+    while (
+        indice_rota < len(sequencia)
+        and not rota_interrompida
+    ):
+
+
+        $ simbolo_rota = sequencia[
+            indice_rota
+        ]
+
+
+        # ====================================================
+        # SÍMBOLO INVÁLIDO
+        # ====================================================
+
+        if simbolo_rota not in automato.obter_alfabeto(
+            configuracao_automato
+        ):
+
+            navegador "Símbolo inválido: [simbolo_rota]."
+
+            $ rota_interrompida = True
+
+
+        else:
+
+
+            # ================================================
+            # TRANSIÇÃO
+            # ================================================
+
+            $ proximo_estado = automato.transicao(
+                configuracao_automato,
+                estado_atual,
+                simbolo_rota
+            )
+
+
+            if proximo_estado is None:
+
+                navegador "Não existe uma rota [simbolo_rota] a partir de [automato.nome_estado(configuracao_automato, estado_atual)]."
+
+                $ rota_interrompida = True
+
+
+            else:
+
+
+                # ============================================
+                # MÉTRICAS
+                # ============================================
+
+                $ novo_historico, novas_repeticoes = jogador.registrar_percurso(
+                    historico_estados,
+                    [proximo_estado]
+                )
+
+
+                $ historico_estados = novo_historico
+
+                $ estados_repetidos += novas_repeticoes
+
+
+                call atualizar_necessidade_assistencia
+
+
+                # ============================================
+                # ATUALIZA ESTADO
+                # ============================================
+
+                $ estado_atual = proximo_estado
+
+
+                $ caminho_exibicao.append(
+                    automato.nome_estado(
+                        configuracao_automato,
+                        estado_atual
+                    )
+                )
+
+
+                # Mostra cada estado efetivamente visitado.
+
+                call exibir_ilha_atual
+
+
+                # ============================================
+                # EVENTOS
+                # ============================================
+
+                call processar_eventos_estado_atual
+
+                $ resultado_evento = _return
+
+
+                # ============================================
+                # VITÓRIA
+                # ============================================
+
+                if resultado_evento == "vitoria":
+
+                    $ percurso = " -> ".join(
+                        caminho_exibicao
+                    )
+
+                    "Percurso realizado: [percurso]"
+
+                    jump vitoria
+
+
+                # ============================================
+                # ARMADILHA + REINÍCIO
+                # ============================================
+
+                elif resultado_evento == "reiniciado":
+
+                    $ rota_interrompida = True
+
+
+                # ============================================
+                # ARMADILHA + MENU
+                # ============================================
+
+                elif resultado_evento == "menu":
+
+                    return
+
+
+                # ============================================
+                # CONTINUA A SEQUÊNCIA
+                # ============================================
+
+                else:
+
+                    $ indice_rota += 1
+
+
+    # ========================================================
+    # REINICIADO DURANTE A ROTA
+    # ========================================================
+
+    if resultado_evento == "reiniciado":
+
+        navegador "A rota foi interrompida."
+
+        call exibir_ilha_atual
+
+        jump planejar_nova_rota
+
+
+    # ========================================================
+    # RESULTADO DA ROTA
+    # ========================================================
 
     $ percurso = " -> ".join(
         caminho_exibicao
     )
 
 
-    # O primeiro elemento é o estado em que o jogador
-    # já estava antes de iniciar a sequência.
-
-    $ estados_visitados = caminho[1:]
-
-
-    # ========================================================
-    # REGISTRA A NAVEGAÇÃO DO JOGADOR
-    # ========================================================
-
-    $ novo_historico, novas_repeticoes = jogador.registrar_percurso(
-    historico_estados,
-    estados_visitados
-    )
-
-
-    $ historico_estados = novo_historico
-    $ estados_repetidos += novas_repeticoes
-
-
-    call atualizar_necessidade_assistencia
-
-
-    # ========================================================
-    # ATUALIZA O ESTADO ATUAL
-    # ========================================================
-
-    $ estado_atual = novo_estado
-
-
-    # ========================================================
-    # MOSTRA O RESULTADO
-    # ========================================================
-
     "Sequência informada: [sequencia]"
 
-    # ========================================================
-    # TRATA POSSÍVEIS ERROS
-    # ========================================================
-
-    if erro:
-
-        navegador "[erro]"
-
-
-    # ========================================================
-    # VERIFICA VITÓRIA
-    # ========================================================
-
-    if automato.eh_final(
-        configuracao_automato,
-        estado_atual
-    ):
-
-        jump vitoria
+    "Percurso realizado: [percurso]"
 
 
     navegador "Terminamos em [automato.nome_estado(configuracao_automato, estado_atual)]."
 
-    navegador "Podemos planejar outra rota daqui."
 
+    jump planejar_nova_rota
 
-    jump modo_rota
-
-
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
+#—————————————————————————————————————————————————————————————————————
 
 # ============================================================
 # VITÓRIA
 # ============================================================
 
 label vitoria:
-
-    call exibir_ilha_atual
 
 
     navegador "Capitão, encontramos nosso destino!"
@@ -321,7 +520,7 @@ label vitoria:
 
 
     # ========================================================
-    # DESBLOQUEAR A PRÓXIMA FASE
+    # DESBLOQUEIA PRÓXIMA FASE
     # ========================================================
 
     if fase_atual < 7:
@@ -339,4 +538,8 @@ label vitoria:
             "Uma nova fase foi desbloqueada!"
 
 
-    return
+    # ========================================================
+    # VOLTA À SELEÇÃO DE FASES
+    # ========================================================
+
+    jump selecionar_fase_jogo

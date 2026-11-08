@@ -122,15 +122,15 @@ default valor_assistencia_fuzzy = None
 # especifica
 default categoria_assistencia = None
 
-
 # ============================================================
 # INÍCIO DO JOGO
 # ============================================================
 
 label start:
 
+
     # ========================================================
-    #  ESCOLHA DO MODO DE JOGO
+    # ESCOLHA DO MODO
     # ========================================================
 
     call screen menu_modo_jogo
@@ -138,17 +138,38 @@ label start:
     $ modo_jogo = _return
 
 
-    # ========================================================
-    #  ESCOLHA DA FASE
-    # ========================================================
+    # Depois de escolher o modo, seguimos para
+    # a seleção de fase.
+
+    jump selecionar_fase_jogo
+
+
+
+# ============================================================
+# SELECIONAR FASE
+# ============================================================
+
+label selecionar_fase_jogo:
+
 
     call screen selecionar_fase
 
     $ fase_atual = _return
 
 
+    jump preparar_execucao_fase
+
+
+
+# ============================================================
+# PREPARAR EXECUÇÃO DA FASE
+# ============================================================
+
+label preparar_execucao_fase:
+
+
     # ========================================================
-    #  CARREGA O AUTÔMATO DA FASE
+    # CARREGA E VALIDA A CONFIGURAÇÃO
     # ========================================================
 
     $ configuracao_automato = fases.obter_automato(
@@ -156,25 +177,36 @@ label start:
     )
 
 
+    # ========================================================
+    # ESTADO INICIAL
+    # ========================================================
+
     $ estado_atual = automato.estado_inicial(
         configuracao_automato
     )
 
 
     # ========================================================
-    # INICIALIZA AS MÉTRICAS DA FASE
+    # MÉTRICAS
     # ========================================================
 
-    $ historico_estados = [estado_atual]
+    $ historico_estados = [
+        estado_atual
+    ]
 
     $ estados_repetidos = 0
+
     $ dicas_pedidas = 0
+
     $ numero_resets = 0
+
     $ armadilhas_atingidas = 0
+
     $ necessidade_assistencia = 0.0
 
+
     # ========================================================
-    # INICIALIZA O SISTEMA DE NPC
+    # NPC
     # ========================================================
 
     $ npc_presente = False
@@ -190,22 +222,26 @@ label start:
     $ historico_interacoes = []
 
 
+    # ========================================================
+    # FUZZY
+    # ========================================================
 
     $ resultado_fuzzy = None
 
     $ valor_assistencia_fuzzy = None
-    
+
     $ categoria_assistencia = None
 
+
     # ========================================================
-    # PREPARA CONTEÚDO ESPECÍFICO DA FASE
+    # CONTEÚDO DA FASE
     # ========================================================
 
     call preparar_fase_atual
 
 
     # ========================================================
-    # INICIA O MODO ESCOLHIDO
+    # INICIA O MODO
     # ========================================================
 
     if modo_jogo == "navegacao":

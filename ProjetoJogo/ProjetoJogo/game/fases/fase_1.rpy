@@ -44,7 +44,7 @@ define DICAS_ESPECIFICAS_FASE_1 = [
 # A Fase 1 possui um encontro obrigatório com NPC.
 # Ele acontece apenas uma vez durante a execução da fase.
 
-default encontro_npc_fase1_realizado = False
+
 
 # ============================================================
 # PREPARAÇÃO DA FASE 1
@@ -55,13 +55,11 @@ label fase_1_preparar:
     # O botão Dica utiliza somente ad dica genéricas da fase.
     #
     # As dicas intermediárias e específicas ficam 
-    # para o sistema de assistência do NPC.
+    # para o sistema de dicas do NPC.
     
     $ dicas_disponiveis = list(
         DICAS_GENERICAS_FASE_1
     )
-    #O encontro tutorial do npc ainda não aconteceu
-    $ encontro_npc_fase1_realizado = False
 
     return
 
@@ -134,14 +132,6 @@ label fase_1_exibir_estado:
         scene bg_ilha3_fase1
 
         "Você está na Ilha 3."
-
-        # ========================================================
-        # ENCONTRO TUTORIAL COM NPC
-        # ========================================================
-
-        if not encontro_npc_fase1_realizado:
-
-            call fase_1_encontro_npc
 
 
     # --------------------------------------------------------
@@ -303,83 +293,6 @@ screen mapa_fase_1:
                 ypos 500
 
                 action Hide("mapa_atual")
-
-# ============================================================
-# ENCONTRO COM NPC - FASE 1
-# ============================================================
-
-label fase_1_encontro_npc:
-
-    # Impede que o encontro tutorial aconteça novamente
-    # nesta mesma execução da fase.
-
-    $ encontro_npc_fase1_realizado = True
-
-
-    "Há alguém nesta ilha."
-
-
-    # ========================================================
-    # INICIA O ENCONTRO
-    # ========================================================
-
-    call iniciar_encontro_npc
-
-
-    # ========================================================
-    # INTRODUÇÃO
-    # ========================================================
-
-    naufrago "Ei! Vocês aí!"
-
-    naufrago "Não esperava encontrar outro navio por aqui."
-
-
-    # ========================================================
-    # PRIMEIRA INTERAÇÃO
-    # ========================================================
-
-    call interacao_npc_inicial
-
-    $ resultado_interacao = _return
-
-
-    # ========================================================
-    # JOGAR AO MAR ENCERRA O ENCONTRO
-    # ========================================================
-
-    if resultado_interacao == "encerrar":
-
-        call encerrar_encontro_npc
-
-        return
-
-
-    # ========================================================
-    # SEGUNDA INTERAÇÃO
-    # ========================================================
-
-    call interacao_npc_social
-
-
-    # ========================================================
-    # DECISÃO FINAL
-    # ========================================================
-
-    # Somente depois das interações o jogador decide
-    # se deseja perguntar sobre as ilhas.
-
-    call decidir_ajuda_npc
-
-
-    # ========================================================
-    # ENCERRA O ENCONTRO
-    # ========================================================
-
-    call encerrar_encontro_npc
-
-
-    return
 
 # ============================================================
 # FORNECER DICA DO NPC - FASE 1

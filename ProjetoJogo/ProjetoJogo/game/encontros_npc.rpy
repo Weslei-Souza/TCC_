@@ -465,3 +465,168 @@ label decidir_ajuda_npc:
 
 
     return
+
+
+
+# ============================================================
+# VERIFICAR ENCONTRO COM NPC
+# ============================================================
+
+label verificar_encontro_npc_atual:
+
+
+    # ========================================================
+    # CONFIGURAÇÃO DA FASE
+    # ========================================================
+
+    $ config_npc = configuracao_automato["npc"]
+
+    $ modo_npc = config_npc["modo"]
+
+    $ max_encontros = config_npc["max_encontros"]
+
+
+    # ========================================================
+    # FASE SEM NPC
+    # ========================================================
+
+    if modo_npc == "nenhum":
+
+        return False
+
+
+    # ========================================================
+    # LIMITE DE ENCONTROS ATINGIDO
+    # ========================================================
+
+    if contador_encontros_npc >= max_encontros:
+
+        return False
+
+
+    # ========================================================
+    # PROTEÇÃO
+    # ========================================================
+
+    # Mesmo que uma configuração incorreta consiga chegar
+    # até aqui, NPCs somente aparecem em estados intermediários.
+
+    if not automato.eh_intermediario(
+        configuracao_automato,
+        estado_atual
+    ):
+
+        return False
+
+
+    # ========================================================
+    # NPC FIXO
+    # ========================================================
+
+    if modo_npc == "fixo":
+
+        $ estado_fixo = config_npc["estado_fixo"]
+
+
+        if estado_atual == estado_fixo:
+
+            call realizar_encontro_npc
+
+            return True
+
+
+        return False
+
+
+    # ========================================================
+    # NPC ALEATÓRIO
+    # ========================================================
+
+    if modo_npc == "aleatorio":
+
+        $ chance_encontro = config_npc[
+            "chance_encontro"
+        ]
+
+
+        # renpy.random é utilizado para manter compatibilidade
+        # com o sistema de rollback/save do Ren'Py.
+
+        $ sorteio_encontro = renpy.random.random()
+
+
+        if sorteio_encontro < chance_encontro:
+
+            call realizar_encontro_npc
+
+            return True
+
+
+    return False
+
+
+
+# ============================================================
+# REALIZAR ENCONTRO GENÉRICO
+# ============================================================
+
+label realizar_encontro_npc:
+
+
+    "Há alguém nesta ilha."
+
+
+    # ========================================================
+    # CRIA O NOVO NPC
+    # ========================================================
+
+    call iniciar_encontro_npc
+
+
+    naufrago "Ei! Vocês aí!"
+
+    naufrago "Não esperava encontrar outro navio por aqui."
+
+
+    # ========================================================
+    # PRIMEIRA INTERAÇÃO
+    # ========================================================
+
+    call interacao_npc_inicial
+
+    $ resultado_interacao = _return
+
+
+    # ========================================================
+    # JOGADO AO MAR
+    # ========================================================
+
+    if resultado_interacao == "encerrar":
+
+        call encerrar_encontro_npc
+
+        return
+
+
+    # ========================================================
+    # SEGUNDA INTERAÇÃO
+    # ========================================================
+
+    call interacao_npc_social
+
+
+    # ========================================================
+    # PEDIR OU NÃO AJUDA
+    # ========================================================
+
+    call decidir_ajuda_npc
+
+
+    # ========================================================
+    # ENCERRAR ENCONTRO
+    # ========================================================
+
+    call encerrar_encontro_npc
+
+
+    return
