@@ -1,13 +1,22 @@
 """
 Configuração lógica da Fase 1.
 
-Este arquivo contém somente dados específicos da fase.
+FASE 1 - TUTORIAL
 
-A lógica de processamento permanece nos módulos gerais:
-- automato.py
-- jogador.py
-- npc.py
-- fuzzy.py
+Objetivo da fase:
+apresentar ao jogador o funcionamento básico da navegação
+entre estados utilizando as entradas A e B.
+
+A fase possui:
+
+- um estado inicial;
+- uma ilha intermediária;
+- um estado final;
+- nenhuma armadilha;
+- um encontro fixo com NPC.
+
+Os identificadores q0, q1 e qf são utilizados apenas
+internamente. A interface apresenta nomes de ilhas.
 """
 
 
@@ -42,7 +51,7 @@ ESTADO_INICIAL = "q0"
 # ============================================================
 
 ESTADOS_FINAIS = {
-    "qf"
+    "qf",
 }
 
 
@@ -50,13 +59,7 @@ ESTADOS_FINAIS = {
 # ESTADOS DE ARMADILHA
 # ============================================================
 
-# A Fase 1 atual não possui armadilhas.
-#
-# Em fases futuras poderemos ter, por exemplo:
-#
-# ESTADOS_ARMADILHA = {
-#     "q4"
-# }
+# A Fase 1 não possui estados de armadilha.
 
 ESTADOS_ARMADILHA = set()
 
@@ -65,18 +68,11 @@ ESTADOS_ARMADILHA = set()
 # NOMES EXIBIDOS AO JOGADOR
 # ============================================================
 
-# Os identificadores q0, q1 etc. são usados apenas
-# internamente.
-#
-# A interface utiliza os nomes definidos aqui.
-
 NOMES_ESTADOS = {
 
     "q0": "Ilha 1",
 
     "q1": "Ilha 2",
-
-    "q2": "Ilha 3",
 
     "qf": "Ilha Final",
 }
@@ -86,28 +82,55 @@ NOMES_ESTADOS = {
 # FUNÇÃO DE TRANSIÇÃO
 # ============================================================
 
+# Cada estado possui exatamente uma transição
+# para cada símbolo do alfabeto.
+#
+# Portanto, o autômato é determinístico e completo.
+
 TRANSICOES = {
 
+    # --------------------------------------------------------
+    # q0 - ESTADO INICIAL
+    # --------------------------------------------------------
+
     "q0": {
+
         "A": "q1",
-        "B": "q2",
+
+        "B": "q1",
     },
+
+
+    # --------------------------------------------------------
+    # q1 - ILHA INTERMEDIÁRIA
+    # --------------------------------------------------------
+
+    # A devolve o jogador ao início.
+    #
+    # B leva ao estado final.
 
     "q1": {
-        "A": "q0",
-        "B": "q2",
-    },
 
-    "q2": {
         "A": "q0",
+
         "B": "qf",
     },
 
-    # O estado final permanece absorvente para que
-    # o autômato continue completo.
+
+    # --------------------------------------------------------
+    # qf - ESTADO FINAL
+    # --------------------------------------------------------
+
+    # Formalmente o autômato precisa possuir
+    # transições também a partir do estado final.
+    #
+    # No jogo essas transições não são utilizadas,
+    # pois a fase termina imediatamente ao chegar em qf.
 
     "qf": {
+
         "A": "qf",
+
         "B": "qf",
     },
 }
@@ -117,10 +140,11 @@ TRANSICOES = {
 # LIMITES DA NECESSIDADE DE ASSISTÊNCIA
 # ============================================================
 
-# Valores provisórios da Fase 1.
+# Estes limites determinam quando cada métrica normalizada
+# atinge seu valor máximo.
 #
-# Serão redefinidos quando os autômatos definitivos
-# das sete fases forem modelados.
+# A Fase 1 não possui armadilhas, portanto essa métrica
+# não participa da média ponderada.
 
 LIMITES_ASSISTENCIA = {
 
@@ -135,33 +159,29 @@ LIMITES_ASSISTENCIA = {
 
 
 # ============================================================
-# CONFIGURAÇÃO DOS ENCONTROS COM NPC
+# CONFIGURAÇÃO DO NPC
 # ============================================================
 
-# Modos possíveis:
+# A primeira fase funciona como tutorial.
 #
-# "nenhum"
-# "fixo"
-# "aleatorio"
-#
-# A Fase 1 atual utiliza um encontro tutorial fixo.
+# Por isso o encontro não é aleatório.
+# O Náufrago aparece obrigatoriamente na Ilha 2 (q1).
 
 CONFIGURACAO_NPC = {
 
     "modo": "fixo",
 
-    # Usado somente quando modo == "fixo".
-    "estado_fixo": "q2",
+    "estado_fixo": "q1",
 
-    # Probabilidade entre 0.0 e 1.0.
-    #
-    # No modo fixo ela não é utilizada, mas mantemos
-    # a chave para que todas as fases possuam a mesma
-    # estrutura de configuração.
+    # Não é utilizada no modo fixo,
+    # mas permanece definida porque faz parte
+    # do contrato genérico das fases.
+
     "chance_encontro": 1.0,
 
-    # Quantidade máxima de encontros durante
-    # uma execução da fase.
+    # O encontro tutorial acontece apenas uma vez
+    # por execução da fase.
+
     "max_encontros": 1,
 }
 

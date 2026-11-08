@@ -1,12 +1,8 @@
 # ============================================================
 # FASE 1
-# PRIMEIROS ESTADOS
+# TUTORIAL DE NAVEGAÇÃO
 # ============================================================
 
-
-# ============================================================
-# DICAS DA FASE 1
-# ============================================================
 
 # ============================================================
 # DICAS GENÉRICAS
@@ -14,8 +10,9 @@
 
 define DICAS_GENERICAS_FASE_1 = [
 
-    "A Ilha 1 é o ponto de partida e a Ilha Final é o seu destino.",
+    "A Ilha Final é o nosso destino. Observe as rotas disponíveis antes de escolher.",
 ]
+
 
 # ============================================================
 # DICAS INTERMEDIÁRIAS
@@ -23,7 +20,7 @@ define DICAS_GENERICAS_FASE_1 = [
 
 define DICAS_INTERMEDIARIAS_FASE_1 = [
 
-    "A Ilha 3 está próxima do objetivo final desta fase.",
+    "Na Ilha 2, uma das rotas leva de volta à Ilha 1 e a outra segue para o nosso destino.",
 ]
 
 
@@ -33,59 +30,64 @@ define DICAS_INTERMEDIARIAS_FASE_1 = [
 
 define DICAS_ESPECIFICAS_FASE_1 = [
 
-    "Você não precisa passar pela Ilha 2 para chegar à Ilha Final, mas pode ser necessário dependendo da rota escolhida.",
+    "Quando estiver na Ilha 2, escolha a rota B para chegar à Ilha Final.",
 ]
 
 
 # ============================================================
-# CONTROLE DO ENCONTRO DA FASE 1
+# INTRODUÇÃO DA FASE
 # ============================================================
 
-# A Fase 1 possui um encontro obrigatório com NPC.
-# Ele acontece apenas uma vez durante a execução da fase.
+label fase_1_introducao:
 
+    navegador "Capitão, vamos começar por estas ilhas."
+
+    navegador "Observe para onde cada rota nos leva e tente chegar à Ilha Final."
+
+    return
 
 
 # ============================================================
-# PREPARAÇÃO DA FASE 1
+# PREPARAÇÃO DA FASE
 # ============================================================
 
 label fase_1_preparar:
 
-    # O botão Dica utiliza somente ad dica genéricas da fase.
+    # O botão comum de Dica utiliza somente
+    # as dicas genéricas da fase.
     #
-    # As dicas intermediárias e específicas ficam 
-    # para o sistema de dicas do NPC.
-    
+    # As dicas intermediárias e específicas
+    # ficam disponíveis para o sistema fuzzy
+    # de assistência do NPC.
+
     $ dicas_disponiveis = list(
         DICAS_GENERICAS_FASE_1
     )
 
     return
 
-# ============================================================
-# PEDIR DICA - FASE 1
-# ============================================================
 
 # ============================================================
-# INTRODUÇÃO DA FASE 1
+# PEDIR DICA NORMAL
 # ============================================================
-
-label fase_1_introducao:
-    
-    scene bg_mar
-
-    navegador "Vamos começar explorando estas ilhas."
-
-    return
-
 
 label fase_1_pedir_dica:
 
+    # Cada solicitação é registrada como uma ocorrência
+    # da métrica Dicas Pedidas.
+
     $ dicas_pedidas += 1
+
+
+    # Atualiza a Necessidade de Assistência
+    # após a nova solicitação.
 
     call atualizar_necessidade_assistencia
 
+
+    # ========================================================
+    # SEM MAIS DICAS
+    # ========================================================
 
     if not dicas_disponiveis:
 
@@ -94,10 +96,17 @@ label fase_1_pedir_dica:
         return
 
 
+    # ========================================================
+    # ESCOLHER DICA
+    # ========================================================
+
     $ dica_escolhida = renpy.random.choice(
         dicas_disponiveis
     )
 
+
+    # Remove a dica para impedir repetição
+    # pelo Navegador enquanto houver outras disponíveis.
 
     $ dicas_disponiveis.remove(
         dica_escolhida
@@ -109,12 +118,17 @@ label fase_1_pedir_dica:
 
     return
 
+
+# ============================================================
 # REPRESENTAÇÃO DOS ESTADOS
+# ============================================================
+
 label fase_1_exibir_estado:
 
-    # --------------------------------------------------------
-    # q0 - ESTADO INICIAL
-    # --------------------------------------------------------
+
+    # ========================================================
+    # q0 - ILHA 1 / ESTADO INICIAL
+    # ========================================================
 
     if estado_atual == "q0":
 
@@ -123,11 +137,9 @@ label fase_1_exibir_estado:
         "Você está na Ilha 1."
 
 
-
-
-    # --------------------------------------------------------
-    # q1
-    # --------------------------------------------------------
+    # ========================================================
+    # q1 - ILHA 2
+    # ========================================================
 
     elif estado_atual == "q1":
 
@@ -136,20 +148,9 @@ label fase_1_exibir_estado:
         "Você está na Ilha 2."
 
 
-
-    # --------------------------------------------------------
-    # q2
-    # --------------------------------------------------------
-    elif estado_atual == "q2":
-
-        scene bg_ilha3_fase1
-
-        "Você está na Ilha 3."
-
-
-    # --------------------------------------------------------
-    # qf - ESTADO FINAL
-    # --------------------------------------------------------
+    # ========================================================
+    # qf - ILHA FINAL
+    # ========================================================
 
     elif estado_atual == "qf":
 
@@ -158,14 +159,17 @@ label fase_1_exibir_estado:
         "Você chegou à Ilha Final."
 
 
-
     return
 
 
+# ============================================================
+# MAPA DA FASE 1
+# ============================================================
 
-# ============================================================
-# MAPA FASE 1
-# ============================================================
+# Este mapa ainda utiliza a interface provisória.
+#
+# Posteriormente será substituído por uma imagem
+# definitiva baseada no autômato modelado no JFLAP.
 
 screen mapa_fase_1:
 
@@ -187,7 +191,7 @@ screen mapa_fase_1:
 
 
             # =================================================
-            # q0
+            # ILHA 1 - q0
             # =================================================
 
             add Transform(
@@ -196,18 +200,18 @@ screen mapa_fase_1:
                 fit="contain"
             ):
 
-                xpos 70
+                xpos 80
                 ypos 250
 
 
             text "Ilha 1":
 
-                xpos 90
+                xpos 140
                 ypos 400
 
 
             # =================================================
-            # q1
+            # ILHA 2 - q1
             # =================================================
 
             add Transform(
@@ -216,38 +220,18 @@ screen mapa_fase_1:
                 fit="contain"
             ):
 
-                xpos 350
-                ypos 50
+                xpos 430
+                ypos 250
 
 
             text "Ilha 2":
 
-                xpos 400
-                ypos 200
-
-
-            # =================================================
-            # q2
-            # =================================================
-
-            add Transform(
-                "bg_ilha3_fase1",
-                xysize=(220, 140),
-                fit="contain"
-            ):
-
-                xpos 350
+                xpos 490
                 ypos 400
 
 
-            text "Ilha 3":
-
-                xpos 400
-                ypos 550
-
-
             # =================================================
-            # qf
+            # ILHA FINAL - qf
             # =================================================
 
             add Transform(
@@ -256,42 +240,45 @@ screen mapa_fase_1:
                 fit="contain"
             ):
 
-                xpos 750
-                ypos 225
+                xpos 790
+                ypos 250
 
 
             text "Ilha Final":
 
-                xpos 780
-                ypos 375
+                xpos 835
+                ypos 400
 
 
             # =================================================
-            # TRANSIÇÕES
+            # INDICAÇÕES PROVISÓRIAS DAS ROTAS
             # =================================================
 
-            text "A":
+            # q0 -> q1
+            text "A / B":
 
-                xpos 290
-                ypos 175
+                xpos 350
+                ypos 235
 
-                size 32
-
-
-            text "B":
-
-                xpos 290
-                ypos 420
-
-                size 32
+                size 28
 
 
-            text "B":
+            # q1 -> q0
+            text "A ←":
 
-                xpos 650
-                ypos 250
+                xpos 350
+                ypos 350
 
-                size 32
+                size 28
+
+
+            # q1 -> qf
+            text "B →":
+
+                xpos 700
+                ypos 270
+
+                size 28
 
 
             # =================================================
@@ -302,17 +289,22 @@ screen mapa_fase_1:
 
                 style "rota_button"
 
-                xpos 720
-                ypos 500
+                xpos 820
+                ypos 520
 
                 action Hide("mapa_atual")
 
+
 # ============================================================
-# FORNECER DICA DO NPC - FASE 1
+# FORNECER DICA DO NPC
 # ============================================================
 
 label fase_1_fornecer_dica_npc:
 
+
+    # ========================================================
+    # GENÉRICA
+    # ========================================================
 
     if categoria_assistencia == "generica":
 
@@ -321,6 +313,10 @@ label fase_1_fornecer_dica_npc:
         )
 
 
+    # ========================================================
+    # INTERMEDIÁRIA
+    # ========================================================
+
     elif categoria_assistencia == "intermediaria":
 
         call fornecer_dica_npc_com_banco(
@@ -328,12 +324,20 @@ label fase_1_fornecer_dica_npc:
         )
 
 
+    # ========================================================
+    # ESPECÍFICA
+    # ========================================================
+
     elif categoria_assistencia == "especifica":
 
         call fornecer_dica_npc_com_banco(
             DICAS_ESPECIFICAS_FASE_1
         )
 
+
+    # ========================================================
+    # NENHUMA
+    # ========================================================
 
     else:
 
