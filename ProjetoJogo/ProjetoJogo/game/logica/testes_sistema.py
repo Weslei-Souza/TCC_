@@ -25,8 +25,15 @@ from copy import deepcopy
 
 from logica import fases
 
-from logica.automatos import fase_1
-
+from logica.automatos import (
+    fase_1,
+    fase_2,
+    fase_3,
+    fase_4,
+    fase_5,
+    fase_6,
+    fase_7,
+)
 
 # ============================================================
 # UTILITÁRIOS
@@ -887,6 +894,174 @@ def executar_todos_testes():
         erro_armadilha_sem_limite,
         "Validação: rejeita armadilha sem limite ativo"
     )
+ 
+
+    # ========================================================
+    # 13. REGISTRO DAS SETE FASES
+    # ========================================================
+
+    verificar(
+        fases.fases_implementadas()
+        == [1, 2, 3, 4, 5, 6, 7],
+        "Registro: todas as sete fases implementadas"
+    )
+
+
+    # ========================================================
+    # 14. VALIDAÇÃO DE TODAS AS FASES
+    # ========================================================
+
+    for numero_fase, configuracao in CONFIGURACOES_FASES.items():
+
+
+        # ----------------------------------------------------
+        # CONTRATO DA FASE
+        # ----------------------------------------------------
+
+        verificar(
+            fases.validar_configuracao(
+                configuracao
+            ),
+            f"Fase {numero_fase}: configuração válida"
+        )
+
+
+        # ----------------------------------------------------
+        # ROTA DE REFERÊNCIA
+        # ----------------------------------------------------
+
+        rota = ROTAS_REFERENCIA[
+            numero_fase
+        ]
+
+
+        estado, caminho, erro = automato.processar_sequencia(
+            configuracao,
+            configuracao["estado_inicial"],
+            rota
+        )
+
+
+        verificar(
+            (
+                estado
+                in configuracao["estados_finais"]
+                and erro is None
+            ),
+            (
+                f"Fase {numero_fase}: "
+                f"rota {rota} chega ao final"
+            ),
+            (
+                f"estado={estado}, "
+                f"caminho={caminho}, "
+                f"erro={erro}"
+            )
+        )
+
+
+        # ----------------------------------------------------
+        # TODOS OS ESTADOS SÃO ALCANÇÁVEIS
+        # ----------------------------------------------------
+
+        estados_configurados = set(
+            configuracao[
+                "nomes_estados"
+            ].keys()
+        )
+
+
+        alcancaveis = estados_alcancaveis(
+            configuracao
+        )
+
+
+        verificar(
+            alcancaveis == estados_configurados,
+            f"Fase {numero_fase}: todos os estados alcançáveis",
+            (
+                f"faltando="
+                f"{estados_configurados - alcancaveis}"
+            )
+        )
+
+
+        # ----------------------------------------------------
+        # SOMENTE ARMADILHAS NÃO CHEGAM AO FINAL
+        # ----------------------------------------------------
+
+        sem_caminho_final = set()
+
+
+        for estado in estados_configurados:
+
+            if not consegue_alcancar_final(
+                configuracao,
+                estado
+            ):
+
+                sem_caminho_final.add(
+                    estado
+                )
+
+
+        verificar(
+            sem_caminho_final
+            == set(
+                configuracao[
+                    "estados_armadilha"
+                ]
+            ),
+            (
+                f"Fase {numero_fase}: "
+                "estados sem saída correspondem às armadilhas"
+            ),
+            (
+                f"encontrado={sem_caminho_final}"
+            )
+        )
+
+
+    # ========================================================
+    # 15. ROTAS DE ARMADILHA
+    # ========================================================
+
+    for numero_fase, casos in ROTAS_ARMADILHA.items():
+
+        configuracao = CONFIGURACOES_FASES[
+            numero_fase
+        ]
+
+
+        for rota, armadilha_esperada in casos:
+
+            estado, caminho, erro = automato.processar_sequencia(
+                configuracao,
+                configuracao["estado_inicial"],
+                rota
+            )
+
+
+            verificar(
+                (
+                    estado == armadilha_esperada
+                    and automato.eh_armadilha(
+                        configuracao,
+                        estado
+                    )
+                    and erro is None
+                ),
+                (
+                    f"Fase {numero_fase}: "
+                    f"rota {rota} chega em "
+                    f"{armadilha_esperada}"
+                ),
+                (
+                    f"estado={estado}, "
+                    f"caminho={caminho}, "
+                    f"erro={erro}"
+                )
+            )
 
 
     # ========================================================
@@ -966,3 +1141,144 @@ def formatar_relatorio(resultado):
     return "\n".join(
         linhas
     )
+
+
+CONFIGURACOES_FASES = {
+
+    1: fase_1.CONFIGURACAO,
+    2: fase_2.CONFIGURACAO,
+    3: fase_3.CONFIGURACAO,
+    4: fase_4.CONFIGURACAO,
+    5: fase_5.CONFIGURACAO,
+    6: fase_6.CONFIGURACAO,
+    7: fase_7.CONFIGURACAO,
+}
+
+
+ROTAS_REFERENCIA = {
+
+    1: "AB",
+    2: "BAB",
+    3: "ABAB",
+    4: "BBAB",
+    5: "AABB",
+    6: "ABBAB",
+    7: "AABABB",
+}
+
+
+ROTAS_ARMADILHA = {
+
+    4: [
+        ("AAA", "qd"),
+    ],
+
+    5: [
+        ("ABA", "qd"),
+    ],
+
+    6: [
+        ("ABA", "qd1"),
+        ("BAB", "qd2"),
+    ],
+
+    7: [
+        ("AB", "qd1"),
+        ("AABB", "qd2"),
+    ],
+}
+
+def estados_alcancaveis(configuracao):
+    """
+    Retorna todos os estados alcançáveis a partir
+    do estado inicial.
+    """
+
+    inicial = configuracao[
+        "estado_inicial"
+    ]
+
+    visitados = {
+        inicial
+    }
+
+    fila = [
+        inicial
+    ]
+
+
+    while fila:
+
+        estado = fila.pop(0)
+
+
+        for destino in configuracao[
+            "transicoes"
+        ][estado].values():
+
+            if destino not in visitados:
+
+                visitados.add(
+                    destino
+                )
+
+                fila.append(
+                    destino
+                )
+
+
+    return visitados
+
+
+
+def consegue_alcancar_final(
+    configuracao,
+    estado_inicial_teste
+):
+    """
+    Verifica se existe algum caminho do estado informado
+    até o estado final.
+    """
+
+    finais = set(
+        configuracao["estados_finais"]
+    )
+
+
+    visitados = {
+        estado_inicial_teste
+    }
+
+
+    fila = [
+        estado_inicial_teste
+    ]
+
+
+    while fila:
+
+        estado = fila.pop(0)
+
+
+        if estado in finais:
+
+            return True
+
+
+        for destino in configuracao[
+            "transicoes"
+        ][estado].values():
+
+            if destino not in visitados:
+
+                visitados.add(
+                    destino
+                )
+
+                fila.append(
+                    destino
+                )
+
+
+    return False
+

@@ -8,7 +8,15 @@ selecionada pelo jogador e sua configuração lógica.
 
 from logica import automato
 
-from logica.automatos import fase_1
+from logica.automatos import (
+    fase_1,
+    fase_2,
+    fase_3,
+    fase_4,
+    fase_5,
+    fase_6,
+    fase_7,
+)
 
 
 # ============================================================

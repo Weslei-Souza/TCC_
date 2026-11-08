@@ -2,34 +2,38 @@
 # FASE 7
 # ============================================================
 
-
-# ============================================================
-# DICAS
-# ============================================================
-
 define DICAS_GENERICAS_FASE_7 = [
-    "Dica genérica da Fase 7.",
+
+    "Este é o arquipélago mais complexo que encontramos até agora.",
+
+    "Há redemoinhos, retornos e duas prisões espalhadas pelas rotas.",
 ]
 
 define DICAS_INTERMEDIARIAS_FASE_7 = [
-    "Dica intermediária da Fase 7.",
+
+    "As Ilhas 3, 6 e 8 possuem redemoinhos.",
+
+    "A Ilha 2 e a Ilha 4 possuem caminhos que levam à Prisão 1.",
+
+    "A Ilha 7 e a Ilha 9 possuem caminhos que levam à Prisão 2.",
 ]
 
 define DICAS_ESPECIFICAS_FASE_7 = [
-    "Dica específica da Fase 7.",
+
+    "Uma rota possível até o objetivo começa com A, A.",
+
+    "A sequência A, A, B, A, B, B leva até a Ilha Final.",
+
+    "Na Ilha 9, escolha B. A rota A leva à Prisão 2.",
 ]
-
-
-# ============================================================
-# INTRODUÇÃO
-# ============================================================
 
 label fase_7_introducao:
 
-    navegador "Esta fase ainda será configurada."
+    navegador "Capitão, chegamos ao arquipélago mais perigoso da viagem."
+
+    navegador "Vamos precisar observar o mapa e planejar cada rota com cuidado."
 
     return
-
 
 # ============================================================
 # PREPARAÇÃO

@@ -1,39 +1,41 @@
 # ============================================================
 # FASE 4
+# PRISÃO / ESTADO DE MORTE
 # ============================================================
 
-
-# ============================================================
-# DICAS
-# ============================================================
 
 define DICAS_GENERICAS_FASE_4 = [
-    "Dica genérica da Fase 4.",
+
+    "Há uma prisão entre estas ilhas. Precisamos evitar as rotas que levam até ela.",
+
+    "Nem toda rota disponível é segura.",
 ]
+
 
 define DICAS_INTERMEDIARIAS_FASE_4 = [
-    "Dica intermediária da Fase 4.",
+
+    "A Ilha 4 possui uma rota perigosa que leva diretamente à prisão.",
+
+    "A Ilha 6 está próxima do objetivo, mas uma das escolhas ainda leva à prisão.",
 ]
+
 
 define DICAS_ESPECIFICAS_FASE_4 = [
-    "Dica específica da Fase 4.",
+
+    "A sequência B, B, A, B leva até a Ilha Final.",
+
+    "Na Ilha 6, escolha B. A rota A leva à prisão.",
 ]
 
-
-# ============================================================
-# INTRODUÇÃO
-# ============================================================
 
 label fase_4_introducao:
 
-    navegador "Esta fase ainda será configurada."
+    navegador "Capitão, avistamos uma prisão entre estas ilhas."
+
+    navegador "Se formos parar lá, estaremos presos e nossa viagem termina."
 
     return
 
-
-# ============================================================
-# PREPARAÇÃO
-# ============================================================
 
 label fase_4_preparar:
 
@@ -43,10 +45,6 @@ label fase_4_preparar:
 
     return
 
-
-# ============================================================
-# DICA NORMAL
-# ============================================================
 
 label fase_4_pedir_dica:
 
@@ -66,24 +64,16 @@ label fase_4_pedir_dica:
         dicas_disponiveis
     )
 
-
     $ dicas_disponiveis.remove(
         dica_escolhida
     )
 
-
     navegador "[dica_escolhida]"
-
 
     return
 
 
-# ============================================================
-# DICA DO NPC
-# ============================================================
-
 label fase_4_fornecer_dica_npc:
-
 
     if categoria_assistencia == "generica":
 
@@ -91,13 +81,11 @@ label fase_4_fornecer_dica_npc:
             DICAS_GENERICAS_FASE_4
         )
 
-
     elif categoria_assistencia == "intermediaria":
 
         call fornecer_dica_npc_com_banco(
             DICAS_INTERMEDIARIAS_FASE_4
         )
-
 
     elif categoria_assistencia == "especifica":
 
@@ -105,21 +93,38 @@ label fase_4_fornecer_dica_npc:
             DICAS_ESPECIFICAS_FASE_4
         )
 
-
     else:
 
         call npc_recusar_dica
 
-
     return
 
 
-# ============================================================
-# REPRESENTAÇÃO DOS ESTADOS
-# ============================================================
-
 label fase_4_exibir_estado:
 
-    "Visual da Fase 4 ainda não configurado."
+    scene bg_mar
+
+    $ nome_estado_fase = automato.nome_estado(
+        configuracao_automato,
+        estado_atual
+    )
+
+    if automato.eh_armadilha(
+        configuracao_automato,
+        estado_atual
+    ):
+
+        "Você chegou à [nome_estado_fase]."
+
+    elif automato.eh_final(
+        configuracao_automato,
+        estado_atual
+    ):
+
+        "Você chegou à [nome_estado_fase]."
+
+    else:
+
+        "Você está em [nome_estado_fase]."
 
     return

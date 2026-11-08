@@ -1,39 +1,41 @@
 # ============================================================
 # FASE 3
+# REDEMOINHOS / AUTO-LAÇOS
 # ============================================================
 
-
-# ============================================================
-# DICAS
-# ============================================================
 
 define DICAS_GENERICAS_FASE_3 = [
-    "Dica genérica da Fase 3.",
+
+    "Existem redemoinhos nestas águas. Algumas rotas podem nos deixar exatamente onde já estávamos.",
+
+    "Se uma escolha não mudar nossa posição, talvez tenhamos encontrado um redemoinho.",
 ]
+
 
 define DICAS_INTERMEDIARIAS_FASE_3 = [
-    "Dica intermediária da Fase 3.",
+
+    "Na Ilha 2, a rota A nos mantém na própria Ilha 2.",
+
+    "A Ilha 5 possui uma rota para a Ilha Final, mas outra nos leva de volta ao início.",
 ]
+
 
 define DICAS_ESPECIFICAS_FASE_3 = [
-    "Dica específica da Fase 3.",
+
+    "A sequência A, B, A, B leva da Ilha 1 até a Ilha Final.",
+
+    "Ao chegar à Ilha 5, escolha B para alcançar a Ilha Final.",
 ]
 
-
-# ============================================================
-# INTRODUÇÃO
-# ============================================================
 
 label fase_3_introducao:
 
-    navegador "Esta fase ainda será configurada."
+    navegador "Capitão, parece que estas águas possuem redemoinhos."
+
+    navegador "Algumas rotas podem acabar nos levando para o mesmo lugar de onde saímos."
 
     return
 
-
-# ============================================================
-# PREPARAÇÃO
-# ============================================================
 
 label fase_3_preparar:
 
@@ -43,10 +45,6 @@ label fase_3_preparar:
 
     return
 
-
-# ============================================================
-# DICA NORMAL
-# ============================================================
 
 label fase_3_pedir_dica:
 
@@ -66,24 +64,16 @@ label fase_3_pedir_dica:
         dicas_disponiveis
     )
 
-
     $ dicas_disponiveis.remove(
         dica_escolhida
     )
 
-
     navegador "[dica_escolhida]"
-
 
     return
 
 
-# ============================================================
-# DICA DO NPC
-# ============================================================
-
 label fase_3_fornecer_dica_npc:
-
 
     if categoria_assistencia == "generica":
 
@@ -91,13 +81,11 @@ label fase_3_fornecer_dica_npc:
             DICAS_GENERICAS_FASE_3
         )
 
-
     elif categoria_assistencia == "intermediaria":
 
         call fornecer_dica_npc_com_banco(
             DICAS_INTERMEDIARIAS_FASE_3
         )
-
 
     elif categoria_assistencia == "especifica":
 
@@ -105,21 +93,31 @@ label fase_3_fornecer_dica_npc:
             DICAS_ESPECIFICAS_FASE_3
         )
 
-
     else:
 
         call npc_recusar_dica
 
-
     return
 
 
-# ============================================================
-# REPRESENTAÇÃO DOS ESTADOS
-# ============================================================
-
 label fase_3_exibir_estado:
 
-    "Visual da Fase 3 ainda não configurado."
+    scene bg_mar
+
+    $ nome_estado_fase = automato.nome_estado(
+        configuracao_automato,
+        estado_atual
+    )
+
+    if automato.eh_final(
+        configuracao_automato,
+        estado_atual
+    ):
+
+        "Você chegou à [nome_estado_fase]."
+
+    else:
+
+        "Você está em [nome_estado_fase]."
 
     return

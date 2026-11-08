@@ -3,35 +3,36 @@
 
 # ============================================================
 
-
-# ============================================================
-# DICAS
-# ============================================================
-
 define DICAS_GENERICAS_FASE_6 = [
-    "Dica genérica da Fase 6.",
+
+    "Este arquipélago é mais perigoso. Há mais de uma prisão e vários caminhos possíveis.",
+
+    "Uma rota aparentemente curta pode terminar em uma armadilha.",
 ]
 
 define DICAS_INTERMEDIARIAS_FASE_6 = [
-    "Dica intermediária da Fase 6.",
+
+    "A Ilha 4 possui uma rota que leva à Prisão 1.",
+
+    "A Ilha 5 possui uma rota que leva à Prisão 2.",
+
+    "Na Ilha 7, apenas uma das rotas leva à Ilha Final.",
 ]
 
 define DICAS_ESPECIFICAS_FASE_6 = [
-    "Dica específica da Fase 6.",
+
+    "A sequência A, B, B, A, B leva até a Ilha Final.",
+
+    "Na Ilha 7, escolha B. A rota A leva à Prisão 2.",
 ]
-
-
-# ============================================================
-# INTRODUÇÃO
-# ============================================================
 
 label fase_6_introducao:
 
-    navegador "Esta fase ainda será configurada."
+    navegador "Capitão, estas águas estão ficando perigosas."
+
+    navegador "Há duas prisões e vários caminhos que podem nos afastar do destino."
 
     return
-
-
 # ============================================================
 # PREPARAÇÃO
 # ============================================================

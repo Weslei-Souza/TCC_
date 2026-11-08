@@ -1,32 +1,29 @@
-# ============================================================
-# FASE 5
-# ============================================================
-
-
-# ============================================================
-# DICAS
-# ============================================================
-
 define DICAS_GENERICAS_FASE_5 = [
-    "Dica genérica da Fase 5.",
+
+    "Agora teremos que lidar ao mesmo tempo com caminhos alternativos, redemoinhos e a prisão.",
+
+    "Observe o mapa antes de escolher: algumas regiões possuem mais de um perigo.",
 ]
 
 define DICAS_INTERMEDIARIAS_FASE_5 = [
-    "Dica intermediária da Fase 5.",
+
+    "A Ilha 4 possui um redemoinho na rota A.",
+
+    "Tanto a Ilha 5 quanto a Ilha 6 possuem uma rota que leva à prisão.",
 ]
 
 define DICAS_ESPECIFICAS_FASE_5 = [
-    "Dica específica da Fase 5.",
+
+    "A sequência A, A, B, B leva até a Ilha Final.",
+
+    "Na Ilha 6, escolha B. A rota A leva à prisão.",
 ]
-
-
-# ============================================================
-# INTRODUÇÃO
-# ============================================================
 
 label fase_5_introducao:
 
-    navegador "Esta fase ainda será configurada."
+    navegador "Capitão, desta vez teremos que usar tudo que vimos até agora."
+
+    navegador "Há diferentes caminhos, redemoinhos e uma prisão nestas águas."
 
     return
 
