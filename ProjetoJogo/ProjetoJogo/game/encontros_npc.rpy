@@ -630,3 +630,110 @@ label realizar_encontro_npc:
 
 
     return
+
+
+# ============================================================
+# ESCOLHER DICA DO NPC SEM REPETIR
+# ============================================================
+
+label fornecer_dica_npc_com_banco(banco_dicas):
+
+
+    # Categoria determinada pelo fuzzy:
+    #
+    # generica
+    # intermediaria
+    # especifica
+
+    $ categoria = categoria_assistencia
+
+
+    # ========================================================
+    # PROTEÇÃO CONTRA BANCO VAZIO
+    # ========================================================
+
+    if not banco_dicas:
+
+        naufrago "Acho que não tenho nenhuma informação útil sobre isso."
+
+        return
+
+
+    # ========================================================
+    # DICAS JÁ UTILIZADAS NESTA CATEGORIA
+    # ========================================================
+
+    $ usadas = list(
+        dicas_npc_usadas.get(
+            categoria,
+            []
+        )
+    )
+
+
+    # Dicas ainda não fornecidas por NPCs.
+
+    $ disponiveis = [
+        dica
+        for dica in banco_dicas
+        if dica not in usadas
+    ]
+
+
+    # ========================================================
+    # BANCO ESGOTADO
+    # ========================================================
+
+    # Quando todas as dicas daquela categoria já foram usadas,
+    # liberamos novamente o banco inteiro.
+    #
+    # A categoria fuzzy NÃO é alterada.
+
+    if not disponiveis:
+
+        $ usadas = []
+
+        $ disponiveis = list(
+            banco_dicas
+        )
+
+
+    # ========================================================
+    # ESCOLHA
+    # ========================================================
+
+    $ dica_npc = renpy.random.choice(
+        disponiveis
+    )
+
+
+    # ========================================================
+    # REGISTRO DA DICA UTILIZADA
+    # ========================================================
+
+    $ usadas.append(
+        dica_npc
+    )
+
+
+    $ novo_historico_dicas = dict(
+        dicas_npc_usadas
+    )
+
+
+    $ novo_historico_dicas[
+        categoria
+    ] = usadas
+
+
+    $ dicas_npc_usadas = novo_historico_dicas
+
+
+    # ========================================================
+    # EXIBIÇÃO
+    # ========================================================
+
+    naufrago "[dica_npc]"
+
+
+    return

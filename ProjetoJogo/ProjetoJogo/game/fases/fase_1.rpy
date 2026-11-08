@@ -67,6 +67,17 @@ label fase_1_preparar:
 # PEDIR DICA - FASE 1
 # ============================================================
 
+# ============================================================
+# INTRODUÇÃO DA FASE 1
+# ============================================================
+
+label fase_1_introducao:
+
+    navegador "Vamos começar explorando estas ilhas."
+
+    return
+
+
 label fase_1_pedir_dica:
 
     $ dicas_pedidas += 1
@@ -301,51 +312,30 @@ screen mapa_fase_1:
 label fase_1_fornecer_dica_npc:
 
 
-    # ========================================================
-    # DICA GENÉRICA
-    # ========================================================
-
     if categoria_assistencia == "generica":
 
-        $ dica_npc = renpy.random.choice(
+        call fornecer_dica_npc_com_banco(
             DICAS_GENERICAS_FASE_1
         )
 
 
-    # ========================================================
-    # DICA INTERMEDIÁRIA
-    # ========================================================
-
     elif categoria_assistencia == "intermediaria":
 
-        $ dica_npc = renpy.random.choice(
+        call fornecer_dica_npc_com_banco(
             DICAS_INTERMEDIARIAS_FASE_1
         )
 
 
-    # ========================================================
-    # DICA ESPECÍFICA
-    # ========================================================
-
     elif categoria_assistencia == "especifica":
 
-        $ dica_npc = renpy.random.choice(
+        call fornecer_dica_npc_com_banco(
             DICAS_ESPECIFICAS_FASE_1
         )
 
 
-    # ========================================================
-    # PROTEÇÃO
-    # ========================================================
-
     else:
 
         call npc_recusar_dica
-
-        return
-
-
-    naufrago "[dica_npc]"
 
 
     return

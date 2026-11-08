@@ -78,6 +78,16 @@ default historico_interacoes = []
 
 default dicas_disponiveis = []
 
+# Dicas já fornecidas por NPCs na execução atual da fase.
+# Cada categoria possui seu próprio histórico para impedir
+# repetição enquanto ainda houver dicas não utilizadas.
+
+default dicas_npc_usadas = {
+    "generica": [],
+    "intermediaria": [],
+    "especifica": [],
+}
+
 
 # ============================================================
 # NPC
@@ -221,6 +231,12 @@ label preparar_execucao_fase:
 
     $ historico_interacoes = []
 
+    $ dicas_npc_usadas = {
+    "generica": [],
+    "intermediaria": [],
+    "especifica": [],
+}
+
 
     # ========================================================
     # FUZZY
@@ -238,6 +254,8 @@ label preparar_execucao_fase:
     # ========================================================
 
     call preparar_fase_atual
+
+    call introducao_fase_atual
 
 
     # ========================================================
