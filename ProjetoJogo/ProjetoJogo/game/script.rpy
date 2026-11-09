@@ -14,9 +14,7 @@ init python:
     # somente a primeira fase fica liberada.
     if persistent.fase_max_desbloqueada is None:
         persistent.fase_max_desbloqueada = 1
-    
-    init python:
-
+        
     # ========================================================
     # GARANTE O ATALHO DE TELA CHEIA
     # ========================================================
