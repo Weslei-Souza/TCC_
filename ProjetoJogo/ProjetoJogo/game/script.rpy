@@ -17,6 +17,22 @@ init python:
 
 
 # ============================================================
+# DESATIVA O GAME MENU PADRÃO DO REN'PY
+# ============================================================
+
+# O jogo possui navegação e controles próprios.
+#
+# Portanto, ESC/clique direito não devem abrir
+# o menu padrão opaco do Ren'Py.
+
+if "game_menu" in config.keymap:
+
+    config.keymap[
+        "game_menu"
+    ] = []
+
+
+# ============================================================
 # PERSONAGENS
 # ============================================================
 
