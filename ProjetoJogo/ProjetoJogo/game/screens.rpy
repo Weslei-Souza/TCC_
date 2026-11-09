@@ -261,7 +261,7 @@ screen quick_menu():
 init python:
     config.overlay_screens.append("quick_menu")
 
-default quick_menu = True
+default quick_menu = False
 
 style quick_menu is hbox
 style quick_button is default
@@ -349,31 +349,31 @@ style navigation_button_text:
 ## Used to display the main menu when Ren'Py starts.
 ##
 ## https://www.renpy.org/doc/html/screen_special.html#main-menu
+# ============================================================
+# MENU PRINCIPAL PERSONALIZADO
+# ============================================================
 
 screen main_menu():
+
 
     tag menu
 
 
-    # ========================================================
-    # FUNDO
-    # ========================================================
+    # Fundo provisório.
+    #
+    # Depois será substituído pela identidade visual final.
 
     add "bg_mar"
 
 
-    # ========================================================
-    # MENU PRINCIPAL
-    # ========================================================
-
     frame:
 
-        style "painel_jogo"
+        background Solid("#111820DD")
 
         xalign 0.5
         yalign 0.5
 
-        xsize 600
+        xsize 520
 
 
         vbox:
@@ -383,15 +383,19 @@ screen main_menu():
             spacing 30
 
 
-            text "Arquipélago":
+            text "Projeto Jogo":
 
                 xalign 0.5
 
-                size 48
+                size 52
 
 
             null height 20
 
+
+            # =================================================
+            # JOGAR
+            # =================================================
 
             textbutton "Jogar":
 
@@ -400,7 +404,11 @@ screen main_menu():
                 xalign 0.5
 
                 action Start()
-            
+
+
+            # =================================================
+            # COMO JOGAR
+            # =================================================
 
             textbutton "Como Jogar":
 
@@ -408,8 +416,14 @@ screen main_menu():
 
                 xalign 0.5
 
-                action Show("como_jogar")
+                action ShowMenu(
+                    "como_jogar"
+                )
 
+
+            # =================================================
+            # SAIR
+            # =================================================
 
             textbutton "Sair":
 
@@ -417,7 +431,9 @@ screen main_menu():
 
                 xalign 0.5
 
-                action Quit(confirm=True)
+                action Show(
+                    "confirmar_saida"
+                )
 
 style main_menu_frame is empty
 style main_menu_vbox is vbox
@@ -1737,11 +1753,20 @@ screen menu_modo_jogo():
 
             null height 20
 
+            textbutton "Voltar":
+
+                style "rota_button"
+
+                xalign 0.5
+
+                action Return("__VOLTAR__")
+
 
 #MENU COMO JOGAR
 screen como_jogar():
 
     modal True
+    tag menu
 
     add "bg_mar"
 
@@ -1840,7 +1865,7 @@ O botão Reiniciar retorna o jogador à primeira ilha da fase e inicia novamente
 
                 xalign 0.5
 
-                action Hide("como_jogar")
+                action ShowMenu("main_menu")
 
 
 
@@ -2099,6 +2124,14 @@ screen selecionar_fase:
 
                         action Return(numero)
 
+        textbutton "Voltar":
+
+            style "rota_button"
+
+            xalign 0.5
+
+            action Return("__VOLTAR__")
+
 
 
 # ============================================================
@@ -2153,6 +2186,83 @@ screen controles_fase:
             style "controle_button"
 
             action Return("__MENU__")
+
+
+# ============================================================
+# CONFIRMAR SAÍDA
+# ============================================================
+
+screen confirmar_saida:
+
+
+    modal True
+
+    zorder 200
+
+
+    # Escurece o fundo.
+
+    add Solid(
+        "#00000099"
+    )
+
+
+    frame:
+
+        background Solid(
+            "#111820"
+        )
+
+        xalign 0.5
+        yalign 0.5
+
+        xsize 520
+
+        padding (
+            40,
+            40
+        )
+
+
+        vbox:
+
+            xalign 0.5
+
+            spacing 30
+
+
+            text "Deseja realmente fechar o jogo?":
+
+                xalign 0.5
+
+                text_align 0.5
+
+                size 32
+
+
+            hbox:
+
+                xalign 0.5
+
+                spacing 30
+
+
+                textbutton "Não":
+
+                    style "rota_button"
+
+                    action Hide(
+                        "confirmar_saida"
+                    )
+
+
+                textbutton "Sim":
+
+                    style "rota_button"
+
+                    action Quit(
+                        confirm=False
+                    )
 
 
 # ESTILO DOS PAINÉIS DO JOGO

@@ -586,6 +586,13 @@ def executar_todos_testes():
         )
     )
 
+    diagnosticos.append(
+        (
+            "Fases registradas: "
+            f"{fases.fases_implementadas()}"
+        )
+    )
+
     # ========================================================
     # 10.1 DIAGNÓSTICO DE REGRESSÃO DAS CATEGORIAS
     # ========================================================
@@ -1062,6 +1069,63 @@ def executar_todos_testes():
                     f"erro={erro}"
                 )
             )
+
+    # ========================================================
+    # BASE DE REGRAS FUZZY
+    # ========================================================
+
+    pares_regras = {
+        (
+            regra["necessidade"],
+            regra["disposicao"]
+        )
+        for regra in fuzzy.REGRAS_FUZZY
+    }
+
+
+    combinacoes_esperadas = {
+
+        ("baixa", "hostil"),
+        ("baixa", "neutro"),
+        ("baixa", "amigavel"),
+
+        ("media", "hostil"),
+        ("media", "neutro"),
+        ("media", "amigavel"),
+
+        ("alta", "hostil"),
+        ("alta", "neutro"),
+        ("alta", "amigavel"),
+    }
+
+
+    verificar(
+        (
+            len(fuzzy.REGRAS_FUZZY) == 9
+            and pares_regras == combinacoes_esperadas
+        ),
+        "Fuzzy: base possui exatamente as nove combinações SE-ENTÃO"
+    )
+
+
+    saidas_validas_regras = all(
+
+        regra["assistencia"] in {
+            "nenhuma",
+            "generica",
+            "intermediaria",
+            "especifica",
+        }
+
+        for regra in fuzzy.REGRAS_FUZZY
+    )
+
+
+    verificar(
+        saidas_validas_regras,
+        "Fuzzy: todas as regras possuem saída válida"
+    )
+        
 
 
     # ========================================================

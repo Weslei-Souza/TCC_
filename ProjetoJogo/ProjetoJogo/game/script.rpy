@@ -131,25 +131,39 @@ default valor_assistencia_fuzzy = None
 # intermediaria
 # especifica
 default categoria_assistencia = None
-
 # ============================================================
 # INÍCIO DO JOGO
 # ============================================================
 
 label start:
 
+    jump escolher_modo_jogo
 
-    # ========================================================
-    # ESCOLHA DO MODO
-    # ========================================================
+
+
+# ============================================================
+# ESCOLHER MODO
+# ============================================================
+
+label escolher_modo_jogo:
+
 
     call screen menu_modo_jogo
 
-    $ modo_jogo = _return
+    $ escolha_modo = _return
 
 
-    # Depois de escolher o modo, seguimos para
-    # a seleção de fase.
+    # ========================================================
+    # VOLTAR AO MENU PRINCIPAL
+    # ========================================================
+
+    if escolha_modo == "__VOLTAR__":
+
+        return
+
+
+    $ modo_jogo = escolha_modo
+
 
     jump selecionar_fase_jogo
 
@@ -164,11 +178,22 @@ label selecionar_fase_jogo:
 
     call screen selecionar_fase
 
-    $ fase_atual = _return
+    $ escolha_fase = _return
+
+
+    # ========================================================
+    # VOLTAR À ESCOLHA DO MODO
+    # ========================================================
+
+    if escolha_fase == "__VOLTAR__":
+
+        jump escolher_modo_jogo
+
+
+    $ fase_atual = escolha_fase
 
 
     jump preparar_execucao_fase
-
 
 
 # ============================================================

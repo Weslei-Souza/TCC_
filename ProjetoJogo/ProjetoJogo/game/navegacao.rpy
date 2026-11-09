@@ -506,7 +506,6 @@ label planejar_nova_rota:
 #—————————————————————————————————————————————————————————————————————
 #—————————————————————————————————————————————————————————————————————
 #—————————————————————————————————————————————————————————————————————
-
 # ============================================================
 # VITÓRIA
 # ============================================================
@@ -516,26 +515,52 @@ label vitoria:
 
     navegador "Capitão, encontramos nosso destino!"
 
+
+    # ========================================================
+    # FASE FINAL
+    # ========================================================
+
+    if fase_atual == 7:
+
+        "Você chegou à Ilha Final."
+
+        navegador "Conseguimos, Capitão!"
+
+        navegador "Exploramos todos os arquipélagos e finalmente encontramos o tesouro."
+
+        "Você completou todas as fases do jogo!"
+
+
+        # Garante que qualquer progresso persistente
+        # pendente seja salvo.
+
+        $ renpy.save_persistent()
+
+
+        # Como o fluxo do jogo começou pelo label start,
+        # retornar sem um caller encerra a execução atual
+        # e leva novamente ao menu principal.
+
+        return
+
+
+    # ========================================================
+    # FASES 1 A 6
+    # ========================================================
+
     "Você concluiu a Fase [fase_atual]."
 
 
-    # ========================================================
-    # DESBLOQUEIA PRÓXIMA FASE
-    # ========================================================
-
-    if fase_atual < 7:
-
-        $ proxima_fase = fase_atual + 1
+    $ proxima_fase = fase_atual + 1
 
 
-        if persistent.fase_max_desbloqueada < proxima_fase:
+    if persistent.fase_max_desbloqueada < proxima_fase:
 
-            $ persistent.fase_max_desbloqueada = proxima_fase
+        $ persistent.fase_max_desbloqueada = proxima_fase
 
-            $ renpy.save_persistent()
+        $ renpy.save_persistent()
 
-
-            "Uma nova fase foi desbloqueada!"
+        "Uma nova fase foi desbloqueada!"
 
 
     # ========================================================

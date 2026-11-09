@@ -224,31 +224,172 @@ def pertinencia_saida(valor):
 
 
 # ============================================================
-# BASE DE REGRAS
+# BASE DE REGRAS FUZZY
+# ============================================================
+#
+# ESTA É A PARTE PRINCIPAL A SER ALTERADA CASO AS REGRAS
+# DO SISTEMA FUZZY SEJAM MODIFICADAS FUTURAMENTE.
+#
+# Cada regra possui a forma:
+#
+# SE Necessidade de Assistência é X
+# E Disposição Afetiva é Y
+# ENTÃO Nível de Assistência é Z
+#
+# Entradas possíveis:
+#
+# Necessidade:
+# - baixa
+# - media
+# - alta
+#
+# Disposição:
+# - hostil
+# - neutro
+# - amigavel
+#
+# Saída:
+# - nenhuma
+# - generica
+# - intermediaria
+# - especifica
+#
 # ============================================================
 
-# Cada regra relaciona:
-#
-# Necessidade + Disposição -> Nível de Assistência
 
-REGRAS = {
+REGRAS_FUZZY = [
 
-    # Necessidade baixa
-    ("baixa", "hostil"): "nenhuma",
-    ("baixa", "neutro"): "nenhuma",
-    ("baixa", "amigavel"): "generica",
+    # ========================================================
+    # NECESSIDADE BAIXA
+    # ========================================================
 
-    # Necessidade média
-    ("media", "hostil"): "nenhuma",
-    ("media", "neutro"): "generica",
-    ("media", "amigavel"): "intermediaria",
+    # R1
+    #
+    # SE Necessidade é BAIXA
+    # E Disposição é HOSTIL
+    # ENTÃO Assistência é NENHUMA.
 
-    # Necessidade alta
-    ("alta", "hostil"): "generica",
-    ("alta", "neutro"): "intermediaria",
-    ("alta", "amigavel"): "especifica",
-}
+    {
+        "necessidade": "baixa",
+        "disposicao": "hostil",
+        "assistencia": "nenhuma",
+    },
 
+
+    # R2
+    #
+    # SE Necessidade é BAIXA
+    # E Disposição é NEUTRA
+    # ENTÃO Assistência é NENHUMA.
+
+    {
+        "necessidade": "baixa",
+        "disposicao": "neutro",
+        "assistencia": "nenhuma",
+    },
+
+
+    # R3
+    #
+    # SE Necessidade é BAIXA
+    # E Disposição é AMIGÁVEL
+    # ENTÃO Assistência é GENÉRICA.
+
+    {
+        "necessidade": "baixa",
+        "disposicao": "amigavel",
+        "assistencia": "generica",
+    },
+
+
+    # ========================================================
+    # NECESSIDADE MÉDIA
+    # ========================================================
+
+    # R4
+    #
+    # SE Necessidade é MÉDIA
+    # E Disposição é HOSTIL
+    # ENTÃO Assistência é NENHUMA.
+
+    {
+        "necessidade": "media",
+        "disposicao": "hostil",
+        "assistencia": "nenhuma",
+    },
+
+
+    # R5
+    #
+    # SE Necessidade é MÉDIA
+    # E Disposição é NEUTRA
+    # ENTÃO Assistência é GENÉRICA.
+
+    {
+        "necessidade": "media",
+        "disposicao": "neutro",
+        "assistencia": "generica",
+    },
+
+
+    # R6
+    #
+    # SE Necessidade é MÉDIA
+    # E Disposição é AMIGÁVEL
+    # ENTÃO Assistência é INTERMEDIÁRIA.
+
+    {
+        "necessidade": "media",
+        "disposicao": "amigavel",
+        "assistencia": "intermediaria",
+    },
+
+
+    # ========================================================
+    # NECESSIDADE ALTA
+    # ========================================================
+
+    # R7
+    #
+    # SE Necessidade é ALTA
+    # E Disposição é HOSTIL
+    # ENTÃO Assistência é GENÉRICA.
+    #
+    # Mesmo sendo hostil, uma necessidade alta impede que
+    # o sistema permaneça obrigatoriamente sem assistência.
+
+    {
+        "necessidade": "alta",
+        "disposicao": "hostil",
+        "assistencia": "generica",
+    },
+
+
+    # R8
+    #
+    # SE Necessidade é ALTA
+    # E Disposição é NEUTRA
+    # ENTÃO Assistência é INTERMEDIÁRIA.
+
+    {
+        "necessidade": "alta",
+        "disposicao": "neutro",
+        "assistencia": "intermediaria",
+    },
+
+
+    # R9
+    #
+    # SE Necessidade é ALTA
+    # E Disposição é AMIGÁVEL
+    # ENTÃO Assistência é ESPECÍFICA.
+
+    {
+        "necessidade": "alta",
+        "disposicao": "amigavel",
+        "assistencia": "especifica",
+    },
+]
 
 # ============================================================
 # INFERÊNCIA DAS REGRAS
@@ -256,17 +397,34 @@ REGRAS = {
 
 def calcular_ativacoes(necessidade, disposicao):
     """
-    Avalia as nove regras fuzzy.
+    Executa as nove regras fuzzy SE–ENTÃO.
 
-    O operador AND é implementado pelo mínimo:
+    Para cada regra:
 
-    ativacao_regra =
-        min(pertinencia_necessidade,
-            pertinencia_disposicao)
+    1. obtém o grau de pertinência da Necessidade;
+    2. obtém o grau de pertinência da Disposição;
+    3. aplica o operador AND pelo mínimo;
+    4. associa o resultado ao conjunto de saída;
+    5. caso várias regras produzam a mesma saída,
+    mantém a maior ativação.
 
-    Se mais de uma regra produz a mesma categoria de saída,
-    fica a maior ativação encontrada.
+    Exemplo:
+
+    SE Necessidade é ALTA com pertinência 0.8
+    E Disposição é AMIGÁVEL com pertinência 0.6
+
+    ENTÃO:
+
+    ativação = min(0.8, 0.6)
+            = 0.6
+
+    A saída ESPECÍFICA é ativada em 0.6.
     """
+
+
+    # ========================================================
+    # FUZZIFICAÇÃO DAS ENTRADAS
+    # ========================================================
 
     graus_necessidade = pertinencia_necessidade(
         necessidade
@@ -276,30 +434,83 @@ def calcular_ativacoes(necessidade, disposicao):
         disposicao
     )
 
+
+    # ========================================================
+    # SAÍDAS INICIALMENTE DESATIVADAS
+    # ========================================================
+
     ativacoes_saida = {
+
         "nenhuma": 0.0,
+
         "generica": 0.0,
+
         "intermediaria": 0.0,
+
         "especifica": 0.0,
     }
 
-    for (
-        conjunto_necessidade,
-        conjunto_disposicao
-    ), conjunto_saida in REGRAS.items():
+
+    # ========================================================
+    # EXECUÇÃO DAS REGRAS SE–ENTÃO
+    # ========================================================
+
+    for regra in REGRAS_FUZZY:
+
+
+        conjunto_necessidade = regra[
+            "necessidade"
+        ]
+
+        conjunto_disposicao = regra[
+            "disposicao"
+        ]
+
+        conjunto_saida = regra[
+            "assistencia"
+        ]
+
+
+        # ====================================================
+        # OPERADOR AND
+        # ====================================================
+        #
+        # Mamdani:
+        #
+        # AND = mínimo.
 
         ativacao = min(
-            graus_necessidade[conjunto_necessidade],
-            graus_disposicao[conjunto_disposicao]
+
+            graus_necessidade[
+                conjunto_necessidade
+            ],
+
+            graus_disposicao[
+                conjunto_disposicao
+            ]
         )
 
-        ativacoes_saida[conjunto_saida] = max(
-            ativacoes_saida[conjunto_saida],
+
+        # ====================================================
+        # AGREGAÇÃO DE REGRAS COM A MESMA SAÍDA
+        # ====================================================
+        #
+        # Se duas regras resultarem em "generica",
+        # por exemplo, permanece a maior ativação.
+
+        ativacoes_saida[
+            conjunto_saida
+        ] = max(
+
+            ativacoes_saida[
+                conjunto_saida
+            ],
+
             ativacao
         )
 
-    return ativacoes_saida
 
+    return ativacoes_saida
 
 # ============================================================
 # AGREGAÇÃO DA SAÍDA
