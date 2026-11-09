@@ -2,7 +2,6 @@
 # FASE 6
 
 # ============================================================
-
 define DICAS_GENERICAS_FASE_6 = [
 
     "Este arquipélago é mais perigoso. Há mais de uma prisão e vários caminhos possíveis.",
@@ -10,20 +9,22 @@ define DICAS_GENERICAS_FASE_6 = [
     "Uma rota aparentemente curta pode terminar em uma armadilha.",
 ]
 
+
 define DICAS_INTERMEDIARIAS_FASE_6 = [
 
-    "A Ilha 4 possui uma rota que leva à Prisão 1.",
+    "A Ilha 4 possui uma rota que leva a uma prisão.",
 
-    "A Ilha 5 possui uma rota que leva à Prisão 2.",
+    "A Ilha 5 também possui uma rota perigosa que termina em uma prisão.",
 
     "Na Ilha 7, apenas uma das rotas leva à Ilha do Tesouro.",
 ]
+
 
 define DICAS_ESPECIFICAS_FASE_6 = [
 
     "A sequência A, B, B, A, B leva até a Ilha do Tesouro.",
 
-    "Na Ilha 7, escolha B. A rota A leva à Prisão 2.",
+    "Na Ilha 7, escolha B. A rota A leva a uma prisão.",
 ]
 
 label fase_6_introducao:
@@ -119,36 +120,3 @@ label fase_6_fornecer_dica_npc:
 
     return
 
-
-# ============================================================
-# REPRESENTAÇÃO DOS ESTADOS
-# ============================================================
-
-label fase_6_exibir_estado:
-
-    scene bg_mar
-
-    $ nome_estado_fase = automato.nome_estado(
-        configuracao_automato,
-        estado_atual
-    )
-
-    if automato.eh_armadilha(
-        configuracao_automato,
-        estado_atual
-    ):
-
-        "Você chegou à [nome_estado_fase]."
-
-    elif automato.eh_final(
-        configuracao_automato,
-        estado_atual
-    ):
-
-        "Você chegou à [nome_estado_fase]."
-
-    else:
-
-        "Você está em [nome_estado_fase]."
-
-    return

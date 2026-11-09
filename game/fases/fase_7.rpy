@@ -1,7 +1,6 @@
 # ============================================================
 # FASE 7
 # ============================================================
-
 define DICAS_GENERICAS_FASE_7 = [
 
     "Este é o arquipélago mais complexo que encontramos até agora.",
@@ -9,14 +8,16 @@ define DICAS_GENERICAS_FASE_7 = [
     "Há redemoinhos, retornos e duas prisões espalhadas pelas rotas.",
 ]
 
+
 define DICAS_INTERMEDIARIAS_FASE_7 = [
 
     "As Ilhas 3, 6 e 8 possuem redemoinhos.",
 
-    "A Ilha 2 e a Ilha 4 possuem caminhos que levam à Prisão 1.",
+    "As Ilhas 2 e 4 possuem rotas que levam a uma prisão.",
 
-    "A Ilha 7 e a Ilha 9 possuem caminhos que levam à Prisão 2.",
+    "As Ilhas 7 e 9 também possuem rotas que terminam em uma prisão.",
 ]
+
 
 define DICAS_ESPECIFICAS_FASE_7 = [
 
@@ -24,9 +25,8 @@ define DICAS_ESPECIFICAS_FASE_7 = [
 
     "A sequência A, A, B, A, B, B leva até a Ilha do Tesouro.",
 
-    "Na Ilha 9, escolha B. A rota A leva à Prisão 2.",
+    "Na Ilha 9, escolha B. A rota A leva a uma prisão.",
 ]
-
 label fase_7_introducao:
 
     navegador "Capitão, chegamos ao arquipélago mais perigoso da viagem."
@@ -117,36 +117,3 @@ label fase_7_fornecer_dica_npc:
 
     return
 
-
-# ============================================================
-# REPRESENTAÇÃO DOS ESTADOS
-# ============================================================
-
-label fase_7_exibir_estado:
-
-    scene bg_mar
-
-    $ nome_estado_fase = automato.nome_estado(
-        configuracao_automato,
-        estado_atual
-    )
-
-    if automato.eh_armadilha(
-        configuracao_automato,
-        estado_atual
-    ):
-
-        "Você chegou à [nome_estado_fase]."
-
-    elif automato.eh_final(
-        configuracao_automato,
-        estado_atual
-    ):
-
-        "Você chegou à [nome_estado_fase]."
-
-    else:
-
-        "Você está em [nome_estado_fase]."
-
-    return

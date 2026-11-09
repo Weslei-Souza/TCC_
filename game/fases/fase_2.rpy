@@ -98,26 +98,3 @@ label fase_2_fornecer_dica_npc:
         call npc_recusar_dica
 
     return
-
-
-label fase_2_exibir_estado:
-
-    scene bg_mar
-
-    $ nome_estado_fase = automato.nome_estado(
-        configuracao_automato,
-        estado_atual
-    )
-
-    if automato.eh_final(
-        configuracao_automato,
-        estado_atual
-    ):
-
-        "Você chegou à [nome_estado_fase]."
-
-    else:
-
-        "Você está em [nome_estado_fase]."
-
-    return

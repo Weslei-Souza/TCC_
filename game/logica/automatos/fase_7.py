@@ -49,8 +49,8 @@ NOMES_ESTADOS = {
     "q7": "Ilha 8",
     "q8": "Ilha 9",
 
-    "qd1": "Prisão 1",
-    "qd2": "Prisão 2",
+    "qd1": "Prisão",
+    "qd2": "Prisão",
 
     "qf": "Ilha do Tesouro",
 }
