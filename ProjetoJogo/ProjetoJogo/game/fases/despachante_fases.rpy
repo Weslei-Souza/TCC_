@@ -134,91 +134,23 @@ label fornecer_dica_npc_atual:
     return
 
 
+# ============================================================
+# EXIBIR ESTADO ATUAL
+# ============================================================
 
 label exibir_ilha_atual:
 
 
-    # ========================================================
-    # FASE 1
-    # ========================================================
+    # O visual é agora genérico.
+    #
+    # A configuração formal continua pertencendo à fase,
+    # mas estados comuns, finais e armadilhas utilizam
+    # fundos compartilhados.
 
-    if fase_atual == 1:
-
-        call fase_1_exibir_estado
-
-
-    # ========================================================
-    # FASES WIP
-    # ========================================================
-
-    elif fase_atual == 2:
-
-        call fase_2_exibir_estado
-
-    elif fase_atual == 3:
-
-        call fase_3_exibir_estado
-
-
-    elif fase_atual == 4:
-
-        call fase_4_exibir_estado
-
-
-    elif fase_atual == 5:
-
-        call fase_5_exibir_estado
-
-
-    elif fase_atual == 6:
-
-        call fase_6_exibir_estado   
-
-
-    elif fase_atual == 7:
-
-        call fase_7_exibir_estado
-
-
-    else:
-
-        "Erro: fase desconhecida."
+    call exibir_estado_visual
 
 
     return
-
-# ============================================================
-# DESPACHANTE DO MAPA
-# ============================================================
-
-screen mapa_atual:
-
-    modal True
-
-
-    if fase_atual == 1:
-
-        use mapa_fase_1
-
-
-    elif fase_atual == 2:
-
-        frame:
-
-            xalign 0.5
-            yalign 0.5
-
-            text "Mapa da Fase 2 ainda não implementado."
-
-
-    else:
-
-        frame:
-
-            xalign 0.5
-            yalign 0.5
-
-            text "Mapa desta fase ainda não disponível."
 
 
 # ============================================================

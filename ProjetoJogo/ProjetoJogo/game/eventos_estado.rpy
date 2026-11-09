@@ -85,7 +85,6 @@ label processar_eventos_estado_atual:
     return "continuar"
 
 
-
 # ============================================================
 # GAME OVER - ARMADILHA
 # ============================================================
@@ -99,26 +98,37 @@ label game_over_armadilha:
     )
 
 
+    # ========================================================
+    # VISUAL
+    # ========================================================
+
+    scene bg_prisao
+
+    show ui_game_over at marca_resultado
+
+    with transicao_fade
+
+
     "Você chegou a [nome_armadilha]."
 
 
-    navegador "Capitão, não podemos continuar daqui!"
+    navegador "Capitão, não há rota de fuga daqui!"
 
 
     menu:
 
+
         "Reiniciar a fase":
 
-            # Reiniciar também incrementa numero_resets,
-            # conforme a definição das métricas.
 
             call reiniciar_fase
+
 
             return "reiniciado"
 
 
+
         "Voltar ao Menu":
 
-            # Sair pelo menu não conta como reinício.
 
             return "menu"

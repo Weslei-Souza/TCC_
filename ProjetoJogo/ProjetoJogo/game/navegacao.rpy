@@ -513,33 +513,44 @@ label planejar_nova_rota:
 label vitoria:
 
 
+    # ========================================================
+    # VISUAL
+    # ========================================================
+
+    scene bg_final
+
+    show ui_victory at marca_resultado
+
+    with transicao_fade
+
+
     navegador "Capitão, encontramos nosso destino!"
 
 
     # ========================================================
-    # FASE FINAL
+    # FASE 7 - ENCERRAMENTO DO JOGO
     # ========================================================
 
     if fase_atual == 7:
 
+
         "Você chegou à Ilha Final."
+
 
         navegador "Conseguimos, Capitão!"
 
-        navegador "Exploramos todos os arquipélagos e finalmente encontramos o tesouro."
+
+        navegador "Depois de atravessar todos os arquipélagos, finalmente encontramos o tesouro."
+
 
         "Você completou todas as fases do jogo!"
 
 
-        # Garante que qualquer progresso persistente
-        # pendente seja salvo.
-
         $ renpy.save_persistent()
 
 
-        # Como o fluxo do jogo começou pelo label start,
-        # retornar sem um caller encerra a execução atual
-        # e leva novamente ao menu principal.
+        # Encerrar o contexto atual retorna
+        # ao menu principal.
 
         return
 
@@ -556,15 +567,14 @@ label vitoria:
 
     if persistent.fase_max_desbloqueada < proxima_fase:
 
+
         $ persistent.fase_max_desbloqueada = proxima_fase
+
 
         $ renpy.save_persistent()
 
+
         "Uma nova fase foi desbloqueada!"
 
-
-    # ========================================================
-    # VOLTA À SELEÇÃO DE FASES
-    # ========================================================
 
     jump selecionar_fase_jogo
