@@ -14,22 +14,53 @@ init python:
     # somente a primeira fase fica liberada.
     if persistent.fase_max_desbloqueada is None:
         persistent.fase_max_desbloqueada = 1
+    
+    init python:
+
+    # ========================================================
+    # GARANTE O ATALHO DE TELA CHEIA
+    # ========================================================
+
+    if "K_F11" not in config.keymap["toggle_fullscreen"]:
+        config.keymap["toggle_fullscreen"].append("K_F11")
 
 
 # ============================================================
-# DESATIVA O GAME MENU PADRÃO DO REN'PY
+# TRANSIÇÕES GERAIS
 # ============================================================
 
-# O jogo possui navegação e controles próprios.
-#
-# Portanto, ESC/clique direito não devem abrir
-# o menu padrão opaco do Ren'Py.
+define transicao_tela = Dissolve(0.25)
 
-if "game_menu" in config.keymap:
+define transicao_fade = Fade(
+    0.20,
+    0.10,
+    0.20
+)
 
-    config.keymap[
-        "game_menu"
-    ] = []
+define config.intra_transition = transicao_tela
+
+define config.enter_yesno_transition = transicao_tela
+
+define config.exit_yesno_transition = transicao_tela
+
+define config.end_game_transition = transicao_fade
+
+# ============================================================
+# CONTROLE DO MENU PADRÃO DO REN'PY
+# ============================================================
+
+# Impede ESC e clique direito de abrirem
+# o game menu padrão do Ren'Py.
+define _game_menu_screen = None
+
+# ============================================================
+# SAÍDA DO JOGO
+# ============================================================
+
+define config.quit_action = Confirm(
+    "Deseja realmente fechar o jogo?",
+    Quit(confirm=False)
+)
 
 
 # ============================================================
@@ -164,7 +195,9 @@ label start:
 label escolher_modo_jogo:
 
 
-    call screen menu_modo_jogo
+    call screen menu_modo_jogo(_with_none=False) with transicao_tela
+
+    with transicao_tela
 
     $ escolha_modo = _return
 
@@ -192,7 +225,11 @@ label escolher_modo_jogo:
 label selecionar_fase_jogo:
 
 
-    call screen selecionar_fase
+    call screen selecionar_fase(
+        _with_none=False
+    ) with transicao_tela
+
+    with transicao_tela
 
     $ escolha_fase = _return
 
@@ -273,10 +310,10 @@ label preparar_execucao_fase:
     $ historico_interacoes = []
 
     $ dicas_npc_usadas = {
-    "generica": [],
-    "intermediaria": [],
-    "especifica": [],
-}
+        "generica": [],
+        "intermediaria": [],
+        "especifica": [],
+    }
 
 
     # ========================================================
@@ -295,6 +332,10 @@ label preparar_execucao_fase:
     # ========================================================
 
     call preparar_fase_atual
+
+    scene bg_mar
+
+    with transicao_fade
 
     call introducao_fase_atual
 

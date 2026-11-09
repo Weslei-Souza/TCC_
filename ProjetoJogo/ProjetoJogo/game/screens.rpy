@@ -1196,46 +1196,72 @@ style help_label_text:
 ## Additional screens
 ################################################################################
 
-
-## Confirm screen ##############################################################
-##
-## The confirm screen is called when Ren'Py wants to ask the player a yes or no
-## question.
-##
-## https://www.renpy.org/doc/html/screen_special.html#confirm
+# ============================================================
+# CONFIRMAÇÃO PERSONALIZADA
+# ============================================================
 
 screen confirm(message, yes_action, no_action):
 
-    ## Ensure other screens do not get input while this screen is displayed.
     modal True
 
-    zorder 200
+    zorder 300
 
-    style_prefix "confirm"
 
-    add "gui/overlay/confirm.png"
+    # Fundo escurecido.
+    add Solid("#00000099")
+
 
     frame:
 
-        vbox:
-            xalign .5
-            yalign .5
-            spacing 30
+        xalign 0.5
+        yalign 0.5
 
-            label _(message):
-                style "confirm_prompt"
+        xsize 580
+
+        background Solid("#111820")
+
+        padding (45, 40)
+
+
+        vbox:
+
+            xalign 0.5
+
+            spacing 35
+
+
+            text "[message]":
+
                 xalign 0.5
+
+                text_align 0.5
+
+                size 32
+
 
             hbox:
+
                 xalign 0.5
-                spacing 100
 
-                textbutton _("Yes") action yes_action
-                textbutton _("No") action no_action
+                spacing 35
 
-    ## Right-click and escape answer "no".
+
+                textbutton "Não":
+
+                    style "rota_button"
+
+                    action no_action
+
+
+                textbutton "Sim":
+
+                    style "rota_button"
+
+                    action yes_action
+
+
+    # ESC cancela a confirmação.
     key "game_menu" action no_action
-
 
 style confirm_frame is gui_frame
 style confirm_prompt is gui_prompt
