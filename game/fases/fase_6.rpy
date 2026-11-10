@@ -38,7 +38,7 @@ label fase_6_introducao:
 
     navegador "Há duas prisões espalhadas pelo arquipélago, além de retornos e um redemoinho."
 
-    navegador "Algumas rotas chegam perto do nosso destino, mas uma única escolha errada pode encerrar toda a tentativa."
+    navegador "Algumas rotas chegam perto do nosso destino, mas uma única escolha errada pode encerrar a nossa aventura!."
 
     navegador "Observe os caminhos com atenção e tente planejar uma sequência segura até a Ilha do Tesouro."
 

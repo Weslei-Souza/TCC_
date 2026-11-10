@@ -37,9 +37,9 @@ label fase_4_introducao:
 
     navegador "Capitão, este arquipélago apresenta um perigo novo."
 
-    navegador "Há uma prisão entre as rotas. Se nosso navio for levado até ela, não teremos uma rota de fuga e a tentativa termina."
+    navegador "Há uma prisão entre as rotas. Se nosso navio for levado até ela, não teremos uma rota de fuga!"
 
-    navegador "Os redemoinhos continuam presentes, mas agora precisamos distinguir um atraso de um caminho realmente sem saída."
+    navegador "Os redemoinhos continuam nessas águas, mas agora precisamos diferenciar um atraso de um caminho realmente sem saída."
 
     navegador "Use o mapa com cuidado e procure chegar à Ilha do Tesouro sem passar pela prisão."
 

@@ -43,7 +43,7 @@ label fase_7_introducao:
 
     navegador "O caminho até a Ilha do Tesouro é mais longo e algumas rotas perigosas aparecem mesmo quando já estamos próximos do objetivo."
 
-    navegador "Este é o desafio final. Observe todo o mapa, planeje com cuidado e escolha nossa rota."
+    navegador "Este é o desafio final. Observe todo o mapa, planeje com cuidado e escolha nossa rota!"
 
     return
 
