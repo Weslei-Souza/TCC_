@@ -7,7 +7,7 @@ label modo_navegacao:
 
     # Mostra o estado inicial.
 
-    call exibir_ilha_atual
+    call exibir_ilha_atual from _call_exibir_ilha_atual
 
 
     jump navegacao_escolher_transicao
@@ -86,7 +86,7 @@ label navegacao_escolher_transicao:
 
     if simbolo == "__AJUDA__":
 
-        call pedir_dica_atual
+        call pedir_dica_atual from _call_pedir_dica_atual
 
         jump navegacao_escolher_transicao
 
@@ -97,9 +97,9 @@ label navegacao_escolher_transicao:
 
     elif simbolo == "__REINICIAR__":
 
-        call reiniciar_fase
+        call reiniciar_fase from _call_reiniciar_fase_1
 
-        call exibir_ilha_atual
+        call exibir_ilha_atual from _call_exibir_ilha_atual_1
 
         jump navegacao_escolher_transicao
 
@@ -146,7 +146,7 @@ label navegacao_escolher_transicao:
     $ estados_repetidos += novas_repeticoes
 
 
-    call atualizar_necessidade_assistencia
+    call atualizar_necessidade_assistencia from _call_atualizar_necessidade_assistencia_10
 
 
     # ========================================================
@@ -158,14 +158,14 @@ label navegacao_escolher_transicao:
 
     # Mostra visualmente a nova ilha.
 
-    call exibir_ilha_atual
+    call exibir_ilha_atual from _call_exibir_ilha_atual_2
 
 
     # ========================================================
     # PROCESSA EVENTOS DA CHEGADA
     # ========================================================
 
-    call processar_eventos_estado_atual
+    call processar_eventos_estado_atual from _call_processar_eventos_estado_atual
 
     $ resultado_evento = _return
 
@@ -185,7 +185,7 @@ label navegacao_escolher_transicao:
 
     elif resultado_evento == "reiniciado":
 
-        call exibir_ilha_atual
+        call exibir_ilha_atual from _call_exibir_ilha_atual_3
 
         jump navegacao_escolher_transicao
 
@@ -224,7 +224,7 @@ label navegacao_escolher_transicao:
 label modo_rota:
 
 
-    call exibir_ilha_atual
+    call exibir_ilha_atual from _call_exibir_ilha_atual_4
 
 
     jump planejar_nova_rota
@@ -258,7 +258,7 @@ label planejar_nova_rota:
 
     if entrada_jogador == "__AJUDA__":
 
-        call pedir_dica_atual
+        call pedir_dica_atual from _call_pedir_dica_atual_1
 
         jump planejar_nova_rota
 
@@ -269,9 +269,9 @@ label planejar_nova_rota:
 
     elif entrada_jogador == "__REINICIAR__":
 
-        call reiniciar_fase
+        call reiniciar_fase from _call_reiniciar_fase_2
 
-        call exibir_ilha_atual
+        call exibir_ilha_atual from _call_exibir_ilha_atual_5
 
         jump planejar_nova_rota
 
@@ -386,7 +386,7 @@ label planejar_nova_rota:
                 $ estados_repetidos += novas_repeticoes
 
 
-                call atualizar_necessidade_assistencia
+                call atualizar_necessidade_assistencia from _call_atualizar_necessidade_assistencia_11
 
 
                 # ============================================
@@ -406,14 +406,14 @@ label planejar_nova_rota:
 
                 # Mostra cada estado efetivamente visitado.
 
-                call exibir_ilha_atual
+                call exibir_ilha_atual from _call_exibir_ilha_atual_6
 
 
                 # ============================================
                 # EVENTOS
                 # ============================================
 
-                call processar_eventos_estado_atual
+                call processar_eventos_estado_atual from _call_processar_eventos_estado_atual_1
 
                 $ resultado_evento = _return
 
@@ -468,7 +468,7 @@ label planejar_nova_rota:
 
         navegador "A rota foi interrompida."
 
-        call exibir_ilha_atual
+        call exibir_ilha_atual from _call_exibir_ilha_atual_7
 
         jump planejar_nova_rota
 

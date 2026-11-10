@@ -33,7 +33,7 @@ label reiniciar_fase:
     $ numero_resets += 1
 
     #atualiza o indice de necessidade 
-    call atualizar_necessidade_assistencia 
+    call atualizar_necessidade_assistencia from _call_atualizar_necessidade_assistencia 
 
     #retorna ao estado inicial 
     $ estado_atual = automato.estado_inicial(

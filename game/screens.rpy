@@ -2045,7 +2045,7 @@ screen entrada_rota(nome_ilha):
 # SELEÇÃO DE FASE
 # ============================================================
 
-screen selecionar_fase:
+screen selecionar_fase():
 
     modal True
 
@@ -2164,7 +2164,7 @@ screen selecionar_fase:
 # CONTROLES DA FASE
 # ============================================================
 
-screen controles_fase:
+screen controles_fase():
 
 
     # ========================================================
@@ -2218,7 +2218,7 @@ screen controles_fase:
 # CONFIRMAR SAÍDA
 # ============================================================
 
-screen confirmar_saida:
+screen confirmar_saida():
 
 
     modal True

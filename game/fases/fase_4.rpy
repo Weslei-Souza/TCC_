@@ -58,7 +58,7 @@ label fase_4_pedir_dica:
 
     $ dicas_pedidas += 1
 
-    call atualizar_necessidade_assistencia
+    call atualizar_necessidade_assistencia from _call_atualizar_necessidade_assistencia_6
 
 
     if not dicas_disponiveis:
@@ -87,23 +87,23 @@ label fase_4_fornecer_dica_npc:
 
         call fornecer_dica_npc_com_banco(
             DICAS_GENERICAS_FASE_4
-        )
+        ) from _call_fornecer_dica_npc_com_banco_9
 
     elif categoria_assistencia == "intermediaria":
 
         call fornecer_dica_npc_com_banco(
             DICAS_INTERMEDIARIAS_FASE_4
-        )
+        ) from _call_fornecer_dica_npc_com_banco_10
 
     elif categoria_assistencia == "especifica":
 
         call fornecer_dica_npc_com_banco(
             DICAS_ESPECIFICAS_FASE_4
-        )
+        ) from _call_fornecer_dica_npc_com_banco_11
 
     else:
 
-        call npc_recusar_dica
+        call npc_recusar_dica from _call_npc_recusar_dica_4
 
     return
 

@@ -172,7 +172,7 @@ init python:
 # VISUAL GENÉRICO DOS ESTADOS
 # ============================================================
 
-label exibir_estado_visual:
+label exibir_estado_visual():
 
 
     # ========================================================
@@ -614,7 +614,7 @@ O Navegador oferece dicas gerais. Alguns Náufragos também podem ajudar, depend
 # SELEÇÃO DE FASE
 # ============================================================
 
-screen selecionar_fase:
+screen selecionar_fase():
 
     modal True
 
@@ -1053,7 +1053,7 @@ screen entrada_rota(nome_ilha):
 # CONTROLES DA FASE
 # ============================================================
 
-screen controles_fase:
+screen controles_fase():
 
 
     # No Planejamento de Rota o mapa já está permanente.
@@ -1128,7 +1128,7 @@ screen controles_fase:
 # MAPA ABERTO NO PASSO A PASSO
 # ============================================================
 
-screen mapa_atual:
+screen mapa_atual():
 
     modal True
 

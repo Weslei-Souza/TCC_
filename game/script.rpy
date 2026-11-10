@@ -339,7 +339,7 @@ label preparar_execucao_fase:
     # PREPARAÇÃO DA FASE
     # ========================================================
 
-    call preparar_fase_atual
+    call preparar_fase_atual from _call_preparar_fase_atual
 
 
     # Fundo da introdução.
@@ -349,7 +349,7 @@ label preparar_execucao_fase:
     with transicao_fade
 
 
-    call introducao_fase_atual
+    call introducao_fase_atual from _call_introducao_fase_atual
 
 
     # ========================================================

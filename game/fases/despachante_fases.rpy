@@ -13,31 +13,31 @@
 label preparar_fase_atual:
     
     if fase_atual == 1:
-        call fase_1_preparar
+        call fase_1_preparar from _call_fase_1_preparar
 
 
     elif fase_atual == 2:
-        call fase_2_preparar
+        call fase_2_preparar from _call_fase_2_preparar
 
 
     elif fase_atual == 3:
-        call fase_3_preparar
+        call fase_3_preparar from _call_fase_3_preparar
 
 
     elif fase_atual == 4:
-        call fase_4_preparar
+        call fase_4_preparar from _call_fase_4_preparar
 
 
     elif fase_atual == 5:
-        call fase_5_preparar
+        call fase_5_preparar from _call_fase_5_preparar
 
 
     elif fase_atual == 6:
-        call fase_6_preparar
+        call fase_6_preparar from _call_fase_6_preparar
         
 
     elif fase_atual == 7:
-        call fase_7_preparar
+        call fase_7_preparar from _call_fase_7_preparar
 
     return
 
@@ -52,37 +52,37 @@ label pedir_dica_atual:
 
     if fase_atual == 1:
 
-        call fase_1_pedir_dica
+        call fase_1_pedir_dica from _call_fase_1_pedir_dica
 
 
     elif fase_atual == 2:
 
-        call fase_2_pedir_dica
+        call fase_2_pedir_dica from _call_fase_2_pedir_dica
 
 
     elif fase_atual == 3:
 
-        call fase_3_pedir_dica
+        call fase_3_pedir_dica from _call_fase_3_pedir_dica
 
 
     elif fase_atual == 4:
 
-        call fase_4_pedir_dica
+        call fase_4_pedir_dica from _call_fase_4_pedir_dica
 
 
     elif fase_atual == 5:
 
-        call fase_5_pedir_dica
+        call fase_5_pedir_dica from _call_fase_5_pedir_dica
 
 
     elif fase_atual == 6:
 
-        call fase_6_pedir_dica
+        call fase_6_pedir_dica from _call_fase_6_pedir_dica
 
 
     elif fase_atual == 7:
 
-        call fase_7_pedir_dica
+        call fase_7_pedir_dica from _call_fase_7_pedir_dica
 
 
     return
@@ -98,37 +98,37 @@ label fornecer_dica_npc_atual:
 
     if fase_atual == 1:
 
-        call fase_1_fornecer_dica_npc
+        call fase_1_fornecer_dica_npc from _call_fase_1_fornecer_dica_npc
 
 
     elif fase_atual == 2:
 
-        call fase_2_fornecer_dica_npc
+        call fase_2_fornecer_dica_npc from _call_fase_2_fornecer_dica_npc
 
 
     elif fase_atual == 3:
 
-        call fase_3_fornecer_dica_npc
+        call fase_3_fornecer_dica_npc from _call_fase_3_fornecer_dica_npc
 
 
     elif fase_atual == 4:
 
-        call fase_4_fornecer_dica_npc
+        call fase_4_fornecer_dica_npc from _call_fase_4_fornecer_dica_npc
 
 
     elif fase_atual == 5:
 
-        call fase_5_fornecer_dica_npc
+        call fase_5_fornecer_dica_npc from _call_fase_5_fornecer_dica_npc
 
 
     elif fase_atual == 6:
 
-        call fase_6_fornecer_dica_npc
+        call fase_6_fornecer_dica_npc from _call_fase_6_fornecer_dica_npc
 
 
     elif fase_atual == 7:
 
-        call fase_7_fornecer_dica_npc
+        call fase_7_fornecer_dica_npc from _call_fase_7_fornecer_dica_npc
 
 
     return
@@ -147,7 +147,7 @@ label exibir_ilha_atual:
     # mas estados comuns, finais e armadilhas utilizam
     # fundos compartilhados.
 
-    call exibir_estado_visual
+    call exibir_estado_visual from _call_exibir_estado_visual
 
 
     return
@@ -162,37 +162,37 @@ label introducao_fase_atual:
 
     if fase_atual == 1:
 
-        call fase_1_introducao
+        call fase_1_introducao from _call_fase_1_introducao
 
 
     elif fase_atual == 2:
 
-        call fase_2_introducao
+        call fase_2_introducao from _call_fase_2_introducao
 
 
     elif fase_atual == 3:
 
-        call fase_3_introducao
+        call fase_3_introducao from _call_fase_3_introducao
 
 
     elif fase_atual == 4:
 
-        call fase_4_introducao
+        call fase_4_introducao from _call_fase_4_introducao
 
 
     elif fase_atual == 5:
 
-        call fase_5_introducao
+        call fase_5_introducao from _call_fase_5_introducao
 
 
     elif fase_atual == 6:
 
-        call fase_6_introducao
+        call fase_6_introducao from _call_fase_6_introducao
 
 
     elif fase_atual == 7:
 
-        call fase_7_introducao
+        call fase_7_introducao from _call_fase_7_introducao
 
 
     return

@@ -50,12 +50,12 @@ label processar_eventos_estado_atual:
         # A Necessidade de Assistência deve refletir
         # imediatamente a nova ocorrência.
 
-        call atualizar_necessidade_assistencia
+        call atualizar_necessidade_assistencia from _call_atualizar_necessidade_assistencia_2
 
 
         # Inicia o fluxo de Game Over.
 
-        call game_over_armadilha
+        call game_over_armadilha from _call_game_over_armadilha
 
         $ resultado_game_over = _return
 
@@ -79,7 +79,7 @@ label processar_eventos_estado_atual:
         # - se ainda pode aparecer;
         # - se o sorteio foi bem-sucedido.
 
-        call verificar_encontro_npc_atual
+        call verificar_encontro_npc_atual from _call_verificar_encontro_npc_atual
 
 
     return "continuar"
@@ -121,7 +121,7 @@ label game_over_armadilha:
         "Reiniciar a fase":
 
 
-            call reiniciar_fase
+            call reiniciar_fase from _call_reiniciar_fase
 
 
             return "reiniciado"

@@ -106,7 +106,7 @@ label iniciar_encontro_npc:
     # PERCEPÇÃO DO NAVEGADOR
     # ========================================================
 
-    call comentar_disposicao_npc
+    call comentar_disposicao_npc from _call_comentar_disposicao_npc
 
 
     return
@@ -257,7 +257,7 @@ label interacao_npc_inicial:
 
             call aplicar_escolha_npc(
                 "ajudar"
-            )
+            ) from _call_aplicar_escolha_npc
 
             naufrago "Obrigado. Isso vai me ajudar bastante."
 
@@ -268,7 +268,7 @@ label interacao_npc_inicial:
 
             call aplicar_escolha_npc(
                 "nao_ajudar"
-            )
+            ) from _call_aplicar_escolha_npc_1
 
             naufrago "Entendi... achei que vocês poderiam ajudar."
 
@@ -279,7 +279,7 @@ label interacao_npc_inicial:
 
             call aplicar_escolha_npc(
                 "jogar_ao_mar"
-            )
+            ) from _call_aplicar_escolha_npc_2
 
             naufrago "Ei! O que você está fazendo?!"
 
@@ -302,7 +302,7 @@ label interacao_npc_social:
 
             call aplicar_escolha_npc(
                 "conversar_educadamente"
-            )
+            ) from _call_aplicar_escolha_npc_3
 
             naufrago "Pelo menos ainda existem pessoas educadas por aqui."
 
@@ -311,7 +311,7 @@ label interacao_npc_social:
 
             call aplicar_escolha_npc(
                 "insultar"
-            )
+            ) from _call_aplicar_escolha_npc_4
 
             naufrago "Não precisava falar assim."
 
@@ -320,7 +320,7 @@ label interacao_npc_social:
 
             call aplicar_escolha_npc(
                 "ignorar"
-            )
+            ) from _call_aplicar_escolha_npc_5
 
             "Você ignora o comentário do Náufrago."
 
@@ -389,12 +389,12 @@ label solicitar_ajuda_npc:
 
 
     # A nova solicitação altera a Necessidade de Assistência.
-    call atualizar_necessidade_assistencia
+    call atualizar_necessidade_assistencia from _call_atualizar_necessidade_assistencia_1
 
 
     # Com a Necessidade atualizada e a Disposição atual
     # do NPC, executamos o sistema fuzzy.
-    call calcular_assistencia_npc
+    call calcular_assistencia_npc from _call_calcular_assistencia_npc
 
 
     # ========================================================
@@ -432,12 +432,12 @@ label solicitar_ajuda_npc:
 
     if categoria_assistencia == "nenhuma":
 
-        call npc_recusar_dica
+        call npc_recusar_dica from _call_npc_recusar_dica
 
 
     else:
 
-        call fornecer_dica_npc_atual
+        call fornecer_dica_npc_atual from _call_fornecer_dica_npc_atual
 
 
     return
@@ -456,7 +456,7 @@ label decidir_ajuda_npc:
 
         "Perguntar sobre as ilhas":
 
-            call solicitar_ajuda_npc
+            call solicitar_ajuda_npc from _call_solicitar_ajuda_npc
 
 
         "Ir embora":
@@ -530,7 +530,7 @@ label verificar_encontro_npc_atual:
 
         if estado_atual == estado_fixo:
 
-            call realizar_encontro_npc
+            call realizar_encontro_npc from _call_realizar_encontro_npc
 
             return True
 
@@ -557,7 +557,7 @@ label verificar_encontro_npc_atual:
 
         if sorteio_encontro < chance_encontro:
 
-            call realizar_encontro_npc
+            call realizar_encontro_npc from _call_realizar_encontro_npc_1
 
             return True
 
@@ -580,7 +580,7 @@ label realizar_encontro_npc:
     # CRIA O NOVO NPC
     # ========================================================
 
-    call iniciar_encontro_npc
+    call iniciar_encontro_npc from _call_iniciar_encontro_npc
 
 
     naufrago "Ei! Vocês aí!"
@@ -592,7 +592,7 @@ label realizar_encontro_npc:
     # PRIMEIRA INTERAÇÃO
     # ========================================================
 
-    call interacao_npc_inicial
+    call interacao_npc_inicial from _call_interacao_npc_inicial
 
     $ resultado_interacao = _return
 
@@ -603,7 +603,7 @@ label realizar_encontro_npc:
 
     if resultado_interacao == "encerrar":
 
-        call encerrar_encontro_npc
+        call encerrar_encontro_npc from _call_encerrar_encontro_npc
 
         return
 
@@ -612,21 +612,21 @@ label realizar_encontro_npc:
     # SEGUNDA INTERAÇÃO
     # ========================================================
 
-    call interacao_npc_social
+    call interacao_npc_social from _call_interacao_npc_social
 
 
     # ========================================================
     # PEDIR OU NÃO AJUDA
     # ========================================================
 
-    call decidir_ajuda_npc
+    call decidir_ajuda_npc from _call_decidir_ajuda_npc
 
 
     # ========================================================
     # ENCERRAR ENCONTRO
     # ========================================================
 
-    call encerrar_encontro_npc
+    call encerrar_encontro_npc from _call_encerrar_encontro_npc_1
 
 
     return

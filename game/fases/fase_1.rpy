@@ -97,7 +97,7 @@ label fase_1_pedir_dica:
     # Atualiza a Necessidade de Assistência
     # após a nova solicitação.
 
-    call atualizar_necessidade_assistencia
+    call atualizar_necessidade_assistencia from _call_atualizar_necessidade_assistencia_3
 
 
     # ========================================================
@@ -149,7 +149,7 @@ label fase_1_fornecer_dica_npc:
 
         call fornecer_dica_npc_com_banco(
             DICAS_GENERICAS_FASE_1
-        )
+        ) from _call_fornecer_dica_npc_com_banco
 
 
     # ========================================================
@@ -160,7 +160,7 @@ label fase_1_fornecer_dica_npc:
 
         call fornecer_dica_npc_com_banco(
             DICAS_INTERMEDIARIAS_FASE_1
-        )
+        ) from _call_fornecer_dica_npc_com_banco_1
 
 
     # ========================================================
@@ -171,7 +171,7 @@ label fase_1_fornecer_dica_npc:
 
         call fornecer_dica_npc_com_banco(
             DICAS_ESPECIFICAS_FASE_1
-        )
+        ) from _call_fornecer_dica_npc_com_banco_2
 
 
     # ========================================================
@@ -180,7 +180,7 @@ label fase_1_fornecer_dica_npc:
 
     else:
 
-        call npc_recusar_dica
+        call npc_recusar_dica from _call_npc_recusar_dica_1
 
 
     return
