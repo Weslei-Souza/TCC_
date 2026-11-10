@@ -4,36 +4,48 @@
 # ============================================================
 define DICAS_GENERICAS_FASE_6 = [
 
-    "Este arquipélago é mais perigoso. Há mais de uma prisão e vários caminhos possíveis.",
+    "Este arquipélago possui duas prisões e diferentes regiões perigosas. Uma sequência curta nem sempre é uma sequência segura.",
 
-    "Uma rota aparentemente curta pode terminar em uma armadilha.",
+    "Procure identificar primeiro quais escolhas levam diretamente às prisões. Eliminá-las pode facilitar o planejamento.",
+
+    "O mapa possui retornos e um redemoinho. Planejar alguns movimentos à frente será mais seguro do que escolher apenas pela proximidade do destino.",
 ]
 
 
 define DICAS_INTERMEDIARIAS_FASE_6 = [
 
-    "A Ilha 4 possui uma rota que leva a uma prisão.",
+    "Na Ilha 2, a rota A entra no redemoinho. A rota B permite avançar para a Ilha 4.",
 
-    "A Ilha 5 também possui uma rota perigosa que termina em uma prisão.",
+    "Na Ilha 4, a rota A leva a uma prisão; na Ilha 5, a rota B também leva a uma prisão.",
 
-    "Na Ilha 7, apenas uma das rotas leva à Ilha do Tesouro.",
+    "Depois da Ilha 6 ainda há perigo: na Ilha 7, somente uma das rotas alcança a Ilha do Tesouro.",
 ]
 
 
 define DICAS_ESPECIFICAS_FASE_6 = [
 
-    "A sequência A, B, B, A, B leva até a Ilha do Tesouro.",
+    "A sequência A, B, B, A, B leva da Ilha 1 até a Ilha do Tesouro.",
 
-    "Na Ilha 7, escolha B. A rota A leva a uma prisão.",
+    "Outra sequência válida é B, A, A, A, B.",
+
+    "Se estiver na Ilha 4, escolha B; depois, na Ilha 6, escolha A; e na Ilha 7, escolha B.",
 ]
+
 
 label fase_6_introducao:
 
-    navegador "Capitão, estas águas estão ficando perigosas."
+    navegador "Capitão, agora entramos em águas realmente perigosas."
 
-    navegador "Há duas prisões e vários caminhos que podem nos afastar do destino."
+    navegador "Há duas prisões espalhadas pelo arquipélago, além de retornos e um redemoinho."
+
+    navegador "Algumas rotas chegam perto do nosso destino, mas uma única escolha errada pode encerrar toda a tentativa."
+
+    navegador "Observe os caminhos com atenção e tente planejar uma sequência segura até a Ilha do Tesouro."
 
     return
+
+
+
 # ============================================================
 # PREPARAÇÃO
 # ============================================================
@@ -61,7 +73,7 @@ label fase_6_pedir_dica:
 
     if not dicas_disponiveis:
 
-        navegador "Sem mais dicas pra você!"
+        navegador "Capitão, já te contei tudo que sabia sobre esses mares!"
 
         return
 

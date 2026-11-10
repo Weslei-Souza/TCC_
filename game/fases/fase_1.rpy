@@ -3,14 +3,17 @@
 # TUTORIAL DE NAVEGAÇÃO
 # ============================================================
 
-
 # ============================================================
 # DICAS GENÉRICAS
 # ============================================================
 
 define DICAS_GENERICAS_FASE_1 = [
 
-    "A Ilha do Tesouro é o nosso destino. Observe as rotas disponíveis antes de escolher.",
+    "Nosso objetivo é chegar à Ilha do Tesouro. Antes de escolher, observe no mapa para onde cada rota pode nos levar.",
+
+    "As letras A e B representam as rotas disponíveis. Observe o resultado de cada escolha antes de continuar.",
+
+    "Se uma rota nos fizer voltar a uma ilha já visitada, ainda podemos escolher um caminho diferente na próxima passagem.",
 ]
 
 
@@ -20,7 +23,11 @@ define DICAS_GENERICAS_FASE_1 = [
 
 define DICAS_INTERMEDIARIAS_FASE_1 = [
 
-    "Na Ilha 2, uma das rotas leva de volta à Ilha 1 e a outra segue para o nosso destino.",
+    "Da Ilha 1, tanto a rota A quanto a rota B levam à Ilha 2.",
+
+    "Na Ilha 2, uma das rotas retorna à Ilha 1 e a outra segue diretamente para o nosso objetivo.",
+
+    "Se voltarmos à Ilha 1, observe novamente as rotas da Ilha 2 quando chegarmos até ela.",
 ]
 
 
@@ -30,19 +37,27 @@ define DICAS_INTERMEDIARIAS_FASE_1 = [
 
 define DICAS_ESPECIFICAS_FASE_1 = [
 
-    "Quando estiver na Ilha 2, escolha a rota B para chegar à Ilha do Tesouro.",
+    "Na Ilha 2, escolha a rota B para chegar à Ilha do Tesouro.",
+
+    "A sequência A, B leva da Ilha 1 até a Ilha do Tesouro.",
+
+    "A sequência B, B também leva da Ilha 1 até a Ilha do Tesouro.",
 ]
 
 
 # ============================================================
-# INTRODUÇÃO DA FASE
+# INTRODUÇÃO
 # ============================================================
 
 label fase_1_introducao:
 
-    navegador "Capitão, vamos começar por estas ilhas."
+    navegador "Capitão, este primeiro arquipélago será nosso treinamento."
 
-    navegador "Observe para onde cada rota nos leva e tente chegar à Ilha do Tesouro."
+    navegador "No mapa, cada ilha possui rotas identificadas pelas letras A e B. Ao escolher uma delas, seguiremos para a ilha indicada."
+
+    navegador "Nem toda escolha precisa nos aproximar do destino. Algumas rotas podem até nos fazer voltar."
+
+    navegador "Nosso objetivo é simples: encontrar um caminho até a Ilha do Tesouro."
 
     return
 
@@ -91,7 +106,7 @@ label fase_1_pedir_dica:
 
     if not dicas_disponiveis:
 
-        navegador "Sem mais dicas pra você!"
+        navegador "Capitão, já te contei tudo que sabia sobre esses mares!"
 
         return
 

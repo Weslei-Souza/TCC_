@@ -1842,7 +1842,7 @@ screen como_jogar():
                     text """
 OBJETIVO
 
-Navegue entre as ilhas e encontre o caminho até a Ilha do Tesouro.
+Navegue entre as ilhas e encontre o caminho até a Ilha Final.
 """
 
 
@@ -1930,7 +1930,7 @@ screen escolha_transicao(nome_ilha, destino_a, destino_b):
 
             style "painel_jogo"
 
-            xsize 600
+            xsize 10000
             ysize 500
 
 
@@ -1957,7 +1957,7 @@ screen escolha_transicao(nome_ilha, destino_a, destino_b):
                         size 30
 
 
-                    text "Capitão, qual rota devemos seguir?":
+                    text "Capitão, qual das rota devemos seguir?":
 
                         size 23
 

@@ -243,7 +243,7 @@ screen main_menu():
         yalign 0.5
 
         xsize 500
-        ysize 560
+        ysize 650
 
 
         vbox:
@@ -782,7 +782,7 @@ screen escolha_transicao(
         xpos 70
         ypos 300
 
-        xsize 420
+        xsize 525
         ysize 300
 
 
@@ -798,7 +798,7 @@ screen escolha_transicao(
 
             vbox:
 
-                xsize 180
+                xsize 250
 
                 spacing 14
 
@@ -808,7 +808,7 @@ screen escolha_transicao(
                     style "nome_navegador"
 
 
-                text "Capitão, qual rota devemos seguir?":
+                text "Capitão, qual das rotas devemos seguir?":
 
                     style "texto_painel"
 

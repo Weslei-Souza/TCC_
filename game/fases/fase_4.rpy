@@ -3,39 +3,47 @@
 # PRISÃO / ESTADO DE MORTE
 # ============================================================
 
-
 define DICAS_GENERICAS_FASE_4 = [
 
-    "Há uma prisão entre estas ilhas. Precisamos evitar as rotas que levam até ela.",
+    "Agora há uma prisão no arquipélago. Precisamos considerar não apenas como avançar, mas também quais rotas evitar.",
 
-    "Nem toda rota disponível é segura.",
+    "Ao contrário de um redemoinho, entrar na prisão encerra nossa tentativa.",
+
+    "Uma rota aparentemente mais direta pode ser perigosa. Observe o destino de cada escolha antes de navegar.",
 ]
 
 
 define DICAS_INTERMEDIARIAS_FASE_4 = [
 
-    "A Ilha 4 possui uma rota perigosa que leva diretamente à prisão.",
+    "A Ilha 3 possui um redemoinho na rota A. A outra rota permite continuar viagem.",
 
-    "A Ilha 6 está próxima do objetivo, mas uma das escolhas ainda leva à prisão.",
+    "Na Ilha 4, a rota A leva diretamente à prisão.",
+
+    "Na Ilha 6, uma rota leva à prisão e a outra alcança a Ilha do Tesouro.",
 ]
 
 
 define DICAS_ESPECIFICAS_FASE_4 = [
 
-    "A sequência B, B, A, B leva até a Ilha do Tesouro.",
+    "A sequência B, B, A, B leva da Ilha 1 até a Ilha do Tesouro.",
 
-    "Na Ilha 6, escolha B. A rota A leva à prisão.",
+    "Uma rota alternativa segura começa com A, B, B.",
+
+    "Quando chegar à Ilha 6, escolha B. A rota A termina na prisão.",
 ]
 
 
 label fase_4_introducao:
 
-    navegador "Capitão, avistamos uma prisão entre estas ilhas."
+    navegador "Capitão, este arquipélago apresenta um perigo novo."
 
-    navegador "Se formos parar lá, estaremos presos e nossa viagem termina."
+    navegador "Há uma prisão entre as rotas. Se nosso navio for levado até ela, não teremos uma rota de fuga e a tentativa termina."
+
+    navegador "Os redemoinhos continuam presentes, mas agora precisamos distinguir um atraso de um caminho realmente sem saída."
+
+    navegador "Use o mapa com cuidado e procure chegar à Ilha do Tesouro sem passar pela prisão."
 
     return
-
 
 label fase_4_preparar:
 
@@ -55,7 +63,7 @@ label fase_4_pedir_dica:
 
     if not dicas_disponiveis:
 
-        navegador "Sem mais dicas pra você!"
+        navegador "Capitão, já te contei tudo que sabia sobre esses mares!"
 
         return
 

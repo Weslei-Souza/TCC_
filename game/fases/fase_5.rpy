@@ -1,33 +1,47 @@
+
+
+
 define DICAS_GENERICAS_FASE_5 = [
 
-    "Agora teremos que lidar ao mesmo tempo com caminhos alternativos, redemoinhos e a prisão.",
+    "A partir daqui não há um elemento novo para descobrir. O desafio é combinar tudo o que já encontramos.",
 
-    "Observe o mapa antes de escolher: algumas regiões possuem mais de um perigo.",
+    "Caminhos alternativos, retornos, redemoinhos e prisão aparecem juntos neste arquipélago.",
+
+    "Antes de executar uma sequência longa, procure no mapa quais ilhas oferecem rotas seguras para continuar avançando.",
 ]
+
 
 define DICAS_INTERMEDIARIAS_FASE_5 = [
 
-    "A Ilha 4 possui um redemoinho na rota A.",
+    "Na Ilha 4, a rota A entra no redemoinho e nos mantém na mesma ilha.",
 
-    "Tanto a Ilha 5 quanto a Ilha 6 possuem uma rota que leva à prisão.",
+    "Na Ilha 5, a rota A leva à prisão, enquanto B permite continuar.",
+
+    "Na Ilha 6, apenas a rota B leva à Ilha do Tesouro. A outra termina na prisão.",
 ]
+
 
 define DICAS_ESPECIFICAS_FASE_5 = [
 
-    "A sequência A, A, B, B leva até a Ilha do Tesouro.",
+    "A sequência A, A, B, B leva da Ilha 1 até a Ilha do Tesouro.",
 
-    "Na Ilha 6, escolha B. A rota A leva à prisão.",
+    "A sequência A, B, B, B também leva ao objetivo.",
+
+    "Outra sequência possível é B, A, B, B.",
 ]
+
 
 label fase_5_introducao:
 
-    navegador "Capitão, desta vez teremos que usar tudo que vimos até agora."
+    navegador "Capitão, já conhecemos todos os perigos básicos destas águas."
 
-    navegador "Há diferentes caminhos, redemoinhos e uma prisão nestas águas."
+    navegador "Desta vez eles aparecem juntos: caminhos que retornam, redemoinhos e uma prisão fazem parte do mesmo arquipélago."
+
+    navegador "Não basta apenas seguir em frente. Algumas escolhas aparentemente boas podem nos levar a uma armadilha."
+
+    navegador "Considere esta nossa primeira navegação completa: observe o mapa, planeje a rota e encontre a Ilha do Tesouro."
 
     return
-
-
 # ============================================================
 # PREPARAÇÃO
 # ============================================================
@@ -54,7 +68,7 @@ label fase_5_pedir_dica:
 
     if not dicas_disponiveis:
 
-        navegador "Sem mais dicas pra você!"
+        navegador "Capitão, já te contei tudo que sabia sobre esses mares!"
 
         return
 

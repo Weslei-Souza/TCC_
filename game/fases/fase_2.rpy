@@ -2,39 +2,48 @@
 # FASE 2
 # CAMINHOS ALTERNATIVOS
 # ============================================================
-
-
 define DICAS_GENERICAS_FASE_2 = [
 
-    "Este arquipélago possui mais de um caminho até o destino.",
+    "Este arquipélago possui diferentes caminhos até a Ilha do Tesouro. Não existe apenas uma sequência possível.",
 
-    "Nem toda rota que nos afasta da Ilha do Tesouro significa que estamos perdidos.",
+    "Uma rota que nos leva para longe do destino pode fazer parte de um caminho válido mais adiante.",
+
+    "Observe como as ilhas se conectam. Pensar em algumas escolhas à frente pode evitar voltas desnecessárias.",
 ]
 
 
 define DICAS_INTERMEDIARIAS_FASE_2 = [
 
-    "A Ilha 5 possui uma rota que leva diretamente à Ilha do Tesouro.",
+    "Na Ilha 3, a rota A segue para a Ilha 5, enquanto a rota B retorna à Ilha 1.",
 
-    "Algumas rotas podem nos levar de volta à Ilha 1.",
+    "Na Ilha 4, a rota B segue para a Ilha 5, mas a rota A nos devolve à Ilha 1.",
+
+    "A Ilha 5 está muito próxima do objetivo: uma de suas rotas leva diretamente à Ilha do Tesouro.",
 ]
 
 
 define DICAS_ESPECIFICAS_FASE_2 = [
 
-    "Partindo da Ilha 1, a sequência B, A, B leva até a Ilha do Tesouro.",
+    "A sequência B, A, B leva da Ilha 1 até a Ilha do Tesouro.",
 
-    "Da Ilha 3, a rota A leva à Ilha 5; de lá, B chega à Ilha do Tesouro.",
+    "Outra sequência possível é A, A, A, B.",
+
+    "A sequência A, B, B, B também encontra a Ilha do Tesouro.",
 ]
 
 
 label fase_2_introducao:
 
-    navegador "Capitão, este arquipélago parece ter mais de um caminho possível."
+    navegador "Capitão, a partir daqui as águas começam a oferecer mais possibilidades."
 
-    navegador "Vamos observar as rotas antes de decidir por onde seguir."
+    navegador "Este arquipélago possui vários caminhos entre as ilhas. Rotas diferentes podem acabar nos levando ao mesmo destino."
+
+    navegador "Também podemos encontrar caminhos que retornam a lugares por onde já passamos."
+
+    navegador "Antes de navegar, observe o mapa e tente identificar mais de uma forma de chegar à Ilha do Tesouro."
 
     return
+
 
 
 label fase_2_preparar:
@@ -55,7 +64,7 @@ label fase_2_pedir_dica:
 
     if not dicas_disponiveis:
 
-        navegador "Sem mais dicas pra você!"
+        navegador "Capitão, já te contei tudo que sabia sobre esses mares!"
 
         return
 

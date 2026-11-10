@@ -1,39 +1,53 @@
 # ============================================================
 # FASE 7
 # ============================================================
+
+
 define DICAS_GENERICAS_FASE_7 = [
 
-    "Este é o arquipélago mais complexo que encontramos até agora.",
+    "Este é o maior arquipélago da viagem. Há vários caminhos, três redemoinhos e duas prisões entre nós e o tesouro.",
 
-    "Há redemoinhos, retornos e duas prisões espalhadas pelas rotas.",
+    "Não tente decidir apenas pela ilha que parece mais próxima do objetivo. Algumas rotas avançam visualmente, mas terminam em armadilhas.",
+
+    "Divida o problema em partes: encontre primeiro uma região segura do mapa e, a partir dela, planeje o trecho seguinte.",
 ]
 
 
 define DICAS_INTERMEDIARIAS_FASE_7 = [
 
-    "As Ilhas 3, 6 e 8 possuem redemoinhos.",
+    "As Ilhas 3, 6 e 8 possuem redemoinhos. Observe quais letras ativam cada um deles.",
 
-    "As Ilhas 2 e 4 possuem rotas que levam a uma prisão.",
+    "Na Ilha 2, a rota B leva a uma prisão; na Ilha 4, a rota A também termina em uma prisão.",
 
-    "As Ilhas 7 e 9 também possuem rotas que terminam em uma prisão.",
+    "Na parte final do percurso, a Ilha 7 possui uma rota para a prisão e a Ilha 9 também. Chegar perto do tesouro ainda não garante segurança.",
 ]
 
 
 define DICAS_ESPECIFICAS_FASE_7 = [
 
-    "Uma rota possível até o objetivo começa com A, A.",
+    "A sequência A, A, B, A, B, B leva da Ilha 1 até a Ilha do Tesouro.",
 
-    "A sequência A, A, B, A, B, B leva até a Ilha do Tesouro.",
+    "Também existe uma rota que começa por B, B e pode chegar ao objetivo com a sequência B, B, A, A, A, B, B.",
 
-    "Na Ilha 9, escolha B. A rota A leva a uma prisão.",
+    "Se estiver na Ilha 2, uma sequência segura até o tesouro é A, B, A, B, B.",
 ]
+
+
+
+
 label fase_7_introducao:
 
-    navegador "Capitão, chegamos ao arquipélago mais perigoso da viagem."
+    navegador "Capitão, chegamos ao último arquipélago da nossa viagem."
 
-    navegador "Vamos precisar observar o mapa e planejar cada rota com cuidado."
+    navegador "Aqui tudo o que encontramos antes aparece ao mesmo tempo: caminhos alternativos, retornos, três redemoinhos e duas prisões."
+
+    navegador "O caminho até a Ilha do Tesouro é mais longo e algumas rotas perigosas aparecem mesmo quando já estamos próximos do objetivo."
+
+    navegador "Este é o desafio final. Observe todo o mapa, planeje com cuidado e escolha nossa rota."
 
     return
+
+
 
 # ============================================================
 # PREPARAÇÃO
@@ -61,7 +75,7 @@ label fase_7_pedir_dica:
 
     if not dicas_disponiveis:
 
-        navegador "Sem mais dicas pra você!"
+        navegador "Capitão, já te contei tudo que sabia sobre esses mares!"
 
         return
 
